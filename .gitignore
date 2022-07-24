@@ -1,5 +1,26 @@
-/.env
-/.idea
-/vendor
-/node_modules
+# CRAFT ENVIRONMENT
+.env
+
+# COMPOSER
+vendor
+
+# BUILD FILES
+node_modules/
+yarn-error.log
+
+# NUXT
+src/debug.log
+src/dist/*
+
+# WEB FILES
+web/assets/images/*
+web/dist/*
+
+# OPS
+
+# MISC FILES
 .DS_Store
+.idea
+.vscode
+.editorconfig
+ansible.log
