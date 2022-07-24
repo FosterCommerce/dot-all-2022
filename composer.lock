@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5289caa78d30dacc92636e819da7f130",
+    "content-hash": "0c8abddf63956dae1e1db1de0e5c0a48",
     "packages": [
         {
             "name": "cebe/markdown",
@@ -4040,6 +4040,95 @@
             "time": "2020-07-16T12:34:01+00:00"
         },
         {
+            "name": "sebastianlenz/craft-utils",
+            "version": "3.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastian-lenz/craft-utils.git",
+                "reference": "043a2971c4fb8a3775f9a65502ca11db66b628a2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastian-lenz/craft-utils/zipball/043a2971c4fb8a3775f9a65502ca11db66b628a2",
+                "reference": "043a2971c4fb8a3775f9a65502ca11db66b628a2",
+                "shasum": ""
+            },
+            "require": {
+                "craftcms/cms": "^4.0.0-beta",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "lenz\\craft\\utils\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A collection of utility classes for Craft CMS development",
+            "support": {
+                "source": "https://github.com/sebastian-lenz/craft-utils/tree/3.0.3"
+            },
+            "time": "2022-05-18T10:09:29+00:00"
+        },
+        {
+            "name": "sebastianlenz/linkfield",
+            "version": "2.1.3-rc",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastian-lenz/craft-linkfield.git",
+                "reference": "ac11c92df2049f8192327944b9c21449a464be55"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastian-lenz/craft-linkfield/zipball/ac11c92df2049f8192327944b9c21449a464be55",
+                "reference": "ac11c92df2049f8192327944b9c21449a464be55",
+                "shasum": ""
+            },
+            "require": {
+                "craftcms/cms": "^4.0.0-beta",
+                "php": "^8.0",
+                "sebastianlenz/craft-utils": "^3.0.2"
+            },
+            "require-dev": {
+                "craftcms/feed-me": "^5.0-dev",
+                "craftcms/phpstan": "dev-main",
+                "phpstan/phpstan": "^1.5",
+                "phpunit/phpunit": "^7.5 || ^8.0",
+                "verbb/super-table": "^3.0.0-beta"
+            },
+            "type": "craft-plugin",
+            "extra": {
+                "handle": "typedlinkfield",
+                "name": "Typed link field",
+                "developer": "Sebastian Lenz",
+                "developerUrl": "https://github.com/sebastian-lenz/"
+            },
+            "autoload": {
+                "psr-4": {
+                    "lenz\\linkfield\\": "src/"
+                },
+                "classmap": [
+                    "legacy"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Craft field type for selecting links",
+            "support": {
+                "issues": "https://github.com/sebastian-lenz/craft-linkfield/issues",
+                "source": "https://github.com/sebastian-lenz/craft-linkfield/tree/2.1.3-rc"
+            },
+            "time": "2022-05-09T08:35:20+00:00"
+        },
+        {
             "name": "seld/cli-prompt",
             "version": "1.0.4",
             "source": {
@@ -7997,7 +8086,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "sebastianlenz/linkfield": 5
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

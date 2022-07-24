@@ -1,4 +1,4 @@
-dateModified: 1658688732
+dateModified: 1658702631
 email:
   fromEmail: admin@fostercommerce.com
   fromName: 'Foster Commerce Dot All 2022'
@@ -28,6 +28,10 @@ plugins:
     edition: standard
     enabled: true
     schemaVersion: 2.3.0
+  typedlinkfield:
+    edition: standard
+    enabled: true
+    schemaVersion: 2.0.0
 system:
   edition: pro
   live: true
