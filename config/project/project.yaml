@@ -1,0 +1,42 @@
+dateModified: 1658688732
+email:
+  fromEmail: admin@fostercommerce.com
+  fromName: 'Foster Commerce Dot All 2022'
+  transportType: craft\mail\transportadapters\Sendmail
+meta:
+  __names__:
+    69d02abe-8711-4774-b44b-2da88ffb76e7: Dummy # Dummy
+    83518c86-e1ee-4f0b-94c9-2611416da0a4: Common # Common
+    96429840-47c0-490f-a057-4565f9d9d895: 'Foster Commerce Dot All 2022' # Foster Commerce Dot All 2022
+    e4b25d4c-f8ee-4d1b-a77c-2e70560cb1d0: New # New
+    f8a2a825-4c38-46e8-853b-b3ee5d46969b: 'Foster Commerce Dot All 2022' # Foster Commerce Dot All 2022
+plugins:
+  commerce:
+    edition: pro
+    enabled: true
+    licenseKey: BC5L8V3XR0KWNFDDARH9GPUI
+    schemaVersion: 4.1.0
+  commerce-paypal-checkout:
+    edition: standard
+    enabled: true
+    schemaVersion: '1.0'
+  commerce-stripe:
+    edition: standard
+    enabled: true
+    schemaVersion: 3.0.0
+  redactor:
+    edition: standard
+    enabled: true
+    schemaVersion: 2.3.0
+system:
+  edition: pro
+  live: true
+  name: 'Foster Commerce Dot All 2022'
+  schemaVersion: 4.0.0.9
+  timeZone: America/Los_Angeles
+users:
+  allowPublicRegistration: false
+  defaultGroup: null
+  photoSubpath: null
+  photoVolumeUid: null
+  requireEmailVerification: true
