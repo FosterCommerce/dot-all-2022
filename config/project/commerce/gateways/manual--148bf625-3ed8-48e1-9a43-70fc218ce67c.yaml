@@ -1,0 +1,8 @@
+handle: manual
+isFrontendEnabled: $MANUAL_ENABLED
+name: Manual
+paymentType: authorize
+settings:
+  onlyAllowForZeroPriceOrders: true
+sortOrder: 3
+type: craft\commerce\gateways\Manual

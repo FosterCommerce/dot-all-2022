@@ -1,4 +1,4 @@
-dateModified: 1658764368
+dateModified: 1658768795
 email:
   fromEmail: admin@fostercommerce.com
   fromName: 'Foster Commerce Dot All 2022'
@@ -27,9 +27,10 @@ meta:
     8f9a9f81-cbc4-41eb-a70b-5eaeadea8840: Catalog # Catalog
     9c475876-3670-4452-82c1-8274c5cbccb2: Image # Image
     47f75540-4c56-4e84-9946-3fba7ad7d9f1: Size # Size
-    69d02abe-8711-4774-b44b-2da88ffb76e7: Dummy # Dummy
+    56fd568a-e1bd-46d2-af2f-8a5b610e47bf: PayPal # PayPal
     76a9bb5d-1499-4e0d-afff-29da6dde9d01: Heading # Heading
     81d425d5-6a7f-4da9-b64d-3752b8286594: Other # Other
+    148bf625-3ed8-48e1-9a43-70fc218ce67c: Manual # Manual
     430acb24-9641-4661-b62e-0cdc21c0fe56: 'Menu Item' # Menu Item
     652c2871-27c1-4b30-8190-0a05255eb19b: Relations # Relations
     4188fa88-45c2-4d45-bc06-3a135bab0725: Catalog # Catalog
