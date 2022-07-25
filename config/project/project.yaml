@@ -1,15 +1,58 @@
-dateModified: 1658702631
+dateModified: 1658707462
 email:
   fromEmail: admin@fostercommerce.com
   fromName: 'Foster Commerce Dot All 2022'
   transportType: craft\mail\transportadapters\Sendmail
+fs:
+  localAssetImages:
+    hasUrls: true
+    name: 'Local Asset Images'
+    settings:
+      path: '@assetBasePath/images'
+    type: craft\fs\Local
+    url: '@assetBaseUrl/images'
 meta:
   __names__:
+    0f2c6c9a-3092-47f2-b0dc-46d8ce11c178: Heading # Heading
+    1b39f5a2-15c0-4af0-be7c-0735aba76665: Text # Text
+    1b753347-9223-47d6-8349-fc1c7c290ea1: 'Product Categories' # Product Categories
+    1bd188af-6bf7-4544-9e2e-f5e4052cefd1: Assets # Assets
+    3f16d68f-cda8-49f7-8564-ba9db1855669: Pages # Pages
+    4dc80b48-acd0-45f5-abdd-abe4eadce58e: Size # Size
+    6e4128ef-78da-40a5-aca7-b52de59fbc3c: General # General
+    7a24de90-6ecf-4386-b258-7e1b8d1671f4: 'Results per page' # Results per page
+    8aa229ec-7643-48c3-947d-9d2c1882b8f2: 'Content Blocks' # Content Blocks
+    8c7805a4-e8b6-4f6b-b433-d777d7d2a6c1: Color # Color
+    8f9a9f81-cbc4-41eb-a70b-5eaeadea8840: Catalog # Catalog
+    9c475876-3670-4452-82c1-8274c5cbccb2: Image # Image
+    47f75540-4c56-4e84-9946-3fba7ad7d9f1: Size # Size
     69d02abe-8711-4774-b44b-2da88ffb76e7: Dummy # Dummy
-    83518c86-e1ee-4f0b-94c9-2611416da0a4: Common # Common
+    76a9bb5d-1499-4e0d-afff-29da6dde9d01: Heading # Heading
+    81d425d5-6a7f-4da9-b64d-3752b8286594: Other # Other
+    430acb24-9641-4661-b62e-0cdc21c0fe56: 'Menu Item' # Menu Item
+    652c2871-27c1-4b30-8190-0a05255eb19b: Relations # Relations
+    4188fa88-45c2-4d45-bc06-3a135bab0725: Catalog # Catalog
+    6208c751-b47b-4315-ac54-cd1f33debd7a: Images # Images
+    7434a2d9-23f7-4206-84fa-f1bbad8be64f: Keywords # Keywords
+    8151dd06-ae31-4c45-bd7e-47e7adbafd1b: 'Navigation Link' # Navigation Link
+    9685ed87-31a4-435c-9f18-ba478320023a: Home # Home
+    63057f3f-d739-4b88-9252-46dc4d1d283a: Copy # Copy
+    79086cc3-2cc6-4433-b251-eb6b65e115c8: Images # Images
+    0491950d-ac35-4f01-a408-29e979b6dd19: Heading # Heading
+    05440641-857c-492e-bbb9-37ff03c88963: Settings # Settings
+    66830969-da65-4137-bbfa-98dd011cc191: 'Preview Image' # Preview Image
     96429840-47c0-490f-a057-4565f9d9d895: 'Foster Commerce Dot All 2022' # Foster Commerce Dot All 2022
+    a1b271b7-b466-4c87-8201-986bcb728a78: 'Rich Text' # Rich Text
+    a1418b5d-f2c0-4a47-a789-f6ce3f3b0387: Image # Image
+    d7d54391-72ab-425b-87f9-d3b982cbd69d: Categories # Categories
+    d3951874-9e5b-4586-979e-c7e9c5b08d92: Home # Home
+    dee4f4f1-d8b0-4f5c-a6ff-b5f10e5a577f: Compound # Compound
+    df62c394-9de1-4e87-baf3-56bc70321894: 'Primary Navigation' # Primary Navigation
+    e0684c4e-4db6-49fe-b178-60bbc3750374: Options # Options
     e4b25d4c-f8ee-4d1b-a77c-2e70560cb1d0: New # New
+    e629d7f3-088b-4db7-96f2-b32c33036226: Image # Image
     f8a2a825-4c38-46e8-853b-b3ee5d46969b: 'Foster Commerce Dot All 2022' # Foster Commerce Dot All 2022
+    f96300ba-530d-42dd-94d6-b086b49639ec: Settings # Settings
 plugins:
   commerce:
     edition: pro

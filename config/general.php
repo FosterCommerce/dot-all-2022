@@ -20,6 +20,17 @@ return [
     // Whether generated URLs should omit "index.php"
     'omitScriptNameInUrls' => true,
 
+    // The secure key Craft will use for hashing and encrypting data
+    'securityKey' => App::env('CRAFT_SECURITY_KEY'),
+
+    // Custom aliases for Nuxt Build, local assets, and the Live Preview with Nuxt
+    'aliases' => [
+        '@distBasePath' => dirname(__DIR__) . '/web/dist',
+        '@assetBasePath' => dirname(__DIR__) . '/web/assets',
+        '@assetBaseUrl' => getenv('ASSET_BASE_URL'),
+        '@nuxtBaseUrl' => getenv('NUXT_BASE_URL')
+    ],
+
     // Whether Dev Mode should be enabled (see https://craftcms.com/guides/what-dev-mode-does)
     'devMode' => $isDev,
 
