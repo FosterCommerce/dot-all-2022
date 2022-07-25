@@ -13,7 +13,6 @@ src/debug.log
 src/dist/*
 
 # WEB FILES
-web/assets/images/*
 web/dist/*
 
 # OPS
