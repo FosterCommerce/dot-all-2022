@@ -1,4 +1,4 @@
-baseUrl: $PRIMARY_SITE_URL
+baseUrl: $CRAFT_BASE_URL
 enabled: true
 handle: default
 hasUrls: true
