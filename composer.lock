@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0c8abddf63956dae1e1db1de0e5c0a48",
+    "content-hash": "fbe61376150b788d0a5291dac134a905",
     "packages": [
         {
             "name": "cebe/markdown",
@@ -1291,6 +1291,61 @@
                 "source": "https://github.com/creocoder/yii2-nested-sets/tree/master"
             },
             "time": "2015-01-27T10:53:51+00:00"
+        },
+        {
+            "name": "davechild/textstatistics",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DaveChild/Text-Statistics.git",
+                "reference": "e83d5f82726db80e662ae305fce3b3c41299b4f5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DaveChild/Text-Statistics/zipball/e83d5f82726db80e662ae305fce3b3c41299b4f5",
+                "reference": "e83d5f82726db80e662ae305fce3b3c41299b4f5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7"
+            },
+            "suggest": {
+                "ext-bcmath": "More accurate floating point calculations.",
+                "ext-mbstring": "Handle multi-byte text properly."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "DaveChild\\TextStatistics": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Dave Child",
+                    "email": "dave@addedbytes.com",
+                    "homepage": "https://www.addedbytes.com/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP package to measure the readability of text according to various algorithms.",
+            "homepage": "https://github.com/DaveChild/Text-Statistics",
+            "support": {
+                "issues": "https://github.com/DaveChild/Text-Statistics/issues",
+                "source": "https://github.com/DaveChild/Text-Statistics/tree/master"
+            },
+            "time": "2018-08-21T08:17:10+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -2914,6 +2969,194 @@
             "time": "2022-07-24T11:55:47+00:00"
         },
         {
+            "name": "nystudio107/craft-plugin-manifest",
+            "version": "4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nystudio107/craft-plugin-manifest.git",
+                "reference": "4695716e0e7936da3e71e0ae5f435b8f0764973c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nystudio107/craft-plugin-manifest/zipball/4695716e0e7936da3e71e0ae5f435b8f0764973c",
+                "reference": "4695716e0e7936da3e71e0ae5f435b8f0764973c",
+                "shasum": ""
+            },
+            "require": {
+                "craftcms/cms": "^4.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "nystudio107\\pluginmanifest\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "nystudio107",
+                    "homepage": "https://nystudio107.com"
+                }
+            ],
+            "description": "Plugin Manifest is the conduit between Craft CMS plugins and webpack, with manifest.json & webpack-dev-server HMR support",
+            "keywords": [
+                "craftcms",
+                "manifest",
+                "plugin"
+            ],
+            "support": {
+                "docs": "https://github.com/nystudio107/craft-plugin-manifest/blob/v4/README.md",
+                "issues": "https://github.com/nystudio107/craft-plugin-manifest/issues",
+                "source": "https://github.com/nystudio107/craft-plugin-manifest/tree/4.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/khalwat",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-05-07T19:06:54+00:00"
+        },
+        {
+            "name": "nystudio107/craft-seomatic",
+            "version": "4.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nystudio107/craft-seomatic.git",
+                "reference": "d6dbe3021c26ba3976a0c3a14a2f05bf5f596940"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/d6dbe3021c26ba3976a0c3a14a2f05bf5f596940",
+                "reference": "d6dbe3021c26ba3976a0c3a14a2f05bf5f596940",
+                "shasum": ""
+            },
+            "require": {
+                "craftcms/cms": "^4.0.0",
+                "davechild/textstatistics": "^1.0.3",
+                "nystudio107/craft-plugin-manifest": "^4.0.0",
+                "nystudio107/craft-twigfield": "^1.0.10",
+                "php": "^8.0.2",
+                "php-science/textrank": "^1.0.3",
+                "sunra/php-simple-html-dom-parser": "^1.5.2"
+            },
+            "require-dev": {
+                "codeception/codeception": "^4.0",
+                "vlucas/phpdotenv": "^3.0"
+            },
+            "type": "craft-plugin",
+            "extra": {
+                "class": "nystudio107\\seomatic\\Seomatic",
+                "handle": "seomatic",
+                "name": "SEOmatic"
+            },
+            "autoload": {
+                "psr-4": {
+                    "nystudio107\\seomatic\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "nystudio107",
+                    "homepage": "https://nystudio107.com"
+                }
+            ],
+            "description": "SEOmatic facilitates modern SEO best practices & implementation for Craft CMS 3. It is a turnkey SEO system that is comprehensive, powerful, and flexible.",
+            "keywords": [
+                "Craft",
+                "JSON-LD",
+                "Sitemap",
+                "cms",
+                "craft-plugin",
+                "craftcms",
+                "facebook",
+                "meta",
+                "seo",
+                "seomatic",
+                "tags",
+                "twitter"
+            ],
+            "support": {
+                "docs": "https://nystudio107.com/docs/seomatic/",
+                "issues": "https://nystudio107.com/plugins/seomatic/support",
+                "source": "https://github.com/nystudio107/craft-seomatic"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/khalwat",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-07-23T21:02:37+00:00"
+        },
+        {
+            "name": "nystudio107/craft-twigfield",
+            "version": "1.0.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nystudio107/craft-twigfield.git",
+                "reference": "1b920b9fa491256755975c9dd8e3a9a160546494"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nystudio107/craft-twigfield/zipball/1b920b9fa491256755975c9dd8e3a9a160546494",
+                "reference": "1b920b9fa491256755975c9dd8e3a9a160546494",
+                "shasum": ""
+            },
+            "require": {
+                "craftcms/cms": "^3.0.0 || ^4.0.0"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "bootstrap": "nystudio107\\twigfield\\Twigfield"
+            },
+            "autoload": {
+                "psr-4": {
+                    "nystudio107\\twigfield\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "nystudio107",
+                    "homepage": "https://nystudio107.com"
+                }
+            ],
+            "description": "Provides a twig editor field with Twig & Craft API autocomplete",
+            "keywords": [
+                "Craft",
+                "auto",
+                "autocomplete",
+                "cms",
+                "complete",
+                "craftcms",
+                "editor",
+                "twig"
+            ],
+            "support": {
+                "docs": "https://github.com/nystudio107/craft-twigfield/blob/v1/README.md",
+                "issues": "https://github.com/nystudio107/craft-twigfield/issues",
+                "source": "https://github.com/nystudio107/craft-twigfield"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/khalwat",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-07-24T18:06:56+00:00"
+        },
+        {
             "name": "paragonie/random_compat",
             "version": "v9.99.100",
             "source": {
@@ -3147,6 +3390,63 @@
                 "source": "https://github.com/dompdf/php-svg-lib/tree/0.4.1"
             },
             "time": "2022-03-07T12:52:04+00:00"
+        },
+        {
+            "name": "php-science/textrank",
+            "version": "1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHP-Science/TextRank.git",
+                "reference": "cfa7480c9e136492109602473c242c1788279a4d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHP-Science/TextRank/zipball/cfa7480c9e136492109602473c242c1788279a4d",
+                "reference": "cfa7480c9e136492109602473c242c1788279a4d",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-mbstring": "*",
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "9.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpScience\\TextRank\\": [
+                        "src/",
+                        "tests/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Belicza",
+                    "email": "87.bdavid@gmail.com"
+                }
+            ],
+            "description": "TextRank (automatic text summarization) for PHP7 and HHVM.",
+            "keywords": [
+                "PHP7",
+                "automatic",
+                "php8",
+                "science",
+                "strict",
+                "summarization",
+                "textrank"
+            ],
+            "support": {
+                "issues": "https://github.com/PHP-Science/TextRank/issues",
+                "source": "https://github.com/PHP-Science/TextRank/tree/1.2.1"
+            },
+            "time": "2021-02-27T07:54:19+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -4426,6 +4726,58 @@
                 "source": "https://github.com/stripe/stripe-php/tree/v7.128.0"
             },
             "time": "2022-05-05T17:18:02+00:00"
+        },
+        {
+            "name": "sunra/php-simple-html-dom-parser",
+            "version": "v1.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sunra/php-simple-html-dom-parser.git",
+                "reference": "75b9b1cb64502d8f8c04dc11b5906b969af247c6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sunra/php-simple-html-dom-parser/zipball/75b9b1cb64502d8f8c04dc11b5906b969af247c6",
+                "reference": "75b9b1cb64502d8f8c04dc11b5906b969af247c6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.3.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Sunra\\PhpSimple\\HtmlDomParser": "Src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sunra",
+                    "email": "sunra@yandex.ru",
+                    "homepage": "https://github.com/sunra"
+                },
+                {
+                    "name": "S.C. Chen",
+                    "homepage": "http://sourceforge.net/projects/simplehtmldom/"
+                }
+            ],
+            "description": "Composer adaptation of: A HTML DOM parser written in PHP5+ let you manipulate HTML in a very easy way! Require PHP 5+. Supports invalid HTML. Find tags on an HTML page with selectors just like jQuery. Extract contents from HTML in a single line.",
+            "homepage": "https://github.com/sunra/php-simple-html-dom-parser",
+            "keywords": [
+                "dom",
+                "html",
+                "parser"
+            ],
+            "support": {
+                "issues": "https://github.com/sunra/php-simple-html-dom-parser/issues",
+                "source": "https://github.com/sunra/php-simple-html-dom-parser/tree/master"
+            },
+            "time": "2016-11-22T22:57:47+00:00"
         },
         {
             "name": "symfony/console",

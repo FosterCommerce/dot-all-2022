@@ -97,6 +97,18 @@ productFieldLayouts:
             width: 100
           -
             elementCondition: null
+            fieldUid: a9b1834c-4af7-44b5-81de-00dc035a0515 # Preview Text
+            instructions: null
+            label: null
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 8b393704-896e-44f9-84bd-0ea3addc7805
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            elementCondition: null
             fieldUid: 7434a2d9-23f7-4206-84fa-f1bbad8be64f # Keywords
             instructions: null
             label: null
