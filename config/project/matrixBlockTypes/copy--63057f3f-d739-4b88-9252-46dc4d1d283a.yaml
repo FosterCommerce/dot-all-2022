@@ -38,7 +38,7 @@ fields:
       manualConfig: ''
       purifierConfig: null
       purifyHtml: true
-      redactorConfig: Simple.json
+      redactorConfig: Content.json
       removeEmptyTags: false
       removeInlineStyles: false
       removeNbsp: false

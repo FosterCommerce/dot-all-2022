@@ -1,4 +1,4 @@
-dateModified: 1658709168
+dateModified: 1658709618
 email:
   fromEmail: admin@fostercommerce.com
   fromName: 'Foster Commerce Dot All 2022'
@@ -40,7 +40,7 @@ meta:
     79086cc3-2cc6-4433-b251-eb6b65e115c8: Images # Images
     0491950d-ac35-4f01-a408-29e979b6dd19: Heading # Heading
     05440641-857c-492e-bbb9-37ff03c88963: Settings # Settings
-    36672673-27b1-406e-b81f-41a1cf1b2c7c: 'Public Schema'
+    36672673-27b1-406e-b81f-41a1cf1b2c7c: 'Public Schema' # Public Schema
     66830969-da65-4137-bbfa-98dd011cc191: 'Preview Image' # Preview Image
     96429840-47c0-490f-a057-4565f9d9d895: 'Foster Commerce Dot All 2022' # Foster Commerce Dot All 2022
     a1b271b7-b466-4c87-8201-986bcb728a78: 'Rich Text' # Rich Text
@@ -76,6 +76,7 @@ plugins:
   seomatic:
     edition: standard
     enabled: true
+    licenseKey: AC6UHUHJ1XLDA9R2BZWH8F9H
     schemaVersion: 3.0.11
     settings:
       addHrefLang: true
