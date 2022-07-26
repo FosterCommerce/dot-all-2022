@@ -36,7 +36,7 @@ get this project up and running quickly by doing the following:
 
         cd <path-to-project>/dot-all-2022
 
-3. Start up Docker Desktop and after it loads, run DDEV in your terminal :
+3. Start up Docker Desktop and after it loads, start DDEV in your terminal :
 
         ddev start
 
