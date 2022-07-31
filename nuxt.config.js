@@ -2,6 +2,9 @@ export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'server',
 
+  // Source files directory
+  srcDir: 'src/',
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'Dot All 2022',
@@ -29,15 +32,13 @@ export default {
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    '@nuxtjs/tailwindcss',
-    '@nuxt/image',
-    'nuxt-vite'
+    '@nuxtjs/tailwindcss'
   ],
 
   server: {
     host: '0.0.0.0',
     strictPort: true,
-    port: 5173
+    port: 3000
   },
 
   // Nuxt http options : https://http.nuxtjs.org/options
@@ -49,19 +50,14 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    // '@nuxtjs/axios',
-    // '@nuxt/image',
+    '@nuxtjs/axios',
+    '@nuxt/image',
   ],
 
   // Add PostCSS plugins
   /* postcss: {
     plugins: {
-      'postcss-mixins': {},
-      'postcss-simple-vars': {},
       'postcss-nested': {},
-      'postcss-pxtorem': {
-        propList: ['*', '!border*'],
-      },
       cssnano: {
         preset: [
           'default',
@@ -73,22 +69,6 @@ export default {
         ],
       },
     },
-  }, */
-
-  // Nuxt image config (image presets)
-  /* image: {
-    presets: {
-      preview: {
-        modifiers: {
-          format: 'webp',
-          auto: 'format,compress',
-          width: 150,
-          height: 150,
-          fit: 'crop',
-          crop: 'faces,edges'
-        },
-      },
-    }
   }, */
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
@@ -107,13 +87,13 @@ export default {
   // server-only-runtime-config
   privateRuntimeConfig: {
     // runtime-config for @nuxtjs/http
-    /* axios: {
+    axios: {
       baseURL: process.env.CRAFT_BASE_URL
-    }, */
+    }
   },
   publicRuntimeConfig: {
-    /* axios: {
-      browserBaseURL: process.env.CRAFT_BASE_URL,
-    }, */
+    axios: {
+      browserBaseURL: process.env.CRAFT_BASE_URL
+    }
   }
 }
