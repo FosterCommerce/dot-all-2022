@@ -11,6 +11,7 @@ yarn-error.log
 # NUXT
 src/debug.log
 src/dist/*
+.nuxt
 
 # WEB FILES
 web/dist/*
