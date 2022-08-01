@@ -1,11 +1,16 @@
 <script>
   export default {
-    name: "Header"
+    name: "Header",
+    data() {
+      return {
+        headerTitle: 'Hello'
+      }
+    }
   }
 </script>
 
 <template>
-  <h1 class="mb-0 text-xl text-red-700 | header">Hello <span>World</span></h1>
+  <h1 class="mb-0 text-xl text-red-700 | header">{{ headerTitle }} <span>World</span></h1>
 </template>
 
 <style lang="postcss" scoped>

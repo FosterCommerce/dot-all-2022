@@ -49,8 +49,8 @@ composer dependencies :
 
         ddev import-db --src=project_db.sql.tar.gz
         
-   Alternatively if you are on a Mac and have TablePlus, SequelPro or SequelAce installed, you can import using these
-   apps directly from DDEV and importing the same database SQL dump seed file (project_db.sql.tar.gz):
+   Alternatively if you are on a Mac and have TablePlus, SequelPro or SequelAce installed, you can open these
+   apps directly from DDEV and import the same database SQL dump seed file (project_db.sql.tar.gz):
    
         // Using TablePlus
         ddev tableplus
@@ -61,11 +61,26 @@ composer dependencies :
         // Using SequelAce
         ddev sequelace
 
-6. In your browser you can now access the site running locally in DDEV :
+6. Next we need to install Nuxt and the other dependencies for the front end build. In your terminal
+run the following command :
 
-        https://dot-all-2022.fostercommerce.test/admin
+        ddev exec yarn install
         
-   * Username : admin
-   * Password : password
+7. To run the front end of the project in dev mode, you then use the following command :
+
+        ddev exec yarn dev
+
+7. In your browser you can now access the site running locally in DDEV :
+    
+    * **Craft Admin**
+
+            https://dot-all-2022.fostercommerce.test/admin
+        
+        * Username : admin
+        * Password : password
+        
+    * **Front End** (on port 3000)
+    
+            https://dot-all-2022.fostercommerce.test:3000
 
 ### Manual Installation
