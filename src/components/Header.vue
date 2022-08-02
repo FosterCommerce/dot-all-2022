@@ -1,16 +1,17 @@
 <script>
-  export default {
-    name: "Header",
-    data() {
-      return {
-        headerTitle: 'Hello'
-      }
-    }
-  }
+	export default {
+		name: "Header",
+		props: {
+			heading: {
+				type: String,
+				default: 'Hello'
+			}
+		}
+	}
 </script>
 
 <template>
-  <h1 class="mb-0 text-xl text-red-700 | header">{{ headerTitle }} <span>World</span></h1>
+  <h1 class="mb-0 text-xl text-red-700 | header">{{ heading }} <span>World</span></h1>
 </template>
 
 <style lang="postcss" scoped>

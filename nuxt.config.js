@@ -32,7 +32,9 @@ export default {
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/eslint-module',
+    '@nuxtjs/stylelint-module',
+    '@nuxtjs/tailwindcss',
   ],
 
   server: {
@@ -54,23 +56,6 @@ export default {
     '@nuxt/image',
   ],
 
-  // Add PostCSS plugins
-  /* postcss: {
-    plugins: {
-      'postcss-nested': {},
-      cssnano: {
-        preset: [
-          'default',
-          {
-            // Disable this optimization until this fix lands
-            // https://github.com/cssnano/cssnano/issues/932
-            mergeRules: false,
-          },
-        ],
-      },
-    },
-  }, */
-
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     // extend the webpack config
@@ -86,13 +71,15 @@ export default {
 
   // server-only-runtime-config
   privateRuntimeConfig: {
-    // runtime-config for @nuxtjs/http
+    graphQLBearerToken: process.env.CRAFT_API_TOKEN,
     axios: {
+      retry: 4,
       baseURL: process.env.CRAFT_BASE_URL
     }
   },
   publicRuntimeConfig: {
     axios: {
+      retry: true,
       browserBaseURL: process.env.CRAFT_BASE_URL
     }
   }
