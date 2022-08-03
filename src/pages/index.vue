@@ -1,4 +1,6 @@
 <script>
+	import EntryHome from '@/queries/EntryHome.gql';
+
 	import Header from "~/components/Header";
 	export default {
 		components: { Header },
@@ -10,7 +12,7 @@
 
 <template>
   <div>
-    <Header />
+    <Header heading="Home Page" />
     <p>Testing Nuxt Install Okay</p>
   </div>
 </template>

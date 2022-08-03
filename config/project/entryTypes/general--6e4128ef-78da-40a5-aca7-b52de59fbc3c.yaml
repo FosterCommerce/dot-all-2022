@@ -35,7 +35,7 @@ fieldLayouts:
             fieldUid: 9c475876-3670-4452-82c1-8274c5cbccb2 # Image
             instructions: null
             label: 'Header Image'
-            required: true
+            required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
             uid: 425aec96-ba05-4025-9325-41732ea1f997

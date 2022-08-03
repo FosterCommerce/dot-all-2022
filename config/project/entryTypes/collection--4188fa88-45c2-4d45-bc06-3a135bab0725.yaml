@@ -32,18 +32,6 @@ fieldLayouts:
             width: 100
           -
             elementCondition: null
-            fieldUid: 9c475876-3670-4452-82c1-8274c5cbccb2 # Image
-            instructions: null
-            label: 'Header Image'
-            required: true
-            tip: null
-            type: craft\fieldlayoutelements\CustomField
-            uid: b6f9f139-e19b-4454-9476-063f84469fc7
-            userCondition: null
-            warning: null
-            width: 100
-          -
-            elementCondition: null
             fieldUid: d7d54391-72ab-425b-87f9-d3b982cbd69d # Categories
             instructions: 'Select the categories to filter products on. Leave blank to display all products.'
             label: null
@@ -111,9 +99,9 @@ fieldLayouts:
         name: 'SEO / Meta'
         uid: 37118b48-517e-4af2-86ef-7d920d7dcaad
         userCondition: null
-handle: catalog
+handle: collection
 hasTitleField: true
-name: Catalog
+name: Collection
 section: 3f16d68f-cda8-49f7-8564-ba9db1855669 # Pages
 sortOrder: 2
 titleFormat: null

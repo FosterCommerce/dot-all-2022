@@ -1,33 +1,33 @@
-field: df62c394-9de1-4e87-baf3-56bc70321894 # Primary Navigation
+field: 8aa229ec-7643-48c3-947d-9d2c1882b8f2 # Content Blocks
 fieldLayouts:
-  f730a51b-08c5-4ffa-bff5-bd529d8fc9ba:
+  681272f0-408c-4a02-a858-c83a4c88af93:
     tabs:
       -
         elementCondition: null
         elements:
           -
             elementCondition: null
-            fieldUid: 8151dd06-ae31-4c45-bd7e-47e7adbafd1b # Navigation Link
+            fieldUid: 0bffb713-e477-48ff-af95-a978d91dcea3
             instructions: null
             label: null
             required: true
             tip: null
             type: craft\fieldlayoutelements\CustomField
-            uid: 4ca86130-56e3-4bfe-8d4a-bcd97639809f
+            uid: f1e72352-2b30-46c0-b741-1794ad372cbd
             userCondition: null
             warning: null
             width: 100
         name: Content
-        uid: 476e1b40-d827-4c76-bb56-62f49f22a58d
+        uid: 1368596b-c204-434c-9222-b0a76112a5f2
         userCondition: null
 fields:
-  8151dd06-ae31-4c45-bd7e-47e7adbafd1b: # Navigation Link
+  0bffb713-e477-48ff-af95-a978d91dcea3:
     columnSuffix: null
     contentColumnType: string
     fieldGroup: null
-    handle: navLink
+    handle: buttonLink
     instructions: null
-    name: 'Navigation Link'
+    name: 'Button Link'
     searchable: false
     settings:
       allowCustomText: true
@@ -90,6 +90,6 @@ fields:
     translationKeyFormat: null
     translationMethod: none
     type: lenz\linkfield\fields\LinkField
-handle: menuItem
-name: 'Menu Item'
-sortOrder: 1
+handle: button
+name: Button
+sortOrder: 4
