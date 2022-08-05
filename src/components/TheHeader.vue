@@ -16,32 +16,38 @@
 
 <template>
   <div>
-    <!-- Mobile Fly-out Menu Menu -->
-    <div v-show="menuOpen" class="relative z-40 lg:hidden" role="dialog" aria-modal="true">
+    <div class="relative z-40 lg:hidden" role="dialog" aria-modal="true">
+
       <!-- Mobile Menu Overlay -->
-      <div class="fixed inset-0 bg-black bg-opacity-25" @click="toggleMenu"></div>
-      <div class="fixed inset-0 flex z-40">
-        <div class="relative max-w-xs w-full bg-white shadow-xl pb-12 flex flex-col overflow-y-auto">
-          <!-- Mobile Menu Close button -->
-          <div class="px-4 pt-5 pb-2 flex">
-            <button type="button" class="-m-2 p-2 rounded-md inline-flex items-center justify-center text-gray-400" @click="toggleMenu">
-              <span class="sr-only">Close menu</span>
-              <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <!-- Mobile Menu Links -->
-          <div class="border-t border-gray-200 py-6 px-4 space-y-6">
-            <div class="flow-root">
-              <a href="#" class="-m-2 p-2 block font-medium text-gray-900">Company</a>
+      <transition name="fade">
+        <div v-show="menuOpen" class="fixed inset-0 bg-black bg-opacity-25"></div>
+      </transition>
+
+      <!-- Mobile Fly Out Menu -->
+      <transition>
+        <div v-show="menuOpen" class="fixed inset-0 flex z-40">
+          <div class="relative max-w-xs w-full bg-white shadow-xl pb-12 flex flex-col overflow-y-auto">
+            <!-- Mobile Menu Close button -->
+            <div class="px-4 pt-5 pb-2 flex">
+              <button type="button" class="-m-2 p-2 rounded-md inline-flex items-center justify-center text-gray-400" @click="toggleMenu">
+                <span class="sr-only">Close menu</span>
+                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-            <div class="flow-root">
-              <a href="#" class="-m-2 p-2 block font-medium text-gray-900">Stores</a>
+            <!-- Mobile Menu Links -->
+            <div class="border-t border-gray-200 py-6 px-4 space-y-6">
+              <div class="flow-root">
+                <a href="#" class="-m-2 p-2 block font-medium text-gray-900">Company</a>
+              </div>
+              <div class="flow-root">
+                <a href="#" class="-m-2 p-2 block font-medium text-gray-900">Stores</a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </transition>
     </div>
 
     <!-- Main Site Header -->
@@ -100,3 +106,15 @@
     </header>
   </div>
 </template>
+
+<style lang="postcss" scoped>
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+</style>
