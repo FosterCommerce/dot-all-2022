@@ -39,16 +39,16 @@
             <!-- Mobile Menu Links -->
             <div class="border-t border-gray-200 py-6 px-4 space-y-6">
 							<div class="flow-root">
-								<a href="#" class="-m-2 p-2 block font-medium text-gray-900">Women</a>
+								<nuxt-link to="/women" class="-m-2 p-2 block font-medium text-gray-900">Women</nuxt-link>
 							</div>
 							<div class="flow-root">
-								<a href="#" class="-m-2 p-2 block font-medium text-gray-900">Menu</a>
+								<nuxt-link to="/men" class="-m-2 p-2 block font-medium text-gray-900">Men</nuxt-link>
 							</div>
               <div class="flow-root">
-                <a href="#" class="-m-2 p-2 block font-medium text-gray-900">About</a>
+								<nuxt-link to="/about" class="-m-2 p-2 block font-medium text-gray-900">About</nuxt-link>
               </div>
               <div class="flow-root">
-                <a href="#" class="-m-2 p-2 block font-medium text-gray-900">Stores</a>
+								<nuxt-link to="/about/stores" class="-m-2 p-2 block font-medium text-gray-900">Stores</nuxt-link>
               </div>
             </div>
           </div>
@@ -74,18 +74,18 @@
             <!-- Non-mobile only links -->
             <div class="hidden lg:flex-1 lg:block lg:self-stretch">
               <div class="h-full flex space-x-8">
-								<a href="#" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">Women</a>
-								<a href="#" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">Men</a>
-                <a href="#" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">About</a>
-                <a href="#" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">Stores</a>
+								<nuxt-link to="/women" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">Women</nuxt-link>
+								<nuxt-link to="/men" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">Men</nuxt-link>
+								<nuxt-link to="/about" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">About</nuxt-link>
+								<nuxt-link to="/about/stores" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">Stores</nuxt-link>
               </div>
             </div>
 
             <!-- Logo -->
-            <a href="#" class="flex">
-              <span class="sr-only">Workflow</span>
+            <nuxt-link to="/" class="flex">
+              <span class="sr-only">Foster Clothing</span>
               <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-mark.svg?color=indigo&shade=600" alt="">
-            </a>
+            </nuxt-link>
 
             <!-- Auxiliary Links -->
             <div class="flex-1 flex items-center justify-end">
@@ -99,13 +99,13 @@
 
               <!-- Cart Link -->
               <div class="ml-4 flow-root lg:ml-6">
-                <a href="#" class="group -m-2 p-2 flex items-center">
+                <nuxt-link to="/cart" class="group -m-2 p-2 flex items-center">
                   <svg class="flex-shrink-0 h-6 w-6 text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                   </svg>
-                  <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">0</span>
+                  <span class="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">3</span>
                   <span class="sr-only">items in cart, view bag</span>
-                </a>
+                </nuxt-link>
               </div>
             </div>
           </div>

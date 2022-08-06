@@ -30,7 +30,7 @@
 			pageViewComponent() {
 				const lastSlug = this.$route.path.substring(this.$route.path.lastIndexOf('/') + 1);
 				const section = 'Pages';
-				const type = lastSlug === 'women' ? 'Collection' : 'General';
+				const type = (lastSlug === 'women' || lastSlug === 'men') ? 'Collection' : 'General';
 				return section + type;
 			},
 		}
