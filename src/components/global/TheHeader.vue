@@ -38,8 +38,14 @@
             </div>
             <!-- Mobile Menu Links -->
             <div class="border-t border-gray-200 py-6 px-4 space-y-6">
+							<div class="flow-root">
+								<a href="#" class="-m-2 p-2 block font-medium text-gray-900">Women</a>
+							</div>
+							<div class="flow-root">
+								<a href="#" class="-m-2 p-2 block font-medium text-gray-900">Menu</a>
+							</div>
               <div class="flow-root">
-                <a href="#" class="-m-2 p-2 block font-medium text-gray-900">Company</a>
+                <a href="#" class="-m-2 p-2 block font-medium text-gray-900">About</a>
               </div>
               <div class="flow-root">
                 <a href="#" class="-m-2 p-2 block font-medium text-gray-900">Stores</a>
@@ -68,7 +74,9 @@
             <!-- Non-mobile only links -->
             <div class="hidden lg:flex-1 lg:block lg:self-stretch">
               <div class="h-full flex space-x-8">
-                <a href="#" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">Company</a>
+								<a href="#" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">Women</a>
+								<a href="#" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">Men</a>
+                <a href="#" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">About</a>
                 <a href="#" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">Stores</a>
               </div>
             </div>
