@@ -30,6 +30,9 @@ return [
         '@assetBaseUrl' => getenv('ASSET_BASE_URL'),
         '@nuxtBaseUrl' => getenv('NUXT_BASE_URL')
     ],
+    
+    // The domain for the Craft control panel
+    'baseCpUrl' => getenv('CRAFT_BASE_URL'),
 
     // Whether Dev Mode should be enabled (see https://craftcms.com/guides/what-dev-mode-does)
     'devMode' => $isDev,
