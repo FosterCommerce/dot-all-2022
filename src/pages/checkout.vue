@@ -1,14 +1,35 @@
 <script>
+	import { mapGetters } from "vuex";
+
 	export default {
 		layout: 'checkout',
+		data() {
+			return {
+				mobileSummaryOpen: false
+			};
+		},
+		computed: {
+			...mapGetters('checkout', [
+				'getCurrentStep',
+				'getIsLastStep'
+			]),
+			layoutStyle() {
+				return !this.getIsLastStep ? 'lg:overflow-hidden lg:flex lg:flex-row-reverse' : '';
+			}
+		},
+		methods: {
+			toggleMobileSummary() {
+				this.mobileSummaryOpen = !this.mobileSummaryOpen;
+			}
+		}
 	}
 </script>
 
 <template>
-	<main class="lg:overflow-hidden lg:flex lg:flex-row-reverse" style="min-height: calc(100% - 85px);">
+	<main :class="layoutStyle" :style="`${!getIsLastStep ? 'min-height: calc(100% - 85px);' : ''}`">
 		<h1 class="sr-only">Checkout</h1>
 
-		<section aria-labelledby="order-heading" class="px-4 py-6 bg-gray-50 border-b border-gray-200 transition-opacity duration-300 sm:px-6 lg:hidden">
+		<section v-if="!getIsLastStep" aria-labelledby="order-heading" class="px-4 py-6 bg-gray-50 border-b border-gray-200 transition-opacity duration-300 sm:px-6 lg:hidden">
 			<div class="max-w-2xl mx-auto">
 				<div class="flex items-center justify-between">
 					<h2 id="order-heading" class="text-lg font-medium text-gray-900">Your Order</h2>
@@ -16,44 +37,51 @@
 						type="button"
 						class="font-medium text-indigo-600 hover:text-indigo-500"
 						aria-controls="disclosure-1"
+						@click="toggleMobileSummary"
 					>
-						<span>Show full summary</span>
+						<span v-if="mobileSummaryOpen">Hide full summary</span>
+						<span v-else>Show full summary</span>
 					</button>
 				</div>
 
-				<div id="disclosure-1">
-					<h3>Mobile Cart Here</h3>
-					<h3>Mobile Discount Form Here</h3>
-					<h3>Mobile Summary Here</h3>
+				<div v-if="mobileSummaryOpen" id="disclosure-1">
+					<CheckoutCart :is-mobile="true" />
+					<CheckoutDiscount :is-mobile="true" />
+					<CheckoutSummary :is-mobile="true" />
 				</div>
 
 				<p class="flex items-center justify-between text-sm font-medium text-gray-900 border-t border-gray-200 pt-6 mt-6">
 					<span class="text-base">Total</span>
-					<span class="text-base">$148.00</span>
+					<span class="text-base">$95.00</span>
 				</p>
 			</div>
 		</section>
 
 		<section
-			v-cloak
+			v-if="!getIsLastStep"
 			aria-labelledby="summary-heading"
 			class="hidden bg-gray-50 w-full max-w-md flex-col transition-opacity duration-300 lg:flex"
 		>
 			<h2 id="summary-heading" class="sr-only">Order summary</h2>
-			<h3>Desktop Cart Here</h3>
+			<CheckoutCart />
 			<div class="sticky bottom-0 flex-none bg-gray-50 border-t border-gray-200 p-6">
-				<h3>Desktop Discount Form Here</h3>
-				<h3>Desktop Summary Here</h3>
+				<CheckoutDiscount />
+				<CheckoutSummary />
 			</div>
 		</section>
 
-		<section v-cloak class="flex-auto overflow-y-auto pt-2 px-4 pb-16 transition-opacity duration-300 sm:px-6 sm:pt-8 lg:px-8 lg:pt-0 lg:pb-24">
+		<section v-if="!getIsLastStep" class="flex-auto overflow-y-auto pt-2 px-4 pb-16 transition-opacity duration-300 sm:px-6 sm:pt-8 lg:px-8 lg:pt-0 lg:pb-24">
 			<div class="max-w-2xl mx-auto">
 				<form class="mt-6 lg:mt-16">
-					<h2>Form Steps Here</h2>
-					<h3>Nav Buttons Here</h3>
+					<CheckoutStepEmail v-if="getCurrentStep.handle === 'email'" />
+					<CheckoutStepAddress v-if="getCurrentStep.handle === 'address'" />
+					<CheckoutStepShipping v-if="getCurrentStep.handle === 'shipping'" />
+					<CheckoutStepPayment v-if="getCurrentStep.handle === 'payment'" />
+					<CheckoutNavigation />
 				</form>
 			</div>
 		</section>
+
+		<CheckoutStepConfirm v-if="getIsLastStep" />
 	</main>
 </template>

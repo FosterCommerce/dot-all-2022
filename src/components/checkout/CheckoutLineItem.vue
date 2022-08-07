@@ -16,7 +16,7 @@
 		<img src="https://tailwindui.com/img/ecommerce-images/checkout-page-04-product-01.jpg" alt="Moss green canvas compact backpack with double top zipper, zipper front pouch, and matching carry handle and backpack straps." class="flex-none w-40 h-40 object-center object-cover bg-gray-200 rounded-md">
 		<div class="flex flex-col justify-between space-y-4">
 			<div class="text-sm font-medium space-y-1">
-				<h3 class="text-gray-900">Basic Tee</h3>
+				<h3 class="text-gray-900 sm:text-base">Basic Tee</h3>
 				<div class="mt-1 flex text-sm">
 					<p class="text-gray-500">Black</p>
 
@@ -24,7 +24,7 @@
 				</div>
 				<p class="text-gray-900">$32.00</p>
 			</div>
-			<div class="flex space-x-4">
+			<div class="space-y-4 sm:flex sm:space-x-4 sm:space-y-0">
 				<div>
 					<label for="quantity_5" class="sr-only">Quantity, Basic Tee</label>
 					<input
@@ -32,6 +32,7 @@
 						name="quantity_5"
 						class="block max-w-[64px] rounded-md border border-gray-300 py-1.5 text-base leading-5 font-medium text-gray-700 text-left shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 						type="number"
+						value="1"
 					/>
 				</div>
 				<button

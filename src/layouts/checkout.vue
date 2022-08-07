@@ -17,3 +17,11 @@
 		<Nuxt />
   </div>
 </template>
+
+
+<style lang="postcss">
+	#__nuxt,
+	#__layout {
+		height: 100vh;
+	}
+</style>
