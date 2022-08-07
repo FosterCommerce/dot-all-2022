@@ -1,8 +1,19 @@
+<script>
+	export default {
+		head: {
+			headAttrs: {
+				class: 'h-full bg-white'
+			},
+			bodyAttrs: {
+				class: 'h-full'
+			}
+		}
+	}
+</script>
+
 <template>
-  <div class="h-full bg-white">
+  <div class="h-full">
 		<CheckoutHeader />
-    <main class="lg:overflow-hidden lg:flex lg:flex-row-reverse" style="min-height: calc(100% - 85px);">
-      <Nuxt />
-    </main>
+		<Nuxt />
   </div>
 </template>
