@@ -1,9 +1,5 @@
 <script>
-	import EntryHome from '@/queries/EntryHome.gql';
-
-	import Header from "~/components/Header";
 	export default {
-		components: { Header },
 		mounted() {
 			console.log('It is loading changes');
 		}
@@ -12,7 +8,6 @@
 
 <template>
   <div>
-    <Header heading="Home Page" />
-    <p>Testing Nuxt Install Okay</p>
+    <p>Home Page</p>
   </div>
 </template>
