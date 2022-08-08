@@ -30,17 +30,17 @@ export const actions = {
 	async nuxtServerInit({ commit, dispatch }) {
 		const query = await import('@/queries/EntrySettings.gql').then((module) => module.default);
 
-		
-		/* NOTE the Craft Base URL must be http and not https 
-			Otherwise you will get errors along the lines of 
-			"unable to verify the first certificate" in local dev
+		/* NOTE: This code below is commented out for now as it causes a 'unable to verify the first certificate' error
+		 * when trying to call Craft's GraphQL endpoint, and needs to be fixed/debugged before we can start bringing
+		 * in GQL data from Craft
 		*/
-		
+
+		/*
 		const { data: queryData, queryErrors } = await this.$axios.$post('/api', {
 			query: print(query),
 		});
 		commit('setPrimaryNav', queryData);
-		
+		*/
 		
 	},
 }
