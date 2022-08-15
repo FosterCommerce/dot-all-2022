@@ -7,7 +7,7 @@ fieldLayouts:
         elements:
           -
             elementCondition: null
-            fieldUid: 0bffb713-e477-48ff-af95-a978d91dcea3
+            fieldUid: 0bffb713-e477-48ff-af95-a978d91dcea3 # Button Link
             instructions: null
             label: null
             required: true
@@ -21,7 +21,7 @@ fieldLayouts:
         uid: 1368596b-c204-434c-9222-b0a76112a5f2
         userCondition: null
 fields:
-  0bffb713-e477-48ff-af95-a978d91dcea3:
+  0bffb713-e477-48ff-af95-a978d91dcea3: # Button Link
     columnSuffix: null
     contentColumnType: string
     fieldGroup: null

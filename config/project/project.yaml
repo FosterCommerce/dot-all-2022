@@ -1,4 +1,4 @@
-dateModified: 1659551253
+dateModified: 1660570504
 elementSources:
   craft\elements\Entry:
     -
@@ -32,7 +32,7 @@ fs:
     url: '@assetBaseUrl/images'
 meta:
   __names__:
-    0bffb713-e477-48ff-af95-a978d91dcea3: 'Button Link'
+    0bffb713-e477-48ff-af95-a978d91dcea3: 'Button Link' # Button Link
     0f2c6c9a-3092-47f2-b0dc-46d8ce11c178: Heading # Heading
     1b39f5a2-15c0-4af0-be7c-0735aba76665: Text # Text
     1b753347-9223-47d6-8349-fc1c7c290ea1: 'Product Categories' # Product Categories
@@ -41,7 +41,7 @@ meta:
     4dc80b48-acd0-45f5-abdd-abe4eadce58e: Size # Size
     6cbc0418-8b1f-411b-aa21-4937acf9bc1a: Stripe # Stripe
     6e4128ef-78da-40a5-aca7-b52de59fbc3c: General # General
-    6f7d866f-f12e-4438-a53c-82110c2c13ab: Button
+    6f7d866f-f12e-4438-a53c-82110c2c13ab: Button # Button
     7a24de90-6ecf-4386-b258-7e1b8d1671f4: 'Results per page' # Results per page
     8aa229ec-7643-48c3-947d-9d2c1882b8f2: 'Content Blocks' # Content Blocks
     8c7805a4-e8b6-4f6b-b433-d777d7d2a6c1: Color # Color
@@ -53,6 +53,7 @@ meta:
     81d425d5-6a7f-4da9-b64d-3752b8286594: Other # Other
     148bf625-3ed8-48e1-9a43-70fc218ce67c: Manual # Manual
     430acb24-9641-4661-b62e-0cdc21c0fe56: 'Menu Item' # Menu Item
+    460addb0-40aa-48c7-ac8c-21f2f621ffbb: 'Site Schema' # Site schema
     652c2871-27c1-4b30-8190-0a05255eb19b: Relations # Relations
     4188fa88-45c2-4d45-bc06-3a135bab0725: Collection # Collection
     6208c751-b47b-4315-ac54-cd1f33debd7a: Images # Images
