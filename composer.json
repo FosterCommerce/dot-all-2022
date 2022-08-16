@@ -15,7 +15,7 @@
     "autoload": {
         "psr-4": {
             "modules\\": "modules/",
-            "fc\\": "modules/fc"
+            "modules\\fc\\": "modules/fc"
         }
     },
     "config": {
