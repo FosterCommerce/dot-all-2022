@@ -50,7 +50,7 @@ export default {
   },
 
   // Nuxt http options : https://http.nuxtjs.org/options
-  http: {
+  axios: {
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
@@ -79,19 +79,21 @@ export default {
     currentEnv: process.env.CRAFT_ENVIRONMENT || 'dev'
   },
 
+
   // server-only-runtime-config
   privateRuntimeConfig: {
     graphQLBearerToken: process.env.CRAFT_API_TOKEN,
     axios: {
       retry: 4,
-      baseURL: process.env.CRAFT_BASE_URL
+      baseURL: process.env.CRAFT_BASE_URL,
+      
     }
   },
   publicRuntimeConfig: {
     baseURL: process.env.CRAFT_BASE_URL,
     axios: {
       retry: true,
-      browserBaseURL: process.env.CRAFT_BASE_URL
+      browserBaseURL: process.env.CRAFT_BASE_URL,
     }
   }
 }
