@@ -15,13 +15,9 @@ use modules\ew\variables\FcVariable;
 
 class Fc extends Module
 {
+	public static Fc $instance;
 
-	public static $instance;
-
-	public function init()
-    {
-
-        // Define a custom alias named after the namespace
+	public function __construct($id, $parent = null, $config = []) {
         Craft::setAlias('@modules/fc', __DIR__);
 
         // Set the controllerNamespace based on whether this is a console or web request
@@ -31,19 +27,25 @@ class Fc extends Module
             $this->controllerNamespace = 'modules\\fc\\controllers';
         }
 
-		$this->setComponents([
-			
-		]);
+        // Set this as the global instance of this module class
+        static::setInstance($this);
+        parent::__construct($id, $parent, $config);
+    }
 
-
+    public function init() {
         parent::init();
-		self::$instance = $this;
+        self::$instance = $this;
+
+		$this->setComponents([
+            'critical' => \modules\fc\services\CriticalDataService::class
+		]);
 
         // Register our site routes
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
+                $event->rules['api/get-critical'] = 'fc/critical-data/get-csrf-token';
             }
         );
 
@@ -58,5 +60,4 @@ class Fc extends Module
             }
         );
     }
-
 }
