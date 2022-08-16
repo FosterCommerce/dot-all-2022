@@ -9,9 +9,12 @@ class CriticalDataService extends Component {
     /**
      * Get the CSRF token from Craft
      *
-     * @return string
+     * @return array
      */
-    public function getCsrfToken(): string {
-        return Craft::$app->request->getCsrfToken();
+    public function getCsrfToken(): array {
+        return [
+            'name'  => Craft::$app->getConfig()->getGeneral()->csrfTokenName,
+            'token' => Craft::$app->request->getCsrfToken()
+        ];
     }
 }
