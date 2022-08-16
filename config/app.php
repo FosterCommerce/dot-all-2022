@@ -63,7 +63,6 @@ return [
                 $origins[] = $request->getOrigin();
             }
         }
-
         return [
             'class' => \modules\fc\filters\Cors::class,
             'cors' => [
