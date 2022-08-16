@@ -60,7 +60,7 @@ return [
                 }
             } elseif ($generalConfig->allowedGraphqlOrigins !== false) {
 
-                $origins[] = $request->getOrigin();
+                $origins[] = $request->getOrigin() . '/';
             }
         }
         return [
@@ -71,6 +71,7 @@ return [
                 'Access-Control-Allow-Headers' => [
                     '*'
                 ],
+				'Access-Control-Allow-Origin' => '*',
                 'Access-Control-Allow-Credentials' => true,
                 'Access-Control-Max-Age' => 3600,
             ],
