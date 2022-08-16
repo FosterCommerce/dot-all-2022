@@ -64,7 +64,7 @@ return [
             }
         }
         return [
-            'class' => \modules\fc\filter\Cors::class,
+            'class' => \modules\fc\filters\Cors::class,
             'cors' => [
                 'Origin' => $origins,
                 'Access-Control-Request-Method' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
