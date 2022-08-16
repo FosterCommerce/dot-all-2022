@@ -26,7 +26,10 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: [
+    '~/plugins/helpers.js',
+    '~/plugins/api.js',
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -79,6 +82,7 @@ export default {
     }
   },
   publicRuntimeConfig: {
+    baseURL: process.env.CRAFT_BASE_URL,
     axios: {
       retry: true,
       browserBaseURL: process.env.CRAFT_BASE_URL
