@@ -1,3 +1,5 @@
+import path from 'path'
+import fs from 'fs'
 export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'server',
@@ -22,11 +24,14 @@ export default {
     ]
   },
 
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: [
+    '~/plugins/axios.js'
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -41,7 +46,7 @@ export default {
   server: {
     host: '0.0.0.0',
     strictPort: true,
-    port: 3000
+    port: 3000,
   },
 
   // Nuxt http options : https://http.nuxtjs.org/options
@@ -68,6 +73,10 @@ export default {
         loader: 'graphql-tag/loader',
       });
     },
+  },
+  
+  env: {
+    currentEnv: process.env.CRAFT_ENVIRONMENT || 'dev'
   },
 
   // server-only-runtime-config
