@@ -1,13 +1,11 @@
-import axios from 'axios';
-
 /*
 import { stringify } from 'qs';
 import merge from 'lodash/merge';
 */
 
-const api = ($config) => ({
+const api = ($config, $axios) => ({
 	get: async (uri) => {
-		const { data } = await axios.get(`${$config.baseURL}${uri}`);
+		const { data } = await $axios.get(`${uri}`);
 
 		return data;
 	},
@@ -16,6 +14,6 @@ const api = ($config) => ({
 	},
 });
 
-export default ({ app, $config }, inject) => {
-	inject('api', api($config));
+export default ({ app, $config, $axios }, inject) => {
+	inject('api', api($config, $axios));
 };

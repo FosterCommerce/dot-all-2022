@@ -22,11 +22,13 @@ export default {
     ]
   },
 
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/axios.js',
     '~/plugins/helpers.js',
     '~/plugins/api.js',
   ],
@@ -44,11 +46,11 @@ export default {
   server: {
     host: '0.0.0.0',
     strictPort: true,
-    port: 3000
+    port: 3000,
   },
 
   // Nuxt http options : https://http.nuxtjs.org/options
-  http: {
+  axios: {
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
@@ -72,20 +74,26 @@ export default {
       });
     },
   },
+  
+  env: {
+    currentEnv: process.env.CRAFT_ENVIRONMENT || 'dev'
+  },
+
 
   // server-only-runtime-config
   privateRuntimeConfig: {
     graphQLBearerToken: process.env.CRAFT_API_TOKEN,
     axios: {
       retry: 4,
-      baseURL: process.env.CRAFT_BASE_URL
+      baseURL: process.env.CRAFT_BASE_URL,
+      
     }
   },
   publicRuntimeConfig: {
     baseURL: process.env.CRAFT_BASE_URL,
     axios: {
       retry: true,
-      browserBaseURL: process.env.CRAFT_BASE_URL
+      browserBaseURL: process.env.CRAFT_BASE_URL,
     }
   }
 }
