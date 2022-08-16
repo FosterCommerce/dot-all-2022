@@ -21,8 +21,7 @@ class CriticalDataController extends Controller
     public function actionGetCsrfToken() : Response {
         $response = [
             'success'   => true,
-            'csrfToken' => '',
-            'gqlToken'  => ''
+            'csrfToken' => ''
         ];
 
         if (Craft::$app->getConfig()->getGeneral()->enableCsrfProtection) {
