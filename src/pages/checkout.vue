@@ -2,7 +2,6 @@
 	import { mapGetters } from "vuex";
 
 	export default {
-		layout: 'checkout',
 		data() {
 			return {
 				mobileSummaryOpen: false
