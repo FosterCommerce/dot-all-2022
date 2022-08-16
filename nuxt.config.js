@@ -1,5 +1,3 @@
-import path from 'path'
-import fs from 'fs'
 export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'server',
@@ -30,7 +28,9 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '~/plugins/axios.js'
+    '~/plugins/axios.js',
+    '~/plugins/helpers.js',
+    '~/plugins/api.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -88,6 +88,7 @@ export default {
     }
   },
   publicRuntimeConfig: {
+    baseURL: process.env.CRAFT_BASE_URL,
     axios: {
       retry: true,
       browserBaseURL: process.env.CRAFT_BASE_URL

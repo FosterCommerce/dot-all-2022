@@ -2,7 +2,7 @@ import { print } from 'graphql';
 
 export const state = () => ({
 	primaryNav: [],
-	csrfToken: {}
+	csrfToken: {},
 });
 
 export const mutations = {
@@ -17,7 +17,10 @@ export const mutations = {
 export const getters = {
 	getPrimaryNav(state) {
 		return state.primaryNav;
-	}
+	},
+	getCsrfToken(state) {
+		return state.csrfToken;
+	},
 }
 
 export const actions = {
@@ -40,6 +43,8 @@ export const actions = {
 			query: print(query),
 		});
 		commit('setPrimaryNav', queryData);
-		
+	},
+	setCsrfToken({ commit }, csrfData) {
+		commit('setCsrfToken', csrfData);
 	},
 }
