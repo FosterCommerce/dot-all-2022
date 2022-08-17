@@ -28,7 +28,7 @@ const api = ($config, store) => ({
 			}
 		}
 
-		console.log(data);
+		console.log(stringify(data));
 
 		await axios.post($config.baseURL,
 			stringify(data),
