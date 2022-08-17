@@ -3,10 +3,6 @@
  * Craft web bootstrap file
  */
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    var_dump($_POST['action']);
-}
-
 // Load shared bootstrap
 require dirname(__DIR__) . '/bootstrap.php';
 
