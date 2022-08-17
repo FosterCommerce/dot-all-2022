@@ -27,7 +27,7 @@ const api = ($config, store) => ({
 			}
 		}
 
-		const { data } = axios.post($config.baseURL,
+		const { data } = axios.post('',
 			formData,
 			{
 				withCredentials: false,
@@ -40,7 +40,6 @@ const api = ($config, store) => ({
 				},
 			}
 		).then((response) => {
-			response.sendStatus(200);
 			console.log(response);
 		});
 
