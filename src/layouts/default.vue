@@ -10,7 +10,7 @@
 
 			await this.$store.dispatch('setCsrfToken', critical.csrfToken);
 
-			console.log(critical);
+			console.log('csrf: ', critical);
 		},
 	}
 </script>

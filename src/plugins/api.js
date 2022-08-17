@@ -18,6 +18,7 @@ const api = ($config, store) => ({
 			action: uri,
 		};
 
+		console.log('csrf3:', csrfToken.token);
 		data[csrfToken.name] = csrfToken.token;
 
 		if (Array.isArray(postData)) {
@@ -27,7 +28,9 @@ const api = ($config, store) => ({
 			}
 		}
 
-		await axios.post(`/proxy`,
+		console.log(data);
+
+		await axios.post($config.baseURL,
 			stringify(data),
 			{
 				headers: {

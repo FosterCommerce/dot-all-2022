@@ -53,15 +53,15 @@ export default {
   axios: {
     proxyHeaders: false,
     credentials: true,
-    proxy: true,
+    // proxy: true,
   },
 
-  proxy: {
-    '/proxy': {
-      target: process.env.CRAFT_BASE_URL,
-      pathRewrite: {'^/proxy': '/'}
-    },
-  },
+  // proxy: {
+  //   '/proxy': {
+  //     target: process.env.CRAFT_BASE_URL,
+  //     pathRewrite: {'^/proxy': '/'}
+  //   },
+  // },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
