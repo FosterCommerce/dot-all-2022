@@ -30,12 +30,13 @@ const api = ($config, store) => ({
 		const { data } = axios.post($config.baseURL,
 			formData,
 			{
-				withCredentials: true,
+				withCredentials: false,
 				headers: {
+					'Access-Control-Allow-Origin': '*',
+					'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
 					'X-Requested-With': 'XMLHttpRequest',
 					'Content-Type': 'application/json',
 					Accept: 'application/json',
-
 				},
 			}
 		).then((response) => {

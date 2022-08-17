@@ -53,7 +53,11 @@ export default {
   axios: {
     headers: {
       'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range',
     },
+    proxyHeaders: false,
+    credentials: false,
   },
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -79,14 +83,14 @@ export default {
     currentEnv: process.env.CRAFT_ENVIRONMENT || 'dev'
   },
 
-
   // server-only-runtime-config
   privateRuntimeConfig: {
     graphQLBearerToken: process.env.CRAFT_API_TOKEN,
     axios: {
       retry: 4,
       baseURL: process.env.CRAFT_BASE_URL,
-      
+      proxyHeaders: false,
+      credentials: false,
     }
   },
   publicRuntimeConfig: {
@@ -94,6 +98,8 @@ export default {
     axios: {
       retry: true,
       browserBaseURL: process.env.CRAFT_BASE_URL,
+      proxyHeaders: false,
+      credentials: false,
     }
   }
 }
