@@ -51,19 +51,23 @@ export default {
 
   // Nuxt http options : https://http.nuxtjs.org/options
   axios: {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range',
-    },
     proxyHeaders: false,
-    credentials: false,
+    credentials: true,
+    proxy: true,
+  },
+
+  proxy: {
+    '/proxy': {
+      target: process.env.CRAFT_BASE_URL,
+      pathRewrite: {'^/proxy': '/'}
+    },
   },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/axios',
     '@nuxt/image',
+    '@nuxtjs/proxy'
   ],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

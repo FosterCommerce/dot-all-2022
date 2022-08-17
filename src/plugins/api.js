@@ -14,29 +14,27 @@ const api = ($config, store) => ({
 	},
 	post: async (uri, postData) => {
 		const csrfToken = await store.getters.getCsrfToken;
-		const formData = {
+		const data = {
 			action: uri,
 		};
 
-		formData[csrfToken.name] = csrfToken.token;
+		data[csrfToken.name] = csrfToken.token;
 
 		if (Array.isArray(postData)) {
 			for (const item of postData.entries()) {
-				formData.qty = item.qty;
-				formData.purchasableId = item.id;
+				data.qty = item.qty;
+				data.purchasableId = item.id;
 			}
 		}
 
-		const { data } = axios.post('',
-			formData,
+		await axios.post(`/proxy`,
+			stringify(data),
 			{
-				withCredentials: false,
 				headers: {
-					'Access-Control-Allow-Origin': '*',
-					'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
 					'X-Requested-With': 'XMLHttpRequest',
-					'Content-Type': 'application/json',
+					'Content-Type': 'application/x-www-form-urlencoded',
 					Accept: 'application/json',
+					'X-CSRF-Token': csrfToken.token,
 				},
 			}
 		).then((response) => {
@@ -49,9 +47,6 @@ const api = ($config, store) => ({
 				action: 'commerce/cart/load-cart'
 			}
 		});*/
-
-		console.log(data);
-		return data;
 	},
 });
 
