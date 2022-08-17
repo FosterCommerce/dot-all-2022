@@ -7,10 +7,7 @@
 		},
 		async created() {
 			const critical = await this.$api.get('/api/get-critical');
-
 			await this.$store.dispatch('setCsrfToken', critical.csrfToken);
-
-			console.log(critical);
 		},
 	}
 </script>

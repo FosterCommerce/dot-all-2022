@@ -1,5 +1,11 @@
 <script>
-	export default {};
+	export default {
+		methods: {
+			async addToCart(products) {
+				await this.$api.post('commerce/cart/update-cart', products);
+			}
+		},
+	};
 </script>
 
 <template>
@@ -34,6 +40,7 @@
 					<button
 						type="button"
 						class="mt-8 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+						@click='addToCart([{ id: 20, qty: 1 }])'
 					>
 						Add to cart
 					</button>

@@ -51,15 +51,23 @@ export default {
 
   // Nuxt http options : https://http.nuxtjs.org/options
   axios: {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-    },
+    proxyHeaders: false,
+    credentials: true,
+    // proxy: true,
   },
+
+  // proxy: {
+  //   '/proxy': {
+  //     target: process.env.CRAFT_BASE_URL,
+  //     pathRewrite: {'^/proxy': '/'}
+  //   },
+  // },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     '@nuxtjs/axios',
     '@nuxt/image',
+    '@nuxtjs/proxy'
   ],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
@@ -79,14 +87,14 @@ export default {
     currentEnv: process.env.CRAFT_ENVIRONMENT || 'dev'
   },
 
-
   // server-only-runtime-config
   privateRuntimeConfig: {
     graphQLBearerToken: process.env.CRAFT_API_TOKEN,
     axios: {
       retry: 4,
       baseURL: process.env.CRAFT_BASE_URL,
-      
+      proxyHeaders: false,
+      credentials: false,
     }
   },
   publicRuntimeConfig: {
@@ -94,6 +102,8 @@ export default {
     axios: {
       retry: true,
       browserBaseURL: process.env.CRAFT_BASE_URL,
+      proxyHeaders: false,
+      credentials: false,
     }
   }
 }
