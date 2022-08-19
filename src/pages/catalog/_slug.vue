@@ -2,11 +2,19 @@
 	import { print } from 'graphql';
 	import Product from '@/queries/Product.gql';
 	export default {
-		async asyncData({isDev, route, $axios}) {
-			const {data, errors} = await $axios.$post('/api', {query: print(Product), variables: {
-				slug: route.params.slug,
-			},});
-			console.log(data)
+		async asyncData({$axios, route}) {
+
+			const { data } = await $axios.$post('/api',
+				{
+					query: print(Product), variables: { slug: route.params.slug }
+				},
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Accept: 'application/json'
+					}
+				});
+			console.log('product: ', data);
 			return{
 				product: data.product,
 				variants: data.variants,

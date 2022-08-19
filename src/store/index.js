@@ -39,7 +39,7 @@ export const actions = {
 		*/
 
 		
-		const { data: queryData, queryErrors } = await this.$api.$post('/api', {
+		const { data: queryData, queryErrors } = await this.$axios.$post('/api', {
 			query: print(query),
 		});
 		commit('setPrimaryNav', queryData);
