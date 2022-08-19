@@ -1,13 +1,19 @@
 <script>
 	export default {
 		name: 'CartLineItem',
+		props:{
+			item:{
+				type: Object,
+				default: () => ({})
+			}
+		}
 	};
 </script>
 
 <template>
 	<div class="flex py-6 sm:py-10">
 		<div class="flex-shrink-0">
-			<img src="https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-02.jpg" alt="Front of men&#039;s Basic Tee in black." class="w-24 h-24 rounded-md object-center object-cover sm:w-48 sm:h-48">
+			<img :src="item.image[0].url" alt="Front of men&#039;s Basic Tee in black." class="w-24 h-24 rounded-md object-center object-cover sm:w-48 sm:h-48">
 		</div>
 
 		<div class="ml-4 flex-1 flex flex-col justify-between sm:ml-6">
@@ -15,14 +21,14 @@
 				<div>
 					<div class="flex justify-between">
 						<h3 class="text-sm">
-							<a href="#" class="font-medium text-gray-700 hover:text-gray-800"> Basic Tee </a>
+							<a href="#" class="font-medium text-gray-700 hover:text-gray-800">{{item.title}}</a>
 						</h3>
 					</div>
 					<div class="mt-1 flex text-sm">
 						<p class="text-gray-500">Black</p>
-						<p class="ml-4 pl-4 border-l border-gray-200 text-gray-500">XS</p>
+						<p class="ml-4 pl-4 border-l border-gray-200 text-gray-500 uppercase">{{item.size}}</p>
 					</div>
-					<p class="mt-1 text-sm font-medium text-gray-900">$32.00</p>
+					<p class="mt-1 text-sm font-medium text-gray-900">${{item.price}}</p>
 				</div>
 
 				<div class="mt-4 sm:mt-0 sm:pr-9">
@@ -33,7 +39,7 @@
 							name="quantity_6"
 							class="block max-w-[64px] rounded-md border border-gray-300 py-1.5 text-base leading-5 font-medium text-gray-700 text-left shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 							type="number"
-							value="1"
+							:value="item.qty"
 						/>
 					</div>
 

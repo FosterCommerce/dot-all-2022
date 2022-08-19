@@ -1,20 +1,47 @@
 <script>
+	import { print } from 'graphql';
+	import Product from '@/queries/Product.gql';
 	export default {
+		async asyncData({isDev, route, $axios}) {
+			const {data} = await $axios.$post('/api', {query: print(Product), variables: {
+				slug: route.params.slug,
+			},});
+		
+			return{
+				product: data.product,
+				variants: data.variants,
+				selectedVariant: data.variants[0]
+			}
+		},
+		data() {
+			return {
+				selectedVariant: null
+			}
+		},
+		computed:{
+			productImageUrl(){
+				return this.selectedVariant === null ? this.variants[0].image[0].url : this.selectedVariant.image[0].url
+			}
+		},
 		methods: {
 			async addToCart(products) {
+				this.$store.dispatch('checkout/updateCart', {...this.selectedVariant, qty: 1})
 				await this.$api.post('commerce/cart/update-cart', products);
+			},
+			sizeUpdated(size){
+				this.selectedVariant = this.variants.find(variant => variant.size === size)
 			}
 		},
 	};
 </script>
 
-<template>
+<template >
 	<div>
 		<div class="lg:grid lg:grid-cols-12 lg:auto-rows-min lg:gap-x-8">
 			<div class="lg:col-start-8 lg:col-span-5">
 				<div class="flex justify-between">
-					<h1 class="text-xl font-medium text-gray-900">Basic Tee</h1>
-					<p class="text-xl font-medium text-gray-900">$35</p>
+					<h1 class="text-xl font-medium text-gray-900">{{product.title}}</h1>
+					<p class="text-xl font-medium text-gray-900">${{selectedVariant.price}}</p>
 				</div>
 			</div>
 
@@ -23,24 +50,23 @@
 				<h2 class="sr-only">Images</h2>
 				<div class="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-3 lg:gap-8">
 					<!-- Primary Image -->
-					<img src="https://tailwindui.com/img/ecommerce-images/product-page-01-featured-product-shot.jpg" alt="Back of women&#039;s Basic Tee in black." class="lg:col-span-2 lg:row-span-2 rounded-lg">
+					<img :src="productImageUrl" alt="Back of women&#039;s Basic Tee in black." class="lg:col-span-2 lg:row-span-2 rounded-lg">
 
 					<!-- Secondary Images -->
-					<img src="https://tailwindui.com/img/ecommerce-images/product-page-01-product-shot-01.jpg" alt="Side profile of women&#039;s Basic Tee in black." class="hidden lg:block rounded-lg">
-					<img src="https://tailwindui.com/img/ecommerce-images/product-page-01-product-shot-02.jpg" alt="Front of women&#039;s Basic Tee in black." class="hidden lg:block rounded-lg">
+					<img v-for="(image, id) in selectedVariant.images" :key="id" :src="image.url" alt="Side profile of women&#039;s Basic Tee in black." class="hidden lg:block rounded-lg">
 				</div>
 			</div>
 
 			<div class="mt-8 lg:col-span-5">
 				<form class="space-y-8">
 					<ProductColorPicker />
-					<ProductSizePicker />
+					<ProductSizePicker :sizes="variants.map( variant => variant.size)" @size-updated="sizeUpdated" />
 
 					<!-- Add to Cart button -->
 					<button
 						type="button"
 						class="mt-8 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-						@click='addToCart([{ id: 20, qty: 1 }])'
+						@click='addToCart({ id: selectedVariant.id, qty: 1 })'
 					>
 						Add to cart
 					</button>

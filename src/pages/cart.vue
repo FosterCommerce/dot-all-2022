@@ -1,5 +1,15 @@
 <script>
-	export default {}
+	import { mapGetters } from 'vuex';
+	export default {
+		computed:{
+			...mapGetters({
+				cartItems: 'checkout/getCart',
+			}),
+			cartTotal(){
+				return this.cartItems.map(item => item.price).reduce((a,b) => a + b, 0)
+			}
+		}
+	}
 </script>
 
 <template>
@@ -11,12 +21,15 @@
 			<!-- Cart Line Items -->
 			<section aria-labelledby="cart-heading" class="lg:col-span-7">
 				<h2 id="cart-heading" class="sr-only">Items in your shopping cart</h2>
-				<ul role="list" class="border-t border-b border-gray-200 divide-y divide-gray-200">
+				<ul v-if="cartItems.length > 0" role="list" class="border-t border-b border-gray-200 divide-y divide-gray-200">
 					<!-- Loop through cart line items here -->
-					<li v-for="index in 3" :key="index">
-						<CartLineItem />
+					<li v-for="item in cartItems" :key="item.id">
+						<CartLineItem :item="item" />
 					</li>
 				</ul>
+				<div v-else class="w-full py-32 flex justify-center items-center">
+					<p class="text-xl text-gray-900">You currently have no item</p>
+				</div>
 			</section>
 
 			<!-- Order summary -->
@@ -26,23 +39,23 @@
 				<dl class="mt-6 space-y-4">
 					<div class="flex items-center justify-between">
 						<dt class="text-sm text-gray-600">Subtotal</dt>
-						<dd class="text-sm font-medium text-gray-900">$99.00</dd>
+						<dd class="text-sm font-medium text-gray-900">${{cartTotal}}</dd>
 					</div>
 					<div class="border-t border-gray-200 pt-4 flex items-center justify-between">
 						<dt class="flex items-center text-sm text-gray-600">
 							<span>Shipping</span>
 						</dt>
-						<dd class="text-sm font-medium text-gray-900">$5.00</dd>
+						<dd class="text-sm font-medium text-gray-900">$0.00</dd>
 					</div>
 					<div class="border-t border-gray-200 pt-4 flex items-center justify-between">
 						<dt class="flex text-sm text-gray-600">
 							<span>Tax</span>
 						</dt>
-						<dd class="text-sm font-medium text-gray-900">$8.32</dd>
+						<dd class="text-sm font-medium text-gray-900">$0.0</dd>
 					</div>
 					<div class="border-t border-gray-200 pt-4 flex items-center justify-between">
 						<dt class="text-base font-medium text-gray-900">Order total</dt>
-						<dd class="text-base font-medium text-gray-900">$112.32</dd>
+						<dd class="text-base font-medium text-gray-900">${{cartTotal}}</dd>
 					</div>
 				</dl>
 

@@ -1,0 +1,43 @@
+query Product($slug: [String] = ["*"]) {
+  product(slug: $slug) {
+    id
+    title
+    productTypeHandle
+    language
+    uri
+    slug
+    seomatic(asArray: true) {
+      metaScriptContainer
+      metaTitleContainer
+      metaTagContainer
+      metaJsonLdContainer
+      metaLinkContainer
+    }
+  }
+  variants {
+    ... on catalog_Variant {
+      id
+      title
+      sku
+      size
+      price
+      images {
+        ... on images_Asset {
+          id
+          alt
+          filename
+          url
+        }
+      }
+      image {
+        id
+        ... on images_Asset {
+          id
+          alt
+          filename
+          url
+        }
+      }
+    }
+  }
+}

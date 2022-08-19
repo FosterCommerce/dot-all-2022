@@ -6,8 +6,8 @@
 			},
 		},
 		async created() {
-			const critical = await this.$api.get('/api/get-critical');
-			await this.$store.dispatch('setCsrfToken', critical.csrfToken);
+			const {data} = await this.$axios.get('/api/get-critical');
+			await this.$store.dispatch('setCsrfToken', data.csrfToken);
 		},
 	}
 </script>

@@ -19,14 +19,13 @@ const api = ($config, store) => ({
 		};
 
 		console.log('csrf3:', csrfToken.token);
-		data[csrfToken.name] = csrfToken.token;
-
-		if (Array.isArray(postData)) {
-			for (const item of postData.entries()) {
-				data.qty = item.qty;
-				data.purchasableId = item.id;
-			}
+		data.csrfTokenName = csrfToken.token;
+		
+		if (Object.values(postData).length > 0) {
+			data.purchasableId = postData.id
+			data.qty = postData.qty
 		}
+
 
 		console.log(stringify(data));
 
