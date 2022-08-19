@@ -21,11 +21,9 @@ const api = ($config, store) => ({
 
 		data[csrfTokeName] = csrfToken;
 
-		if (Array.isArray(postData)) {
-			for (const item of postData.entries()) {
-				data.qty = item.qty;
-				data.purchasableId = item.id;
-			}
+		if (Object.values(postData).length > 0) {
+			data.purchasableId = postData.id
+			data.qty = postData.qty
 		}
 
 		console.log('stringified form data: ', stringify(data));

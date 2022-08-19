@@ -3,10 +3,10 @@
 	import Product from '@/queries/Product.gql';
 	export default {
 		async asyncData({isDev, route, $axios}) {
-			const {data} = await $axios.$post('/api', {query: print(Product), variables: {
+			const {data, errors} = await $axios.$post('/api', {query: print(Product), variables: {
 				slug: route.params.slug,
 			},});
-		
+			console.log(data)
 			return{
 				product: data.product,
 				variants: data.variants,
@@ -20,7 +20,7 @@
 		},
 		computed:{
 			productImageUrl(){
-				return this.selectedVariant === null ? this.variants[0].image[0].url : this.selectedVariant.image[0].url
+				return this.selectedVariant.image[0].url
 			}
 		},
 		methods: {
