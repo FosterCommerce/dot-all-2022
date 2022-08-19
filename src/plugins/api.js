@@ -14,12 +14,12 @@ const api = ($config, store) => ({
 	},
 	post: async (uri, postData) => {
 		const csrfToken = await store.getters.getCsrfToken;
+		const csrfTokeName = 'CRAFT_CSRF_TOKEN';
 		const data = {
 			action: uri,
 		};
 
-		console.log('csrf3:', csrfToken.token);
-		data[csrfToken.name] = csrfToken.token;
+		data[csrfTokeName] = csrfToken;
 
 		if (Array.isArray(postData)) {
 			for (const item of postData.entries()) {
@@ -28,28 +28,24 @@ const api = ($config, store) => ({
 			}
 		}
 
-		console.log(stringify(data));
+		console.log('stringified form data: ', stringify(data));
 
 		await axios.post($config.baseURL,
 			stringify(data),
 			{
+				withCredentials: true,
 				headers: {
 					'X-Requested-With': 'XMLHttpRequest',
 					'Content-Type': 'application/x-www-form-urlencoded',
 					Accept: 'application/json',
-					'X-CSRF-Token': csrfToken.token,
+					'X-CSRF-Token': csrfToken,
 				},
 			}
 		).then((response) => {
-			console.log(response);
+			console.log('form response: ', response);
+
 		});
 
-		/*const { data } = await axios.get('', {
-			params: {
-				CRAFT_CSRF_TOKEN: `${csrfToken.token}`,
-				action: 'commerce/cart/load-cart'
-			}
-		});*/
 	},
 });
 

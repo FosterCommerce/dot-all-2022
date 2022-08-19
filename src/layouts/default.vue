@@ -6,8 +6,15 @@
 			},
 		},
 		async created() {
-			const critical = await this.$api.get('/api/get-critical');
-			await this.$store.dispatch('setCsrfToken', critical.csrfToken);
+			const sessionInfo = await this.$api.get('/actions/users/session-info', {}, {
+				withCredentials: true,
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json'
+				}
+			});
+			console.log('csrf from /session-info: ', sessionInfo);
+			await this.$store.dispatch('setCsrfToken', sessionInfo.csrfTokenValue);
 		},
 	}
 </script>
