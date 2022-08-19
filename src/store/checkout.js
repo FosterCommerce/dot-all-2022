@@ -50,6 +50,7 @@ export const state = () => ({
 			price: '$5.00'
 		}
 	],
+	cart: [],
 	modals: {
 		login: false,
 		addressEdit: false,
@@ -99,6 +100,9 @@ export const getters = {
 	},
 	getModals(state) {
 		return state.modals;
+	},
+	getCart(state){
+		return state.cart
 	}
 }
 
@@ -120,6 +124,10 @@ export const mutations = {
 	},
 	setModal(state, { context, payload }) {
 		state.modals[context] = payload;
+	},
+	setCart(state, payload ) {
+		state.cart = [...state.cart, payload];
+		console.log(state.cart)
 	}
 }
 
@@ -134,5 +142,8 @@ export const actions = {
 		if (!getters.getIsLastStep) {
 			commit('setCurrentStepNumber', (getters.getCurrentStepNumber + 1));
 		}
+	},
+	updateCart({commit}, item){
+		commit('setCart', item)
 	}
 }

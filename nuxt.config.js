@@ -93,8 +93,6 @@ export default {
     axios: {
       retry: 4,
       baseURL: process.env.CRAFT_BASE_URL,
-      proxyHeaders: false,
-      credentials: false,
     }
   },
   publicRuntimeConfig: {
@@ -102,8 +100,6 @@ export default {
     axios: {
       retry: true,
       browserBaseURL: process.env.CRAFT_BASE_URL,
-      proxyHeaders: false,
-      credentials: false,
     }
   }
 }

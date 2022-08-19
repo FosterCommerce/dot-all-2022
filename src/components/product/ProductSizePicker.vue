@@ -1,6 +1,23 @@
 <script>
 	export default {
-		name: 'ProductSizePicker'
+		name: 'ProductSizePicker',
+		props:{
+			sizes:{
+				type: Array,
+				default: () => [],
+			}
+		},
+		data() {
+			return {
+				selected: this.sizes[0],
+			}
+		},
+		methods: {
+			updateSelected(size){
+				this.selected = size
+				this.$emit('size-updated', size)
+			}
+		}
 	}
 </script>
 
@@ -17,9 +34,9 @@
 					Active: "ring-2 ring-offset-2 ring-indigo-500"
 					Checked: "bg-indigo-600 border-transparent text-white hover:bg-indigo-700", Not Checked: "bg-white border-gray-200 text-gray-900 hover:bg-gray-50"
 				-->
-				<label class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 cursor-pointer focus:outline-none">
-					<input type="radio" name="size-choice" value="XXS" class="sr-only" aria-labelledby="size-choice-0-label">
-					<span id="size-choice-0-label"> XXS </span>
+				<label v-for="size in sizes" :key="size" :class="selected === size ? 'bg-black text-white' : 'text-black bg-transparent'" class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 cursor-pointer focus:outline-none" @click="updateSelected(size)">
+					<input type="radio" name="size-choice" value="size" class="sr-only" aria-labelledby="size-choice-0-label">
+					<span id="size-choice-0-label"> {{size}} </span>
 				</label>
 
 				<!--
@@ -27,50 +44,50 @@
 					Active: "ring-2 ring-offset-2 ring-indigo-500"
 					Checked: "bg-indigo-600 border-transparent text-white hover:bg-indigo-700", Not Checked: "bg-white border-gray-200 text-gray-900 hover:bg-gray-50"
 				-->
-				<label class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 cursor-pointer focus:outline-none">
+				<!-- <label class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 cursor-pointer focus:outline-none">
 					<input type="radio" name="size-choice" value="XS" class="sr-only" aria-labelledby="size-choice-1-label">
 					<span id="size-choice-1-label"> XS </span>
-				</label>
+				</label> -->
 
 				<!--
 					In Stock: "cursor-pointer", Out of Stock: "opacity-25 cursor-not-allowed"
 					Active: "ring-2 ring-offset-2 ring-indigo-500"
 					Checked: "bg-indigo-600 border-transparent text-white hover:bg-indigo-700", Not Checked: "bg-white border-gray-200 text-gray-900 hover:bg-gray-50"
 				-->
-				<label class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 cursor-pointer focus:outline-none">
+				<!-- <label class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 cursor-pointer focus:outline-none">
 					<input type="radio" name="size-choice" value="S" class="sr-only" aria-labelledby="size-choice-2-label">
 					<span id="size-choice-2-label"> S </span>
-				</label>
+				</label> -->
 
 				<!--
 					In Stock: "cursor-pointer", Out of Stock: "opacity-25 cursor-not-allowed"
 					Active: "ring-2 ring-offset-2 ring-indigo-500"
 					Checked: "bg-indigo-600 border-transparent text-white hover:bg-indigo-700", Not Checked: "bg-white border-gray-200 text-gray-900 hover:bg-gray-50"
 				-->
-				<label class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 cursor-pointer focus:outline-none">
+				<!-- <label class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 cursor-pointer focus:outline-none">
 					<input type="radio" name="size-choice" value="M" class="sr-only" aria-labelledby="size-choice-3-label">
 					<span id="size-choice-3-label"> M </span>
-				</label>
+				</label> -->
 
 				<!--
 					In Stock: "cursor-pointer", Out of Stock: "opacity-25 cursor-not-allowed"
 					Active: "ring-2 ring-offset-2 ring-indigo-500"
 					Checked: "bg-indigo-600 border-transparent text-white hover:bg-indigo-700", Not Checked: "bg-white border-gray-200 text-gray-900 hover:bg-gray-50"
 				-->
-				<label class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 cursor-pointer focus:outline-none">
+				<!-- <label class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 cursor-pointer focus:outline-none">
 					<input type="radio" name="size-choice" value="L" class="sr-only" aria-labelledby="size-choice-4-label">
 					<span id="size-choice-4-label"> L </span>
-				</label>
+				</label> -->
 
 				<!--
 					In Stock: "cursor-pointer", Out of Stock: "opacity-25 cursor-not-allowed"
 					Active: "ring-2 ring-offset-2 ring-indigo-500"
 					Checked: "bg-indigo-600 border-transparent text-white hover:bg-indigo-700", Not Checked: "bg-white border-gray-200 text-gray-900 hover:bg-gray-50"
 				-->
-				<label class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 opacity-25 cursor-not-allowed">
+				<!-- <label class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 opacity-25 cursor-not-allowed">
 					<input type="radio" name="size-choice" value="XL" disabled class="sr-only" aria-labelledby="size-choice-5-label">
 					<span id="size-choice-5-label"> XL </span>
-				</label>
+				</label> -->
 			</div>
 		</fieldset>
 	</div>
