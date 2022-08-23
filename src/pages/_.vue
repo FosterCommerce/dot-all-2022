@@ -10,13 +10,6 @@
 			PagesGeneral,
 			PagesCollection
 		},
-		data() {
-			return {
-				entry: {
-					title: "Page Title Here"
-				},
-			};
-		},
 		computed: {
 			/** Calculates the page view component to call based on the Craft section handle and entry type handle
 			 * of the entry we have fetched */
@@ -28,9 +21,11 @@
 			 * https://github.com/FosterCommerce/fostercommerce-site/blob/develop/site-nuxt/pages/_.vue
 			 */
 			pageViewComponent() {
-				const lastSlug = this.$route.path.substring(this.$route.path.lastIndexOf('/') + 1);
+				const url = this.$route.fullPath.replace(/\/$/, '');
+				const slug = url.substring(url.lastIndexOf('/') + 1);
 				const section = 'Pages';
-				const type = (lastSlug === 'women' || lastSlug === 'men') ? 'Collection' : 'General';
+				const type = (slug === 'women' || slug === 'men') ? 'Collection' : 'General';
+
 				return section + type;
 			},
 		}
@@ -39,6 +34,6 @@
 
 <template>
 	<div>
-		<component :is="pageViewComponent" :entry="entry" />
+		<component :is="pageViewComponent" />
 	</div>
 </template>

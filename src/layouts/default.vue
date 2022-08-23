@@ -1,6 +1,4 @@
 <script>
-	import ProductsCatalog from '@/queries/ProductsCatalog.gql';
-
 	export default {
 		computed: {
 			header() {
@@ -8,13 +6,6 @@
 			},
 		},
 		async created() {
-			const test = await this.$api.post(
-				'/api',
-				ProductsCatalog,
-			);
-
-			console.log(test);
-
 			const sessionInfo = await this.$api.get('/actions/users/session-info', {}, {
 				withCredentials: true,
 				headers: {
