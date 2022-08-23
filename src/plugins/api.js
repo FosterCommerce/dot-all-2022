@@ -11,15 +11,10 @@ const api = ($config, store) => {
 	/**
 	 * Utility to add default request config to requests, such as adding commonly used headers.
 	 *
-	 * Note: This is an async function, so needs to be `await`ed. It fetches the csrfToken from the
-	 * store which is async.
-	 *
 	 * @param {*} requestConfig custom request config to be merged with the default config.
 	 * @returns merged request config.
 	 */
-	const withDefaultConfig = async (requestConfig = {}) => {
-		const csrfToken = await store.getters.getCsrfToken;
-
+	const withDefaultConfig = (requestConfig = {}) => {
 		const config = {
 			...requestConfig,
 			withCredentials: true,
@@ -27,7 +22,6 @@ const api = ($config, store) => {
 				'X-Requested-With': 'XMLHttpRequest',
 				'Content-Type': 'application/x-www-form-urlencoded',
 				Accept: 'application/json',
-				'X-CSRF-Token': csrfToken,
 				...requestConfig.headers,
 			},
 			httpsAgent: new https.Agent({
@@ -41,7 +35,7 @@ const api = ($config, store) => {
 	const get = async (action, config = {}) => {
 		const {
 			data
-		} = await axios.get(`${$config.baseURL}${action}`, await withDefaultConfig({config}), );
+		} = await axios.get(`${$config.baseURL}${action}`, withDefaultConfig({config}), );
 
 		return data;
 	}
@@ -49,6 +43,7 @@ const api = ($config, store) => {
 	const postAction = async (action, postData, config = {}) => {
 		const data = {
 			action,
+			CRAFT_CSRF_TOKEN: await store.getters.getCsrfToken,
 			...postData,
 		};
 
@@ -56,7 +51,7 @@ const api = ($config, store) => {
 
 		const response = await axios.post($config.baseURL,
 			stringify(data),
-			await withDefaultConfig(config),
+			withDefaultConfig(config),
 
 		)
 		console.log('form response: ', response);
