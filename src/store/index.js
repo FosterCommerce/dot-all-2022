@@ -15,8 +15,24 @@ export const mutations = {
 }
 
 export const getters = {
+	// Returns the primary navigation link elements from the EntrySettings results
 	getPrimaryNav(state) {
-		return state.primaryNav;
+		const linkArr = [];
+		state.primaryNav.forEach((obj) => {
+			const linkObj = {
+				target: obj.navLink.target ?? '_self',
+				type: obj.navLink.type === 'entry' ? 'internal' : 'external'
+			}
+			if(obj.navLink.type === 'entry' && obj.navLink.element) {
+				linkObj.label = obj.navLink.customText ?? obj.navLink.element.title;
+				linkObj.url = '/' + obj.navLink.element.uri;
+			} else {
+				linkObj.label = obj.navLink.customText;
+				linkObj.url = obj.navLink.url;
+			}
+			linkArr.push(linkObj);
+		});
+		return linkArr;
 	},
 	getCsrfToken(state) {
 		return state.csrfToken;
@@ -31,18 +47,34 @@ export const actions = {
 	 * @param {*} NuxtContext
 	 */
 	async nuxtServerInit({ commit, dispatch }) {
+		// Fetch the settings entry to get the sites global navigation
 		const query = await import('@/queries/EntrySettings.gql').then((module) => module.default);
-
-		/* NOTE: This code below is commented out for now as it causes a 'unable to verify the first certificate' error
-		 * when trying to call Craft's GraphQL endpoint, and needs to be fixed/debugged before we can start bringing
-		 * in GQL data from Craft
-		*/
-
-		
 		const { data: queryData, queryErrors } = await this.$axios.$post('/api', {
 			query: print(query),
 		});
-		commit('setPrimaryNav', queryData);
+		commit('setPrimaryNav', queryData.entry.primaryNavigation);
+	},
+	/**
+	 *
+	 * Imports a GQL file to be used for a fetch request, then
+	 * querying the GraphQL API with the relevant query string.
+	 * Utilizes graphql/language/printer to convert from AST to a string for Craft.
+	 * @param {dispatch, commit, state} param0
+	 * @param {name, variables, params}
+	 * @returns
+	 */
+	async queryAPI({ commit }, { name, variables, params }) {
+		const query = await import(`@/queries/${name}.gql`).then((module) => module.default);
+		return await this.$axios.$post(
+			'/api',
+			{
+				query: print(query),
+				variables,
+			},
+			{
+				params,
+			}
+		);
 	},
 	setCsrfToken({ commit }, csrfData) {
 		commit('setCsrfToken', csrfData);

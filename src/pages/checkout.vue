@@ -8,10 +8,11 @@
 			};
 		},
 		computed: {
-			...mapGetters('checkout', [
-				'getCurrentStep',
-				'getIsLastStep'
-			]),
+			...mapGetters( {getCurrentStep:'checkout/getCurrentStep',
+				getIsLastStep:'checkout/getIsLastStep',
+				isLoading: 'cart/getloading',
+				cart: 'cart/getCurrentCart',
+			}),
 			layoutStyle() {
 				return !this.getIsLastStep ? 'lg:overflow-hidden lg:flex lg:flex-row-reverse' : '';
 			}
@@ -51,7 +52,7 @@
 
 				<p class="flex items-center justify-between text-sm font-medium text-gray-900 border-t border-gray-200 pt-6 mt-6">
 					<span class="text-base">Total</span>
-					<span class="text-base">$95.00</span>
+					<span class="text-base">{{cart.totalAsCurrency}}</span>
 				</p>
 			</div>
 		</section>
@@ -62,12 +63,16 @@
 			class="hidden bg-gray-50 w-full max-w-md flex-col transition-opacity duration-300 lg:flex"
 		>
 			<h2 id="summary-heading" class="sr-only">Order summary</h2>
-			<CheckoutCart />
+			<CheckoutCart v-if="!isLoading"/>
+			<div v-else class="py-12 flex justify-center items-end">
+				<BaseLoader />
+			</div>
 			<div class="sticky bottom-0 flex-none bg-gray-50 border-t border-gray-200 p-6">
 				<CheckoutDiscount />
 				<CheckoutSummary />
 			</div>
 		</section>
+
 
 		<section v-if="!getIsLastStep" class="flex-auto overflow-y-auto pt-2 px-4 pb-16 transition-opacity duration-300 sm:px-6 sm:pt-8 lg:px-8 lg:pt-0 lg:pb-24">
 			<div class="max-w-2xl mx-auto">

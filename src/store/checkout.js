@@ -125,10 +125,6 @@ export const mutations = {
 	setModal(state, { context, payload }) {
 		state.modals[context] = payload;
 	},
-	setCart(state, payload ) {
-		state.cart = [...state.cart, payload];
-		console.log(state.cart)
-	}
 }
 
 export const actions = {
@@ -143,7 +139,4 @@ export const actions = {
 			commit('setCurrentStepNumber', (getters.getCurrentStepNumber + 1));
 		}
 	},
-	updateCart({commit}, item){
-		commit('setCart', item)
-	}
 }

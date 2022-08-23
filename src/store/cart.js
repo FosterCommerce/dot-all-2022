@@ -1,10 +1,16 @@
 export const state = () => ({
   items: [],
-  subTotal: 0,
-  shipping: 0,
-  taxes: 0,
-  discount: 0,
-  total: 0,
+  loading: true,
+  currentCart: {
+    couponCode: null,
+    itemSubtotalAsCurrency: '$0.00',
+    totalTaxAsCurrency: '$0.00',
+    totalDiscountAsCurrency: '$0.00',
+    totalShippingCostAsCurrency: '$0.00',
+    totalAsCurrency: '$0.00',
+    number: null,
+  },
+ 
 });
 
 export const getters = {
@@ -13,36 +19,25 @@ export const getters = {
    */
   getItems(state) {
     return state.items;
+  },  
+  /**
+   * Get the current cart id
+   */
+  getCartId(state) {
+    return state.cartId;
   },
   /**
-   * Get the subtotal of all items in the cart
+   * Get the current cart
    */
-  getSubtotal(state) {
-    return state.subTotal;
+  getCurrentCart(state) {
+    return state.currentCart;
   },
+
   /**
-   * Get the shipping cost
+   * Get the current cart
    */
-  getShipping(state) {
-    return state.shipping;
-  },
-  /**
-   * Get any applicable taxes
-   */
-  getTaxes(state) {
-    return state.taxes;
-  },
-  /**
-   * Get the discount if there is one
-   */
-  getDiscount(state) {
-    return state.discount;
-  },
-  /**
-   * Get the total for everything
-   */
-  getTotal(state) {
-    return state.total;
+  getloading(state) {
+    return state.loading;
   },
 };
 
@@ -51,55 +46,59 @@ export const mutations = {
    * Set the entire items array. Probably only useful for emptying an entire cart
    */
   setItems(state, payload) {
-    state.items = payload;
+    state.items = payload || [];
   },
   /**
    * Add a new item to the cart (to modify quantity, use setItemQty)
    */
   addNewItem(state, payload) {
-    state.items.push(payload);
+    const availableItemIndex = state.items.findIndex(item => String(item.id) === String(payload.id));
+    if (availableItemIndex === -1) {
+      state.items = [...state.items, payload];
+    } else {
+      state.items[availableItemIndex].qty = state.items[availableItemIndex].qty + 1
+    }
+    localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
   },
   /**
    * Remove an item entirely from the cart
    */
   removeItem(state, payload) {
     state.items.splice(payload, 1);
+    localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
   },
   /**
    * Set the quantity of an item
    */
   setItemQty(state, payload) {
-    state.items[payload.idx].qty = payload.qty;
+    const cartItems = state.items
+    if (parseInt(payload.qty) !== 0) {
+      const availableItemIndex = cartItems.findIndex(item => String(item.id) === String(payload.id));
+      cartItems[availableItemIndex] = payload;
+      state.items = [...cartItems]
+    } else {
+      const filteredCart = cartItems.filter(item => String(item.id) !== String(payload.id));
+      state.items = filteredCart
+    }
+     localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
   },
   /**
-   * Set the subtotal for the cart
+   * Set the current cart id
    */
-  setSubTotal(state, payload) {
-    state.subTotal = payload;
+  setCartId(state, payload) {
+    state.cartId = payload;
   },
   /**
-   * Set the shipping cost
+   * Set the current cart
    */
-  setShipping(state, payload) {
-    state.shipping = payload;
+  setCurrentCart(state, payload) {
+    state.currentCart = payload;
   },
   /**
-   * Set any applicable taxes
+   * Set the loading state
    */
-  setTaxes(state, payload) {
-    state.taxes = payload;
-  },
-  /**
-   * Set the amount of the discount, if any
-   */
-  setDiscount(state, payload) {
-    state.discount = payload;
-  },
-  /**
-   * Set the total for everything (items, shipping, taxes, discount)
-   */
-  setTotal(state, payload) {
-    state.total = payload;
+  setLoading(state, payload) {
+    state.loading = payload;
   },
 };
 
@@ -113,57 +112,54 @@ export const actions = {
   /**
    * Add a new item to the cart (to modify quantity, use setItemQty)
    */
-  addNewItem({ commit }, item) {
-    commit('addNewItem', item);
+  async addNewItem({ commit }, item) {
+    const {cart} = await this.$api.post('commerce/cart/update-cart', item);
+    console.log({cart})
+    const newItem = cart.lineItems.find(cartItem => String(cartItem.purchasableId) === String(item.id))
+    commit('addNewItem', {...item, itemId: newItem.id});
+    commit('setCurrentCart', cart);
   },
   /**
    * Remove an item entirely from the cart
    */
-  removeItem({ commit }, item) {
-    let itemIdx;
-
-    for (const [idx, existingItem] of state.items) {
-      if (existingItem.id === item.id) {
-        itemIdx = idx;
-      }
-    }
-
-    if (itemIdx && itemIdx !== -1) {
-      commit('removeItem', itemIdx);
-    }
+  async removeItem({ commit }, item) {
+      const {cart} = await this.$api.removeItem('commerce/cart/update-cart', item);
+      console.log({cart})
+      commit('removeItem', item);
+      commit('setCurrentCart', cart);
+      
   },
   /**
    * Set the quantity of an item
    */
-  setItemQty({ commit }, item) {
-    let itemIdx;
-
-    for (const [idx, existingItem] of state.items) {
-      if (existingItem.id === item.id) {
-        itemIdx = idx;
-      }
+  async setItemQty({dispatch, commit }, item) {
+    const {cart} = await this.$api.updateQty('commerce/cart/update-cart', item);
+    console.log({cart})
+    if (item.qty === 0) {
+      return dispatch('removeItem', item)
     }
+    commit('setItemQty', item);
+    commit('setCurrentCart', cart);
+  },
 
-    if (itemIdx && itemIdx !== -1) {
-      commit('setItemQty', { idx: itemIdx, qty: item.qty });
-    }
+  /**
+   * set the cart id
+   */
+  setCartId({ commit }, payload) {
+    commit('setCartId', payload);
   },
   /**
-   * Calculates the subtotal for items in the cart
+   * set the current cart
    */
-  calculateSubtotal({ commit }) {
-    let subTotal = 0;
-
-    for (const item of state.items) {
-      subTotal += item.price * item.qty;
-    }
-
-    commit('setSubtotal', subTotal);
+  setCurrentCart({ commit }, payload) {
+    commit('setCurrentCart', payload);
   },
+
   /**
-   * Calculates the total for everything (items, shipping, taxes, discount)
+   * set the current cart
    */
-  calculateTotal({ commit }) {
-    commit('setTotal', (state.subTotal + state.shipping + state.taxes - state.discount));
+  setLoading({ commit }, payload) {
+    commit('setLoading', payload);
   },
 }
+
