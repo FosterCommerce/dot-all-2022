@@ -131,25 +131,25 @@ const api = ($config, store) => ({
 		const csrfToken = await store.getters.getCsrfToken;
 		const params = {
 			action: uri,
-			'CRAFT_CSRF_TOKEN': csrfToken
+			'CRAFT_CSRF_TOKEN': csrfToken,
 		};
+
 		const response = await axios.get($config.baseURL,
 			{
 				params,
 				withCredentials: true,
-					headers: {
-						'X-Requested-With': 'XMLHttpRequest',
-						'Content-Type': 'application/x-www-form-urlencoded',
-						Accept: 'application/json',
-						'X-CSRF-Token': csrfToken,
-					},
-					httpsAgent: new https.Agent({
-						rejectUnauthorized: false
-					})
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest',
+					'Content-Type': 'application/x-www-form-urlencoded',
+					Accept: 'application/json',
+					'X-CSRF-Token': csrfToken,
+				},
+				httpsAgent: new https.Agent({
+					rejectUnauthorized: false
+				})
 			}
 			
 		)
-		// console.log('form response: ', response);
 		return response.data
 
 	},
