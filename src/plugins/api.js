@@ -1,10 +1,7 @@
 import axios from 'axios';
 import { stringify } from 'qs';
-
-/*
-import { stringify } from 'qs';
-import merge from 'lodash/merge';
-*/
+import { print } from 'graphql';
+// import merge from 'lodash/merge';
 
 const api = ($config, store) => ({
 	get: async (uri) => {
@@ -13,37 +10,45 @@ const api = ($config, store) => ({
 		return data;
 	},
 	post: async (uri, postData) => {
-		const csrfToken = await store.getters.getCsrfToken;
-		const csrfTokeName = 'CRAFT_CSRF_TOKEN';
-		const data = {
-			action: uri,
+		const data = {};
+		const headers = {
+			'X-Requested-With': 'XMLHttpRequest',
+			Accept: 'application/json',
 		};
+		let postURL = $config.baseURL;
+		let query;
 
-		data[csrfTokeName] = csrfToken;
+		if (uri !== '/api') { // not GraphQL
+			const csrfToken = await store.getters.getCsrfToken;
+			const csrfTokeName = 'CRAFT_CSRF_TOKEN';
 
-		if (Object.values(postData).length > 0) {
-			data.purchasableId = postData.id
-			data.qty = postData.qty
+			data[csrfTokeName] = csrfToken;
+
+			headers['Content-Type'] = 'application/x-www-form-urlencoded';
+			headers['X-CSRF-Token'] = csrfToken;
+			data.action = uri;
+
+			if (Object.values(postData).length > 0) {
+				data.purchasableId = postData.id
+				data.qty = postData.qty
+			}
+
+			query = stringify(data);
+		} else { // GraphQL
+			headers['Content-Type'] = 'application/json';
+			postURL += uri;
+			query = print(postData);
 		}
 
-		console.log('stringified form data: ', stringify(data));
-
-		await axios.post($config.baseURL,
-			stringify(data),
+		await axios.post(postURL,
+			query,
 			{
 				withCredentials: true,
-				headers: {
-					'X-Requested-With': 'XMLHttpRequest',
-					'Content-Type': 'application/x-www-form-urlencoded',
-					Accept: 'application/json',
-					'X-CSRF-Token': csrfToken,
-				},
+				headers,
 			}
 		).then((response) => {
 			console.log('form response: ', response);
-
 		});
-
 	},
 });
 
