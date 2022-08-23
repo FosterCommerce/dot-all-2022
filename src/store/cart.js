@@ -1,5 +1,6 @@
 export const state = () => ({
   items: [],
+  cartId: null,
   subTotal: 0,
   shipping: 0,
   taxes: 0,
@@ -44,6 +45,12 @@ export const getters = {
   getTotal(state) {
     return state.total;
   },
+  /**
+   * Get the current cart id
+   */
+  getCartId(state) {
+    return state.cartId;
+  },
 };
 
 export const mutations = {
@@ -63,14 +70,14 @@ export const mutations = {
     } else {
       state.items[availableItemIndex].qty = state.items[availableItemIndex].qty + 1
     }
-    localStorage.setItem('cartItems', JSON.stringify(state.items));
+    localStorage.setItem(state.cartId, JSON.stringify(state.items));
   },
   /**
    * Remove an item entirely from the cart
    */
   removeItem(state, payload) {
     state.items.splice(payload, 1);
-    localStorage.setItem('cartItems', JSON.stringify(state.items));
+    localStorage.setItem(state.cartId, JSON.stringify(state.items));
   },
   /**
    * Set the quantity of an item
@@ -85,7 +92,7 @@ export const mutations = {
       const filteredCart = cartItems.filter(item => String(item.id) !== String(payload.id));
       state.items = filteredCart
     }
-     localStorage.setItem('cartItems', JSON.stringify(state.items));
+     localStorage.setItem(state.cartId, JSON.stringify(state.items));
   },
   /**
    * Set the subtotal for the cart
@@ -116,6 +123,12 @@ export const mutations = {
    */
   setTotal(state, payload) {
     state.total = payload;
+  },
+  /**
+   * Set the current cart id
+   */
+  setCartId(state, payload) {
+    state.cartId = payload;
   },
 };
 
@@ -181,6 +194,13 @@ export const actions = {
    */
   calculateTotal({ commit }) {
     commit('setTotal', (state.subTotal + state.shipping + state.taxes - state.discount));
+  },
+
+  /**
+   * Calculates the total for everything (items, shipping, taxes, discount)
+   */
+  setCartId({ commit }, payload) {
+    commit('setCartId', payload);
   },
 }
 

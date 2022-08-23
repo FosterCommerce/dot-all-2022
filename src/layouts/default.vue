@@ -1,11 +1,7 @@
 <script>
 	export default {
-		computed: {
-			header() {
-				return this.$helpers.header();
-			},
-		},
-		async created() {
+		fetchOnServer: false,
+		async fetch() {
 			const sessionInfo = await this.$api.get('/actions/users/session-info', {}, {
 				withCredentials: true,
 				headers: {
@@ -15,11 +11,27 @@
 			});
 			console.log('csrf from /session-info: ', sessionInfo);
 			await this.$store.dispatch('setCsrfToken', sessionInfo.csrfTokenValue);
-		},
-		async mounted() {
-			const items = await localStorage.getItem('cartItems');
+
+
+			/** Get current cart from craft */
+			const {cart} = await this.$api.getCart(`/commerce/cart/get-cart`);
+			await this.$store.dispatch('cart/setCartId', cart.number);
+
+			/** Get current cart items from local storage */
+			const items = await localStorage.getItem(this.$store.state.cart.cartId);
+
+			/** If there is no current cart items clear local storage */
+			if(items === null){
+				localStorage.clear();
+			}
 			this.$store.dispatch('cart/setItems', JSON.parse(items))
 		},
+		computed: {
+			header() {
+				return this.$helpers.header();
+			},
+		},
+	
 	}
 </script>
 
