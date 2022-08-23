@@ -14,7 +14,7 @@
 	<div>
 		<!-- Collection Header -->
 		<header class="text-center py-16 px-4 sm:px-6 lg:px-8">
-			<h1 class="text-4xl font-extrabold tracking-tight text-gray-900">Collection Page Title Here</h1>
+			<h1 class="text-4xl font-extrabold tracking-tight text-gray-900">{{ entry.title }}</h1>
 			<p class="mt-4 max-w-xl mx-auto text-base text-gray-500">The secret to a tidy desk? Don't get rid of anything, just put it in really really nice looking containers.</p>
 		</header>
 
