@@ -48,7 +48,7 @@ const api = ($config, store) => {
 
 	const postAction = async (action, postData, config = {}) => {
 		const data = {
-			action: uri,
+			action,
 			...postData,
 		};
 
