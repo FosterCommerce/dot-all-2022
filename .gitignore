@@ -15,6 +15,7 @@ src/dist/*
 
 # WEB FILES
 web/dist/*
+web/assets/*
 
 # OPS
 
@@ -25,3 +26,4 @@ web/dist/*
 .editorconfig
 ansible.log
 .eslintcache
+craft
