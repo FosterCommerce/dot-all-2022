@@ -41,7 +41,7 @@
 
 				<div class="mt-4 sm:mt-0 sm:pr-9">
 					<div>
-						<label for="quantity_6" class="sr-only">Quantity, Basic Tee</label>
+						<label for="quantity_6" class="sr-only">Quantity, {{item.title}}</label>
 						<input
 							id="quantity_6"
 							name="quantity_6"

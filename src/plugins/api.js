@@ -153,6 +153,38 @@ const api = ($config, store) => ({
 		return response.data
 
 	},
+	applyCoupon: async (uri, postData) => {
+		const csrfToken = await store.getters.getCsrfToken;
+		const csrfTokeName = 'CRAFT_CSRF_TOKEN';
+		console.log(postData)
+		const data = {
+			action: uri,
+			couponCode: postData.coupon
+		};
+
+		data[csrfTokeName] = csrfToken;
+		console.log('stringified form data: ', stringify(data));
+
+		const response = await axios.post($config.baseURL,
+			stringify(data),
+			{
+				withCredentials: true,
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest',
+					'Content-Type': 'application/x-www-form-urlencoded',
+					Accept: 'application/json',
+					'X-CSRF-Token': csrfToken,
+				},
+				httpsAgent: new https.Agent({
+					rejectUnauthorized: false
+				})
+			},
+			
+		)
+		console.log('form response: ', response);
+		return response.data
+
+	},
 });
 
 export default ({ app, $config, store }, inject) => {
