@@ -143,7 +143,7 @@ export const actions = {
    * Add a new item to the cart (to modify quantity, use setItemQty)
    */
   async addNewItem({ commit }, item) {
-    const response = await this.$api.post('commerce/cart/update-cart', item);
+    const response = await this.$api.addItem(item);
     // console.log(response)
     const newItem = response.cart.lineItems.find(cartItem => String(cartItem.purchasableId) === String(item.id))
     commit('addNewItem', {...item, itemId: newItem.id});
@@ -152,9 +152,8 @@ export const actions = {
    * Remove an item entirely from the cart
    */
   async removeItem({ commit }, item) {
-      await this.$api.removeItem('commerce/cart/update-cart', item);
+      await this.$api.removeItem(item);
       commit('removeItem', item);
-      
   },
   /**
    * Set the quantity of an item
@@ -171,7 +170,7 @@ export const actions = {
     // if (itemIdx && itemIdx !== -1) {
     //   commit('setItemQty', { idx: itemIdx, qty: item.qty });
     // }
-    await this.$api.updateQty('commerce/cart/update-cart', item);
+    await this.$api.updateQty(item);
     if (item.qty === 0) {
       return dispatch('removeItem', item)
     }

@@ -2,7 +2,7 @@ import { print } from 'graphql';
 
 export const state = () => ({
 	primaryNav: [],
-	csrfToken: {},
+	csrfToken: "",
 });
 
 export const mutations = {
