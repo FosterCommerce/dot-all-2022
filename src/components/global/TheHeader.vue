@@ -9,7 +9,7 @@
 		},
 		computed:{
 			...mapGetters({
-				cartItems: 'checkout/getCart',
+				cartItems: 'cart/getItems',
 			}),
 		},
 		methods: {

@@ -1,11 +1,7 @@
 <script>
 	export default {
-		computed: {
-			header() {
-				return this.$helpers.header();
-			},
-		},
-		async created() {
+		fetchOnServer: false,
+		async fetch() {
 			const sessionInfo = await this.$api.get('/actions/users/session-info', {}, {
 				withCredentials: true,
 				headers: {
@@ -15,7 +11,24 @@
 			});
 			console.log('csrf from /session-info: ', sessionInfo);
 			await this.$store.dispatch('setCsrfToken', sessionInfo.csrfTokenValue);
+
+
+			/** Get current cart from craft */
+			const {cart} = await this.$api.getCart(`/commerce/cart/get-cart`);
+			await this.$store.dispatch('cart/setCartId', cart.number);
+
+
+			/** Get current cart items from local storage */
+			const items = await localStorage.getItem(this.$store.state.cart.cartId);
+
+			this.$store.dispatch('cart/setItems', JSON.parse(items))
 		},
+		computed: {
+			header() {
+				return this.$helpers.header();
+			},
+		},
+	
 	}
 </script>
 

@@ -38,6 +38,7 @@ export const actions = {
 		 * in GQL data from Craft
 		*/
 
+
 		
 		const { data: queryData, queryErrors } = await this.$axios.$post('/api', {
 			query: print(query),

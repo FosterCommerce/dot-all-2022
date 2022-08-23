@@ -3,10 +3,15 @@
 	export default {
 		computed:{
 			...mapGetters({
-				cartItems: 'checkout/getCart',
+				cartItems: 'cart/getItems',
 			}),
 			cartTotal(){
-				return this.cartItems.map(item => item.price).reduce((a,b) => a + b, 0)
+				return this.cartItems.map(item => {
+					return {
+						...item,
+						totalPrice: parseFloat(item.price) * parseFloat(item.qty)
+					}
+				}).map(item => item.totalPrice).reduce((a,b) => a + b, 0)
 			}
 		}
 	}
