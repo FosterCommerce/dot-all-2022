@@ -14,7 +14,6 @@
 						Accept: 'application/json'
 					}
 				});
-			console.log('product: ', data);
 			return{
 				product: data.product,
 				variants: data.variants,
@@ -32,9 +31,9 @@
 			}
 		},
 		methods: {
-			async addToCart(products) {
-				this.$store.dispatch('checkout/updateCart', {...this.selectedVariant, qty: 1})
-				await this.$api.post('commerce/cart/update-cart', products);
+			addToCart(products) {
+				const item = {...this.selectedVariant, qty: 1, slug: this.product.slug}
+				this.$store.dispatch('cart/addNewItem', item)
 			},
 			sizeUpdated(size){
 				this.selectedVariant = this.variants.find(variant => variant.size === size)
