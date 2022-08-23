@@ -51,25 +51,41 @@ export const mutations = {
    * Set the entire items array. Probably only useful for emptying an entire cart
    */
   setItems(state, payload) {
-    state.items = payload;
+    state.items = payload || [];
   },
   /**
    * Add a new item to the cart (to modify quantity, use setItemQty)
    */
   addNewItem(state, payload) {
-    state.items.push(payload);
+    const availableItemIndex = state.items.findIndex(item => String(item.id) === String(payload.id));
+    if (availableItemIndex === -1) {
+      state.items = [...state.items, payload];
+    } else {
+      state.items[availableItemIndex].qty = state.items[availableItemIndex].qty + 1
+    }
+    localStorage.setItem('cartItems', JSON.stringify(state.items));
   },
   /**
    * Remove an item entirely from the cart
    */
   removeItem(state, payload) {
     state.items.splice(payload, 1);
+    localStorage.setItem('cartItems', JSON.stringify(state.items));
   },
   /**
    * Set the quantity of an item
    */
   setItemQty(state, payload) {
-    state.items[payload.idx].qty = payload.qty;
+    const cartItems = state.items
+    if (parseInt(payload.qty) !== 0) {
+      const availableItemIndex = cartItems.findIndex(item => String(item.id) === String(payload.id));
+      cartItems[availableItemIndex] = payload;
+      state.items = [...cartItems]
+    } else {
+      const filteredCart = cartItems.filter(item => String(item.id) !== String(payload.id));
+      state.items = filteredCart
+    }
+     localStorage.setItem('cartItems', JSON.stringify(state.items));
   },
   /**
    * Set the subtotal for the cart
@@ -113,40 +129,40 @@ export const actions = {
   /**
    * Add a new item to the cart (to modify quantity, use setItemQty)
    */
-  addNewItem({ commit }, item) {
-    commit('addNewItem', item);
+  async addNewItem({ commit }, item) {
+    const response = await this.$api.post('commerce/cart/update-cart', item);
+    // console.log(response)
+    const newItem = response.cart.lineItems.find(cartItem => String(cartItem.purchasableId) === String(item.id))
+    commit('addNewItem', {...item, itemId: newItem.id});
   },
   /**
    * Remove an item entirely from the cart
    */
-  removeItem({ commit }, item) {
-    let itemIdx;
-
-    for (const [idx, existingItem] of state.items) {
-      if (existingItem.id === item.id) {
-        itemIdx = idx;
-      }
-    }
-
-    if (itemIdx && itemIdx !== -1) {
-      commit('removeItem', itemIdx);
-    }
+  async removeItem({ commit }, item) {
+      await this.$api.removeItem('commerce/cart/update-cart', item);
+      commit('removeItem', item);
+      
   },
   /**
    * Set the quantity of an item
    */
-  setItemQty({ commit }, item) {
-    let itemIdx;
+  async setItemQty({dispatch, commit }, item) {
+    // let itemIdx;
 
-    for (const [idx, existingItem] of state.items) {
-      if (existingItem.id === item.id) {
-        itemIdx = idx;
-      }
-    }
+    // for (const [idx, existingItem] of state.items) {
+    //   if (existingItem.id === item.id) {
+    //     itemIdx = idx;
+    //   }
+    // }
 
-    if (itemIdx && itemIdx !== -1) {
-      commit('setItemQty', { idx: itemIdx, qty: item.qty });
+    // if (itemIdx && itemIdx !== -1) {
+    //   commit('setItemQty', { idx: itemIdx, qty: item.qty });
+    // }
+    await this.$api.updateQty('commerce/cart/update-cart', item);
+    if (item.qty === 0) {
+      return dispatch('removeItem', item)
     }
+    commit('setItemQty', item);
   },
   /**
    * Calculates the subtotal for items in the cart
@@ -167,3 +183,4 @@ export const actions = {
     commit('setTotal', (state.subTotal + state.shipping + state.taxes - state.discount));
   },
 }
+

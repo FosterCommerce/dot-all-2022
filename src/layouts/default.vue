@@ -16,6 +16,10 @@
 			console.log('csrf from /session-info: ', sessionInfo);
 			await this.$store.dispatch('setCsrfToken', sessionInfo.csrfTokenValue);
 		},
+		async mounted() {
+			const items = await localStorage.getItem('cartItems');
+			this.$store.dispatch('cart/setItems', JSON.parse(items))
+		},
 	}
 </script>
 

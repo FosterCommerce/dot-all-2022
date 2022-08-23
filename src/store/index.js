@@ -38,6 +38,9 @@ export const actions = {
 		 * in GQL data from Craft
 		*/
 
+
+		const cart = await this.$api.getCart(`commerce/cart/get-cart`);
+		console.log(cart)
 		
 		const { data: queryData, queryErrors } = await this.$axios.$post('/api', {
 			query: print(query),
