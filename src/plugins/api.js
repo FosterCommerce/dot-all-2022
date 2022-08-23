@@ -9,7 +9,7 @@ const api = ($config, store) => ({
 
 		return data;
 	},
-	post: async (uri, postData) => {
+	post: async (uri, postData, vars) => {
 		const data = {};
 		const headers = {
 			'X-Requested-With': 'XMLHttpRequest',
@@ -38,17 +38,21 @@ const api = ($config, store) => ({
 			headers['Content-Type'] = 'application/json';
 			postURL += uri;
 			query = { query: print(postData) };
+
+			if (vars) {
+				query.variables = vars;
+			}
 		}
 
-		await axios.post(postURL,
+		const res = await axios.post(postURL,
 			query,
 			{
 				withCredentials: true,
 				headers,
 			}
-		).then((response) => {
-			console.log('form response: ', response);
-		});
+		);
+
+		return res?.data?.data;
 	},
 });
 
