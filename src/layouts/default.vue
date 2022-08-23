@@ -17,13 +17,10 @@
 			const {cart} = await this.$api.getCart(`/commerce/cart/get-cart`);
 			await this.$store.dispatch('cart/setCartId', cart.number);
 
+
 			/** Get current cart items from local storage */
 			const items = await localStorage.getItem(this.$store.state.cart.cartId);
 
-			/** If there is no current cart items clear local storage */
-			if(items === null){
-				localStorage.clear();
-			}
 			this.$store.dispatch('cart/setItems', JSON.parse(items))
 		},
 		computed: {
