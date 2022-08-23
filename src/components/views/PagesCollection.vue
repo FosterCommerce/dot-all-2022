@@ -1,12 +1,32 @@
 <script>
+	import EntriesPages from '@/queries/EntriesPages.gql';
+	import ProductsCatalog from '@/queries/ProductsCatalog.gql';
+
 	export default {
 		name: 'PagesCollection',
-		props: {
-			entry: {
-				type: Object,
-				required: true
-			}
-		}
+		data() {
+			return {
+				products: [],
+				entry: {},
+			};
+		},
+		async fetch() {
+			const url = this.$route.fullPath.replace(/\/$/, '');
+			const slug = url.substring(url.lastIndexOf('/') + 1);
+			const entry = await this.$api.post(
+				'/api',
+				EntriesPages,
+				{ slug }
+			);
+
+			this.entry = entry?.entries[0];
+
+			this.products = await this.$api.post(
+				'/api',
+				ProductsCatalog,
+				{ categories: slug }
+			);
+		},
 	};
 </script>
 
@@ -14,7 +34,7 @@
 	<div>
 		<!-- Collection Header -->
 		<header class="text-center py-16 px-4 sm:px-6 lg:px-8">
-			<h1 class="text-4xl font-extrabold tracking-tight text-gray-900">Collection Page Title Here</h1>
+			<h1 class="text-4xl font-extrabold tracking-tight text-gray-900">{{ entry.title }}</h1>
 			<p class="mt-4 max-w-xl mx-auto text-base text-gray-500">The secret to a tidy desk? Don't get rid of anything, just put it in really really nice looking containers.</p>
 		</header>
 
@@ -22,7 +42,7 @@
 		<section aria-labelledby="products-heading" class="max-w-7xl mx-auto overflow-hidden sm:px-6 lg:px-8">
 			<h2 id="products-heading" class="sr-only">Products</h2>
 			<div class="-mx-px border-l border-t border-gray-200 grid grid-cols-2 sm:mx-0 md:grid-cols-3 lg:grid-cols-4">
-				<ProductPreviewCard v-for="index in 12" :key="index" />
+				<ProductPreviewCard v-for="product in products" :key="product.id" :product="product[0]" />
 			</div>
 		</section>
 
