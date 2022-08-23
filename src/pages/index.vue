@@ -1,8 +1,33 @@
 <script>
 	export default {
-		mounted() {
-			console.log('It is loading changes');
-		}
+		async asyncData({ route, store }) {
+			// Check for Craft Live Preview params
+			let previewParams = null;
+			if (route.query['x-craft-live-preview']) {
+				previewParams = {
+					token: route.query.token,
+					'x-craft-live-preview': route.query['x-craft-live-preview'],
+				};
+			}
+
+			// Call the query API method to get the data from Craft
+			const { data: queryData } = await store.dispatch('queryAPI', {
+				name: 'EntryHome',
+				variables: {
+					limit: 1
+				},
+				params: previewParams,
+			});
+
+			return {
+				entry: queryData?.entry,
+			};
+		},
+		data() {
+			return {
+				entry: null,
+			};
+		},
 	}
 </script>
 
@@ -28,7 +53,7 @@
 			</div>
 		</div>
 
-		<!-- Content blocks area -->
+		<!-- Page Content -->
 		<div class="mt-12 mx-auto prose prose-indigo prose-lg text-gray-500 lg:mt-24">
 
 			<!--
