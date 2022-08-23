@@ -37,7 +37,7 @@ const api = ($config, store) => ({
 		} else { // GraphQL
 			headers['Content-Type'] = 'application/json';
 			postURL += uri;
-			query = print(postData);
+			query = { query: print(postData) };
 		}
 
 		await axios.post(postURL,
