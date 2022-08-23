@@ -33,7 +33,7 @@
 
 <template>
   <div>
-		<!-- Hero -->
+		<!-- Hero Header -->
 		<div class="flex flex-col border-b border-gray-200 lg:border-0">
 			<div class="relative">
 				<div aria-hidden="true" class="hidden absolute w-1/2 h-full bg-gray-100 lg:block"></div>
@@ -55,35 +55,7 @@
 
 		<!-- Page Content -->
 		<div class="mt-12 mx-auto prose prose-indigo prose-lg text-gray-500 lg:mt-24">
-
-			<!--
-				DEV NOTE: This is where we should use the output from the content builder (ContentBlocks)
-				The block components have already been built as well so you should just be able to include
-				it here. The markup below is just an example of the output on this page type.
-			-->
-
-			<div>
-
-				<h2>From beginner to expert in 30 days</h2>
-
-				<div>
-					<p>
-						Id orci tellus laoreet id ac. Dolor, aenean leo, ac etiam consequat in. Convallis arcu ipsum urna nibh.
-						Pharetra, euismod vitae interdum mauris enim, consequat vulputate nibh. Maecenas pellentesque id sed tellus
-						mauris, ultrices mauris. Tincidunt enim cursus ridiculus mi. Pellentesque nam sed nullam sed diam turpis
-						ipsum eu a sed convallis diam.
-					</p>
-
-					<p>
-						Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae
-						sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit.
-					</p>
-				</div>
-
-			</div>
-
+			<ContentBlocks :blocks="entry.contentBlocks" />
 		</div>
-
-
   </div>
 </template>
