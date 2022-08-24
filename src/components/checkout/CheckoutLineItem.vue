@@ -10,7 +10,7 @@
 		},
 		data() {
 			return {
-				quantity: this.item.qty
+				quantity: this.lineItem.qty
 			}
 		},
 		methods: {
@@ -20,7 +20,7 @@
 			async updateQuantity(e){
 				const successfull = await this.$store.dispatch('cart/setItemQty', {...this.lineItem, qty: Number(e.target.value)})
 				if (!successfull) {
-					this.quantity = this.item.qty
+					this.quantity = this.lineItem.qty
 				}
 			}
 		},
