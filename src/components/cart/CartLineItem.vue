@@ -7,12 +7,20 @@
 				default: () => ({})
 			}
 		},
+		data() {
+			return {
+				quantity: this.item.qty
+			}
+		},
 		methods: {
 			removeItem(){
 				this.$store.dispatch('cart/removeItem', this.item)
 			},
-			updateQuantity(e){
-				this.$store.dispatch('cart/setItemQty', {...this.item, qty: Number(e.target.value)})
+			async updateQuantity(e){
+				const successfull = await this.$store.dispatch('cart/setItemQty', {...this.item, qty: Number(e.target.value)})
+				if (!successfull) {
+					this.quantity = this.item.qty
+				}
 			}
 		},
 	};
@@ -44,12 +52,10 @@
 						<label for="quantity_6" class="sr-only">Quantity, {{item.title}}</label>
 						<input
 							id="quantity_6"
+							v-model="quantity"
 							name="quantity_6"
 							class="block max-w-[64px] rounded-md border border-gray-300 py-1.5 text-base leading-5 font-medium text-gray-700 text-left shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 							type="number"
-							min="0"
-							:max="item.stock"
-							:value="item.qty"
 							@change="updateQuantity"
 						/>
 					</div>

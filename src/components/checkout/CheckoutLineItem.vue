@@ -12,8 +12,11 @@
 			removeItem(){
 				this.$store.dispatch('cart/removeItem', this.lineItem)
 			},
-			updateQuantity(e){
-				this.$store.dispatch('cart/setItemQty', {...this.lineItem, qty: Number(e.target.value)})
+			async updateQuantity(e){
+				const successfull = await this.$store.dispatch('cart/setItemQty', {...this.lineItem, qty: Number(e.target.value)})
+				if (!successfull) {
+					this.quantity = this.item.qty
+				}
 			}
 		},
 	};
@@ -38,11 +41,8 @@
 					<input
 						id="quantity_5"
 						name="quantity_5"
-						min="0"
-						:max="lineItem.stock"
 						class="block max-w-[64px] rounded-md border border-gray-300 py-1.5 text-base leading-5 font-medium text-gray-700 text-left shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 						type="number"
-						:value="lineItem.qty"
 						@change="updateQuantity"
 					/>
 				</div>
