@@ -56,12 +56,12 @@ export default {
     // proxy: true,
   },
 
-  // proxy: {
-  //   '/proxy': {
-  //     target: process.env.CRAFT_BASE_URL,
-  //     pathRewrite: {'^/proxy': '/'}
-  //   },
-  // },
+  proxy: {
+    '/*sitemap.xml': process.env.CRAFT_BASE_URL,
+    '/*sitemap.xsl': process.env.CRAFT_BASE_URL,
+    '/sitemap.xml': process.env.CRAFT_BASE_URL,
+    '/sitemap.xsl': process.env.CRAFT_BASE_URL,
+  },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
