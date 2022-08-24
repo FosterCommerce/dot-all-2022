@@ -3,7 +3,6 @@
 		fetchOnServer: false,
 		async fetch() {
 			const sessionInfo = await this.$api.get('/actions/users/session-info');
-			console.log('csrf from /session-info: ', sessionInfo);
 			await this.$store.dispatch('setCsrfToken', sessionInfo.csrfTokenValue);
 
 
@@ -11,11 +10,16 @@
 			const {cart} = await this.$api.getCart();
 			await this.$store.dispatch('cart/setCartId', cart.number);
 
+			await this.$store.dispatch('cart/setCurrentCart', cart);
 
 			/** Get current cart items from local storage */
-			const items = await localStorage.getItem(this.$store.state.cart.cartId);
+			const items = await localStorage.getItem(cart.number);
 
-			this.$store.dispatch('cart/setItems', JSON.parse(items))
+			await this.$store.dispatch('cart/setItems', JSON.parse(items))
+
+			this.$store.dispatch('cart/setLoading', false)
+
+
 		},
 		computed: {
 			header() {

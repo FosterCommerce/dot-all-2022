@@ -47,14 +47,14 @@ const api = ($config, store) => {
 			...postData,
 		};
 
-		console.log('stringified form data: ', stringify(data));
+		// console.log('stringified form data: ', stringify(data));
 
 		const response = await axios.post($config.baseURL,
 			stringify(data),
 			withDefaultConfig(config),
 
 		)
-		console.log('form response: ', response);
+		// console.log('postAction form response', response);
 		return response.data
 	}
 
@@ -86,6 +86,12 @@ const api = ($config, store) => {
 		getCart: async () => {
 			return await get('/actions/commerce/cart/get-cart');
 		},
+		applyCoupon: async (item) => {
+			const data = {
+				couponCode: item.coupon
+			};
+			return await postAction('commerce/cart/update-cart', data);
+		}
 	}
 };
 
