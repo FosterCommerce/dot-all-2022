@@ -26,7 +26,7 @@
 			);
 
 			this.entry = entry?.data?.entries[0] ?? {};
-			this.products = products?.data;
+			this.products = products?.data?.products;
 		},
 	};
 </script>
@@ -43,7 +43,7 @@
 		<section aria-labelledby="products-heading" class="max-w-7xl mx-auto overflow-hidden sm:px-6 lg:px-8">
 			<h2 id="products-heading" class="sr-only">Products</h2>
 			<div class="-mx-px border-l border-t border-gray-200 grid grid-cols-2 sm:mx-0 md:grid-cols-3 lg:grid-cols-4">
-				<ProductPreviewCard v-for="product in products" :key="product.id" :product="product[0]" />
+				<ProductPreviewCard v-for="product of products" :key="product.id" :product="product" />
 			</div>
 		</section>
 
