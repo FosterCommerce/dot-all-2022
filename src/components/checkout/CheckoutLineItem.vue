@@ -8,6 +8,11 @@
 				required: true
 			}
 		},
+		data() {
+			return {
+				quantity: this.item.qty
+			}
+		},
 		methods: {
 			removeItem(){
 				this.$store.dispatch('cart/removeItem', this.lineItem)
