@@ -10,7 +10,7 @@
 		computed: {
 			...mapGetters( {getCurrentStep:'checkout/getCurrentStep',
 				getIsLastStep:'checkout/getIsLastStep',
-				isLoading: 'cart/getloading',
+				isLoading: 'cart/getLoading',
 				cart: 'cart/getCurrentCart',
 			}),
 			layoutStyle() {

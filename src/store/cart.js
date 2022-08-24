@@ -37,7 +37,7 @@ export const getters = {
   /**
    * Get the current cart
    */
-  getloading(state) {
+  getLoading(state) {
     return state.loading;
   },
   /**
@@ -60,13 +60,11 @@ export const mutations = {
    */
   addNewItem(state, payload) {
     const availableItemIndex = state.items.findIndex(item => String(item.id) === String(payload.id));
-
     if (availableItemIndex === -1) {
       state.items = [...state.items, payload];
     } else {
       state.items[availableItemIndex].qty = state.items[availableItemIndex].qty + 1
     }
-
     localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
   },
   /**
@@ -80,17 +78,16 @@ export const mutations = {
    * Set the quantity of an item
    */
   setItemQty(state, payload) {
-    const cartItems = state.items;
-
+    const cartItems = state.items
     if (parseInt(payload.qty) !== 0) {
       const availableItemIndex = cartItems.findIndex(item => String(item.id) === String(payload.id));
       cartItems[availableItemIndex] = payload;
-      state.items = [...cartItems];
+      state.items = [...cartItems]
     } else {
-      state.items = cartItems.filter(item => String(item.id) !== String(payload.id));
+      const filteredCart = cartItems.filter(item => String(item.id) !== String(payload.id));
+      state.items = filteredCart
     }
-
-    localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
+     localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
   },
   /**
    * Set the current cart id

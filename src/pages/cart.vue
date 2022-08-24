@@ -5,7 +5,7 @@
 			...mapGetters({
 				cartItems: 'cart/getItems',
 				cart: 'cart/getCurrentCart',
-				isLoading: 'cart/getloading',
+				isLoading: 'cart/getLoading',
 			}),
 		}
 	}

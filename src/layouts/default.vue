@@ -3,24 +3,22 @@
 	export default {
 		fetchOnServer: false,
 		async fetch() {
-			const sessionInfo = await this.$api.get(null, '/actions/users/session-info');
+			const sessionInfo = await this.$api.get('/actions/users/session-info');
 
 			await this.$store.dispatch('setCsrfToken', sessionInfo.csrfTokenValue);
 
 			/** Get current cart from craft */
-			const { cart } = await this.$api.get(null, '/commerce/cart/get-cart');
-			console.log(cart)
+			const {cart} = await this.$api.getCart();
 
-			if (cart) {
-				await this.$store.dispatch('cart/setCurrentCart', cart);
+			await this.$store.dispatch('cart/setCartId', cart.number);
+			await this.$store.dispatch('cart/setCurrentCart', cart);
 
-				/** Get current cart items from local storage */
-				const items = localStorage.getItem(cart.number);
+			/** Get current cart items from local storage */
+			const items = await localStorage.getItem(cart.number);
 
-				await this.$store.dispatch('cart/setItems', JSON.parse(items));
-			}
+			await this.$store.dispatch('cart/setItems', JSON.parse(items))
+			this.$store.dispatch('cart/setLoading', false)
 
-			await this.$store.dispatch('cart/setLoading', false);
 		},
 		computed: {
 			header() {
@@ -30,6 +28,7 @@
 				cartErrors: 'cart/getCartErrors',
 			}),
 		},
+	
 	}
 </script>
 
