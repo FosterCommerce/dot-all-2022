@@ -116,7 +116,10 @@ export const actions = {
    * Add a new item to the cart (to modify quantity, use setItemQty)
    */
   async addNewItem({ commit }, item) {
-    const { cart } = await this.$api.post('commerce/cart/update-cart', item);
+    const { cart } = await this.$api.post('commerce/cart/update-cart', {
+      purchasableId: item.id,
+      qty: item.qty
+    });
     const newItem = cart.lineItems.find(cartItem => String(cartItem.purchasableId) === String(item.id));
 
     commit('addNewItem', {...item, itemId: newItem.id});
@@ -126,16 +129,21 @@ export const actions = {
    * Remove an item entirely from the cart
    */
   async removeItem({ commit }, item) {
-      const { cart } = await this.$api.post('commerce/cart/update-cart', item);
+    const { cart } = await this.$api.post('commerce/cart/update-cart', {
+      lineItems: {[item.itemId]: {'remove': true}},
+    });
 
-      commit('removeItem', item);
-      commit('setCurrentCart', cart);
+    commit('removeItem', item);
+    commit('setCurrentCart', cart);
   },
   /**
    * Set the quantity of an item
    */
   async setItemQty({dispatch, commit }, item) {
-    const { cart } = await this.$api.post('commerce/cart/update-cart', item);
+    const { cart } = await this.$api.post('commerce/cart/update-cart', {
+      purchasableId: item.id,
+      qty: item.qty
+    });
 
     if (item.qty === 0) {
       return dispatch('removeItem', item)

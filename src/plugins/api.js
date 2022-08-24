@@ -55,9 +55,8 @@ const api = ($config, store) => ({
 			headers['X-CSRF-Token'] = csrfToken;
 			data.action = uri;
 
-			if (Object.values(postData).length > 0) {
-				data.purchasableId = postData.id;
-				data.qty = postData.qty;
+			if (Object.values(postData).length) {
+				Object.assign(data, postData);
 			}
 
 			query = stringify(data);
