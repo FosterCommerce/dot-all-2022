@@ -2,22 +2,46 @@
 	export default {
 		name: 'ProductSizePicker',
 		props: {
-			sizes: {
+			options: {
 				type: Array,
-				default: () => [],
+				default: () => []
+			},
+			available: {
+				type: Array,
+				default: () => []
 			}
 		},
 		data() {
 			return {
-				selected: this.sizes[0],
+				selected: this.options.find(option => this.available.includes(option)),
+			}
+		},
+		computed: {
+			computedOptions() {
+				const sizeArr = [];
+				this.options.forEach((option) => {
+					let style = '';
+					if (!this.available.includes(option)) {
+						style = 'opacity-25 cursor-not-allowed text-black bg-transparent';
+					} else {
+						style = option === this.selected ? 'bg-black text-white cursor-pointer' : 'text-black bg-transparent cursor-pointer';
+					}
+					sizeArr.push({
+						label: option.toUpperCase(),
+						value: option,
+						disabled: !this.available.includes(option),
+						style
+					});
+				});
+				return sizeArr;
 			}
 		},
 		methods: {
-			updateSelected(size){
-				this.selected = size
-				this.$emit('size-updated', {
+			updateSelected(option) {
+				this.selected = option
+				this.$emit('option-selected', {
 					type: 'size',
-					value: size
+					value: option
 				});
 			}
 		}
@@ -37,9 +61,24 @@
 					Active: "ring-2 ring-offset-2 ring-indigo-500"
 					Checked: "bg-indigo-600 border-transparent text-white hover:bg-indigo-700", Not Checked: "bg-white border-gray-200 text-gray-900 hover:bg-gray-50"
 				-->
-				<label v-for="size in sizes" :key="size" :class="selected === size ? 'bg-black text-white' : 'text-black bg-transparent'" class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 cursor-pointer focus:outline-none" @click="updateSelected(size)">
-					<input type="radio" name="size-choice" value="size" class="sr-only" aria-labelledby="size-choice-0-label">
-					<span id="size-choice-0-label"> {{size}} </span>
+				<label
+					v-for="(option, index) in computedOptions"
+					:key="index"
+					:for="`size-choice-${index}`"
+					:class="option.style"
+					class="border rounded-md py-3 px-3 flex items-center justify-center text-sm font-medium uppercase sm:flex-1 focus:outline-none"
+				>
+					<input
+						:id="`size-choice-${index}`"
+						type="radio"
+						name="size-choice"
+						:value="option.value"
+						class="sr-only"
+						:aria-labelledby="`size-choice-${index}-label`"
+						:disabled="option.disabled"
+						@change="updateSelected(option.value)"
+					>
+					<span :id="`size-choice-${index}-label`">{{ option.label }}</span>
 				</label>
 
 				<!--

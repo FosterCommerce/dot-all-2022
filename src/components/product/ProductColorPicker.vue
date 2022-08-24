@@ -2,38 +2,66 @@
 	export default {
 		name: 'ProductColorPicker',
 		props: {
-			colors: {
+			options: {
 				type: Array,
-				required: false,
 				default: () => []
 			},
-			current: {
-				type: String,
-				required: false,
-				default: null
+			available: {
+				type: Array,
+				default: () => []
 			}
 		},
 		data() {
 			return {
-				selected: this.current ?? this.colors[0],
+				selected: this.options.find(option => this.available.includes(option)),
 			}
 		},
 		computed: {
-			colorOptions() {
+			/** Takes the color values array and turns it into an array of objects
+			 * with labels, values, and color names for Tailwind */
+			computedOptions() {
 				const colorArr = [];
-				this.colors.forEach((color) => {
+				this.options.forEach((option) => {
+					// Define the selected and disabled classes
+					let style = '';
+					if (!this.available.includes(option)) {
+						style = 'opacity-25 cursor-not-allowed text-black bg-transparent';
+					} else {
+						style = option === this.selected ? 'ring ring-offset-1' : '';
+					}
+
+					// Define the Tailwind color name
+					let colorName = '';
+					switch (option) {
+						case 'black':
+							colorName = 'gray-900';
+							break;
+						case 'gray':
+							colorName = 'gray-400';
+							break;
+						case 'none':
+							colorName = 'transparent';
+							break;
+						default:
+							colorName = option + '-600';
+					}
+
+					// Add the object to the array we will return
 					colorArr.push({
-						label: color.charAt(0).toUpperCase() + color.slice(1),
-						value: color,
+						label: option.charAt(0).toUpperCase() + option.slice(1),
+						value: option,
+						color: colorName,
+						disabled: !this.available.includes(option),
+						style
 					});
 				});
 				return colorArr;
-			}
+			},
 		},
 		methods: {
-			updateSelected(color){
+			updateSelected(color) {
 				this.selected = color
-				this.$emit('color-updated', {
+				this.$emit('option-selected', {
 					type: 'color',
 					value: color
 				});
@@ -53,12 +81,11 @@
 					Not Active and Checked: "ring-2"
 				-->
 				<label
-					v-for="(option, index) in colorOptions"
+					v-for="(option, index) in computedOptions"
 					:key="index"
 					:for="`color-choice-${index}`"
-					:class="selected === option.value ? 'ring ring-offset-1' : ''"
+					:class="option.style"
 					class="-m-0.5 relative p-0.5 rounded-full flex items-center justify-center cursor-pointer focus:outline-none ring-gray-900"
-					@click="updateSelected(option.value)"
 				>
 					<input
 						:id="`color-choice-${index}`"
@@ -67,9 +94,11 @@
 						value="Black"
 						class="sr-only"
 						:aria-labelledby="`color-choice-${index}-label`"
+						:disabled="option.disabled"
+						@change="updateSelected(option.value)"
 					/>
 					<span :id="`color-choice-${index}-label`" class="sr-only"> {{ option.label }} </span>
-					<span aria-hidden="true" :class="`bg-${ option.value === 'black' ? 'gray-900' : (option.value + '-600') }`" class="h-8 w-8 border border-black border-opacity-10 rounded-full"></span>
+					<span aria-hidden="true" :class="`bg-${option.color}`" class="h-8 w-8 border border-black border-opacity-10 rounded-full"></span>
 				</label>
 
 				<!--<label class="-m-0.5 relative p-0.5 rounded-full flex items-center justify-center cursor-pointer focus:outline-none ring-gray-400">

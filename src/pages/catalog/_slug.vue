@@ -50,7 +50,22 @@
 			variantImage() {
 				return this.selectedVariant.image[0] ?? null
 			},
-			optionsMatrix() {
+			allColors() {
+				return [...new Set(
+					this.variants.map((variant) => {
+						return variant.color;
+					})
+				)];
+			},
+			allSizes() {
+				return [...new Set(
+					this.variants.map((variant) => {
+						return variant.size;
+					})
+				)];
+			},
+			/** Returns a relational matrix for sizes to available colors */
+			sizeToColorMatrix() {
 				const matrix = {};
 				this.variants.forEach((sizeVariant) => {
 					matrix[sizeVariant.size] = this.variants.filter((variant) => {
@@ -59,18 +74,42 @@
 				});
 				return matrix;
 			},
-			sizeOptions() {
-				const selectedColor = this.selectedVariant.color;
-				const filteredVariants = this.variants.filter((variant) => {
-					return variant.color === selectedColor;
+			/** Returns a relational matrix for colors to available sizes */
+			colorToSizeMatrix() {
+				const matrix = {};
+				this.variants.forEach((colorVariant) => {
+					matrix[colorVariant.color] = this.variants.filter((variant) => {
+						return variant.color === colorVariant.color;
+					}).map(sizeVariant => sizeVariant.size);
 				});
-				return filteredVariants.map( variant => variant.size);
+				return matrix;
 			},
-			colorOptions() {
-				return this.optionsMatrix[this.selectedVariant.size]
+			availableSizes() {
+				return this.colorToSizeMatrix[this.selectedVariant.color];
+			},
+			availableColors() {
+				return this.sizeToColorMatrix[this.selectedVariant.size];
 			},
 		},
 		methods: {
+			/** Selects the variant based on the options set (size and color) */
+			selectVariant(option) {
+				let colorOption = this.selectedVariant.color;
+				let sizeOption = this.selectedVariant.size;
+
+				if (option.type === 'color') {
+					colorOption = option.value;
+					sizeOption = this.selectedVariant.size;
+				} else if (option.type === 'size') {
+					colorOption = this.selectedVariant.color;
+					sizeOption = option.value;
+				}
+
+				this.selectedVariant = this.variants.find(
+					variant =>
+						variant.color === colorOption && variant.size === sizeOption
+				);
+			},
 			/** Adds the currently selected variant to the cart */
 			addToCart() {
 				const item = {
@@ -78,13 +117,6 @@
 					qty: 1
 				}
 				this.$store.dispatch('cart/addNewItem', item)
-			},
-			/** Selects the variant based on size */
-			sizeUpdated(payload) {
-				this.selectedVariant = this.variants.find(variant => variant.size === payload.value)
-			},
-			colorUpdated(payload) {
-				this.selectedVariant = this.variants.find(variant => variant.color === payload.value)
 			}
 		},
 	};
@@ -129,15 +161,15 @@
 
 				<form class="space-y-8">
 					<ProductColorPicker
-						:colors="colorOptions"
-						:current="selectedVariant.color"
+						:options="allColors"
+						:available="availableColors"
+						@option-selected="selectVariant"
 					/>
 					<ProductSizePicker
-						:sizes="sizeOptions"
-						:current="selectedVariant.size"
-						@size-updated="sizeUpdated"
+						:options="allSizes"
+						:available="availableSizes"
+						@option-selected="selectVariant"
 					/>
-
 					<button
 						v-if="selectedVariant.isAvailable"
 						type="button"
