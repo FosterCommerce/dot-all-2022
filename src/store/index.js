@@ -66,7 +66,7 @@ export const actions = {
 	async queryAPI({ commit }, { name, variables, params }) {
 		const query = await import(`@/queries/${name}.gql`).then((module) => module.default);
 		return await this.$axios.$post(
-			'/api',
+			'/graphql',
 			{
 				query: print(query),
 				variables,
