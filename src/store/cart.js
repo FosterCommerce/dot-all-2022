@@ -36,7 +36,7 @@ export const getters = {
   /**
    * Get the current cart
    */
-  getloading(state) {
+  getLoading(state) {
     return state.loading;
   },
 };
@@ -113,33 +113,28 @@ export const actions = {
    * Add a new item to the cart (to modify quantity, use setItemQty)
    */
   async addNewItem({ commit }, item) {
-    const {cart} = await this.$api.post('commerce/cart/update-cart', item);
-    console.log({cart})
-    const newItem = cart.lineItems.find(cartItem => String(cartItem.purchasableId) === String(item.id))
+    const response = await this.$api.addItem(item);
+    const newItem = response.cart.lineItems.find(cartItem => String(cartItem.purchasableId) === String(item.id))
     commit('addNewItem', {...item, itemId: newItem.id});
-    commit('setCurrentCart', cart);
+    commit('setCurrentCart', response.cart);
   },
   /**
    * Remove an item entirely from the cart
    */
   async removeItem({ commit }, item) {
-      const {cart} = await this.$api.removeItem('commerce/cart/update-cart', item);
-      console.log({cart})
+      await this.$api.removeItem(item);
       commit('removeItem', item);
-      commit('setCurrentCart', cart);
-      
   },
   /**
    * Set the quantity of an item
    */
   async setItemQty({dispatch, commit }, item) {
-    const {cart} = await this.$api.updateQty('commerce/cart/update-cart', item);
-    console.log({cart})
+    const response = await this.$api.updateQty(item);
     if (item.qty === 0) {
       return dispatch('removeItem', item)
     }
     commit('setItemQty', item);
-    commit('setCurrentCart', cart);
+    commit('setCurrentCart', response.cart);
   },
 
   /**
