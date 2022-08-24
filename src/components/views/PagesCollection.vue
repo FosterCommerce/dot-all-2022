@@ -19,13 +19,14 @@
 				{ slug }
 			);
 
-			this.entry = entry?.entries[0];
-
-			this.products = await this.$api.post(
+			const products = await this.$api.post(
 				'/api',
 				ProductsCatalog,
 				{ categories: slug }
 			);
+
+			this.entry = entry?.data?.entries[0] ?? {};
+			this.products = products?.data;
 		},
 	};
 </script>
