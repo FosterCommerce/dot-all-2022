@@ -2,13 +2,12 @@
 	export default {
 		fetchOnServer: false,
 		async fetch() {
-			const sessionInfo = await this.$api.get(null, '/actions/users/session-info');
+			const sessionInfo = await this.$api.get('/actions/users/session-info');
 
 			await this.$store.dispatch('setCsrfToken', sessionInfo.csrfTokenValue);
 
 			/** Get current cart from craft */
 			const { cart } = await this.$api.get(null, '/commerce/cart/get-cart');
-			console.log(cart)
 
 			if (cart) {
 				await this.$store.dispatch('cart/setCurrentCart', cart);
