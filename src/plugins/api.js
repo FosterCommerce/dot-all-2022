@@ -12,15 +12,19 @@ const api = ($config, store) => ({
 
 		if (!action) {
 			url += uri;
-		} else {
+		} else if (typeof csrfToken !== 'string'){
+			url = `${url}${action}`
+		} 
+		else{
+			
 			params.action = action;
-			params.CRAFT_CSRF_TOKEN = csrfToken;
+			params.CRAFT_CSRF_TOKEN = csrfToken ;
 		}
 
-		const { data } = await axios.get(
+		const  data  = await axios.get(
 			url,
-			params,
 			{
+				params,
 				withCredentials: true,
 				headers: {
 					'X-Requested-With': 'XMLHttpRequest',
@@ -33,8 +37,7 @@ const api = ($config, store) => ({
 				})
 			}
 		);
-
-		return data;
+		return data.data;
 	},
 	post: async (uri, postData, vars) => {
 		const data = {};
