@@ -1,4 +1,4 @@
-dateModified: 1661362995
+dateModified: 1661365736
 elementSources:
   craft\elements\Entry:
     -
@@ -141,7 +141,7 @@ plugins:
         - twitter
         - facebook
       siteGroupsSeparate: true
-      siteUrlOverride: ''
+      siteUrlOverride: $NUXT_BASE_URL
       sitemapsEnabled: true
       socialMediaPreviewTarget: true
       submitSitemaps: true
