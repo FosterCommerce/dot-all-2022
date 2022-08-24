@@ -3,6 +3,7 @@
 	import Product from '@/queries/Product.gql';
 	export default {
 		async asyncData({$axios, route}) {
+
 			const { data } = await $axios.$post('/api',
 				{
 					query: print(Product), variables: { slug: route.params.slug }
@@ -25,16 +26,16 @@
 			}
 		},
 		computed:{
-			productImageUrl() {
+			productImageUrl(){
 				return this.selectedVariant.image[0].url
 			}
 		},
 		methods: {
-			addToCart() {
+			addToCart(products) {
 				const item = {...this.selectedVariant, qty: 1, slug: this.product.slug}
 				this.$store.dispatch('cart/addNewItem', item)
 			},
-			sizeUpdated(size) {
+			sizeUpdated(size){
 				this.selectedVariant = this.variants.find(variant => variant.size === size)
 			}
 		},

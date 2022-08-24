@@ -27,7 +27,7 @@
 					</li>
 				</ul>
 				<div v-else class="w-full py-32 flex justify-center items-center">
-					<p class="text-xl text-gray-900">You currently have no items in your cart.</p>
+					<p class="text-xl text-gray-900">You currently have no item</p>
 				</div>
 			</section>
 			<div v-else class="h-[500px] lg:h-[600px] lg:col-span-7 animate-pulse flex justify-center items-center">

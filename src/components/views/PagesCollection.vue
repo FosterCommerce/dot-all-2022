@@ -1,33 +1,12 @@
 <script>
-	import EntriesPages from '@/queries/EntriesPages.gql';
-	import ProductsCatalog from '@/queries/ProductsCatalog.gql';
-
 	export default {
 		name: 'PagesCollection',
-		data() {
-			return {
-				products: [],
-				entry: {},
-			};
-		},
-		async fetch() {
-			const url = this.$route.fullPath.replace(/\/$/, '');
-			const slug = url.substring(url.lastIndexOf('/') + 1);
-			const entry = await this.$api.post(
-				'/api',
-				EntriesPages,
-				{ slug }
-			);
-
-			const products = await this.$api.post(
-				'/api',
-				ProductsCatalog,
-				{ categories: slug }
-			);
-
-			this.entry = entry?.data?.entries[0] ?? {};
-			this.products = products?.data?.products;
-		},
+		props: {
+			entry: {
+				type: Object,
+				required: true
+			}
+		}
 	};
 </script>
 
@@ -43,7 +22,7 @@
 		<section aria-labelledby="products-heading" class="max-w-7xl mx-auto overflow-hidden sm:px-6 lg:px-8">
 			<h2 id="products-heading" class="sr-only">Products</h2>
 			<div class="-mx-px border-l border-t border-gray-200 grid grid-cols-2 sm:mx-0 md:grid-cols-3 lg:grid-cols-4">
-				<ProductPreviewCard v-for="product of products" :key="product.id" :product="product" />
+				<ProductPreviewCard v-for="index in 12" :key="index" />
 			</div>
 		</section>
 

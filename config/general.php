@@ -44,5 +44,5 @@ return [
     'disallowRobots' => !$isProd,
 
 	//
-	'enableCsrfProtection' => false,
+	'enableCsrfProtection' => true,
 ];

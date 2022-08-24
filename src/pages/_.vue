@@ -24,14 +24,19 @@
 			const { data: queryData } = await store.dispatch('queryAPI', {
 				name: 'EntriesPages',
 				variables: {
-					uri: route.params.pathMatch,
 					limit: 1,
+					uri: route.params.pathMatch,
 				},
 				params: previewParams,
 			});
 
 			return {
-				entry: queryData?.entries[0] ?? {},
+				entry: queryData?.entries[0],
+			};
+		},
+		data() {
+			return {
+				entry: null,
 			};
 		},
 		computed: {
@@ -48,6 +53,6 @@
 
 <template>
 	<div>
-		<component :is="pageViewComponent" />
+		<component :is="pageViewComponent" :entry="entry" />
 	</div>
 </template>
