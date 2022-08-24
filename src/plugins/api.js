@@ -35,7 +35,7 @@ const api = ($config, store) => {
 	const get = async (action, config = {}) => {
 		const {
 			data
-		} = await axios.get(`${$config.baseURL}${action}`, withDefaultConfig({config}), );
+		} = await axios.get(`/api${action}`, withDefaultConfig({config}), );
 
 		return data;
 	}
@@ -47,14 +47,14 @@ const api = ($config, store) => {
 			...postData,
 		};
 
-		// console.log('stringified form data: ', stringify(data));
+		console.log('post', action)
 
-		const response = await axios.post($config.baseURL,
+		const response = await axios.post(`/api`,
 			stringify(data),
 			withDefaultConfig(config),
 
 		)
-		// console.log('postAction form response', response);
+
 		return response.data
 	}
 
@@ -67,30 +67,36 @@ const api = ($config, store) => {
 				qty: item.qty,
 			};
 
-			return await postAction('commerce/cart/update-cart', data);
+			return await postAction('/commerce/cart/update-cart', data);
 		},
 		updateQty: async (item) => {
 			const data = {
 				lineItems: {[item.itemId]: {'qty': item.qty}}
 			};
 
-			return await postAction('commerce/cart/update-cart', data)
+			return await postAction('/commerce/cart/update-cart', data)
 		},
 		removeItem: async (item) => {
 			const data = {
 				lineItems: {[item.itemId]: {'remove': true}}
 			};
 
-			return await postAction('commerce/cart/update-cart', data);
+			return await postAction('/commerce/cart/update-cart', data);
 		},
 		getCart: async () => {
 			return await get('/actions/commerce/cart/get-cart');
 		},
 		applyCoupon: async (item) => {
 			const data = {
-				couponCode: item.coupon
+				couponCode: item.couponCode
 			};
 			return await postAction('commerce/cart/update-cart', data);
+		},
+		clearNotices: async () => {
+			const data = {
+				clearNotices: 'clearNotices'
+			};
+			return await postAction('/commerce/cart/update-cart', data);
 		}
 	}
 };
