@@ -27,7 +27,7 @@
 		<div class="pt-10 pb-4 text-center">
 			<!-- Product Title and Link -->
 			<h3 class="text-base font-medium text-gray-900">
-				<a href="#">
+				<a :href="`/${product.uri}`">
 					<span aria-hidden="true" class="absolute inset-0"></span>
 					{{ product.title }}
 				</a>
