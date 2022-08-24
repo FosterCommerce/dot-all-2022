@@ -1,25 +1,50 @@
 import https from 'https';
 import axios from 'axios';
 import { stringify } from 'qs';
-import { print } from 'graphql';
+
+/*
+import { stringify } from 'qs';
+import merge from 'lodash/merge';
+*/
 
 const api = ($config, store) => ({
-	get: async (uri, action) => {
+	get: async (uri) => {
 		const csrfToken = await store.getters.getCsrfToken;
-		const params = {};
-		let url = $config.baseURL;
+		const {
+			data
+		} = await axios.get(`${$config.baseURL}${uri}`, {
+			withCredentials: true,
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest',
+				'Content-Type': 'application/x-www-form-urlencoded',
+				Accept: 'application/json',
+				'X-CSRF-Token': csrfToken,
+			},
+			httpsAgent: new https.Agent({
+				rejectUnauthorized: false
+			})
+		}, );
 
+		return data;
+	},
+	post: async (uri, postData) => {
+		const csrfToken = await store.getters.getCsrfToken;
+		const csrfTokeName = 'CRAFT_CSRF_TOKEN';
+		const data = {
+			action: uri,
+		};
 
-		if (!action) {
-			url += uri;
-		} else {
-			params.action = action;
-			params.CRAFT_CSRF_TOKEN = csrfToken;
+		data[csrfTokeName] = csrfToken;
+
+		if (Object.values(postData).length > 0) {
+			data.purchasableId = postData.id
+			data.qty = postData.qty
 		}
 
-		const { data } = await axios.get(
-			url,
-			params,
+		console.log('stringified form data: ', stringify(data));
+
+		const response = await axios.post($config.baseURL,
+			stringify(data),
 			{
 				withCredentials: true,
 				headers: {
@@ -31,57 +56,134 @@ const api = ($config, store) => ({
 				httpsAgent: new https.Agent({
 					rejectUnauthorized: false
 				})
-			}
-		);
+			},
+			
+		)
+		console.log('form response: ', response);
+		return response.data
 
-		return data;
 	},
-	post: async (uri, postData, vars) => {
-		const data = {};
-		const headers = {
-			'X-Requested-With': 'XMLHttpRequest',
-			Accept: 'application/json',
+	updateQty: async (uri, postData) => {
+		const csrfToken = await store.getters.getCsrfToken;
+		const csrfTokeName = 'CRAFT_CSRF_TOKEN';
+		console.log(postData)
+		const data = {
+			action: uri,
+			lineItems: {[postData.itemId]: {'qty': postData.qty}}
 		};
-		let postURL = $config.baseURL;
-		let query;
 
-		if (uri !== '/api') { // not GraphQL
-			const csrfToken = await store.getters.getCsrfToken;
-			const csrfTokeName = 'CRAFT_CSRF_TOKEN';
+		data[csrfTokeName] = csrfToken;
+		console.log('stringified form data: ', stringify(data));
 
-			data[csrfTokeName] = csrfToken;
-
-			headers['Content-Type'] = 'application/x-www-form-urlencoded';
-			headers['X-CSRF-Token'] = csrfToken;
-			data.action = uri;
-
-			if (Object.values(postData).length) {
-				Object.assign(data, postData);
-			}
-
-			query = stringify(data);
-		} else { // GraphQL
-			postURL += '/api';
-			headers['Content-Type'] = 'application/json';
-			query = { query: print(postData) };
-
-			if (vars) {
-				query.variables = vars;
-			}
-		}
-
-		const response = await axios.post(postURL,
-			query,
+		const response = await axios.post($config.baseURL,
+			stringify(data),
 			{
 				withCredentials: true,
-				headers,
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest',
+					'Content-Type': 'application/x-www-form-urlencoded',
+					Accept: 'application/json',
+					'X-CSRF-Token': csrfToken,
+				},
 				httpsAgent: new https.Agent({
 					rejectUnauthorized: false
 				})
 			},
-		);
+			
+		)
+		console.log('form response: ', response);
+		return response.data
 
-		return response?.data;
+	},
+	removeItem: async (uri, postData) => {
+		const csrfToken = await store.getters.getCsrfToken;
+		const csrfTokeName = 'CRAFT_CSRF_TOKEN';
+		console.log(postData)
+		const data = {
+			action: uri,
+			lineItems: {[postData.itemId]: {'remove': true}}
+		};
+
+		data[csrfTokeName] = csrfToken;
+		console.log('stringified form data: ', stringify(data));
+
+		const response = await axios.post($config.baseURL,
+			stringify(data),
+			{
+				withCredentials: true,
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest',
+					'Content-Type': 'application/x-www-form-urlencoded',
+					Accept: 'application/json',
+					'X-CSRF-Token': csrfToken,
+				},
+				httpsAgent: new https.Agent({
+					rejectUnauthorized: false
+				})
+			},
+			
+		)
+		console.log('form response: ', response);
+		return response.data
+
+	},
+	getCart: async (uri) => {
+		const csrfToken = await store.getters.getCsrfToken;
+		const params = {
+			action: uri,
+			'CRAFT_CSRF_TOKEN': csrfToken,
+		};
+
+		const response = await axios.get($config.baseURL,
+			{
+				params,
+				withCredentials: true,
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest',
+					'Content-Type': 'application/x-www-form-urlencoded',
+					Accept: 'application/json',
+					'X-CSRF-Token': csrfToken,
+				},
+				httpsAgent: new https.Agent({
+					rejectUnauthorized: false
+				})
+			}
+			
+		)
+		return response.data
+
+	},
+	applyCoupon: async (uri, postData) => {
+		const csrfToken = await store.getters.getCsrfToken;
+		const csrfTokeName = 'CRAFT_CSRF_TOKEN';
+		console.log(postData)
+		const data = {
+			action: uri,
+			couponCode: postData.coupon
+		};
+
+		data[csrfTokeName] = csrfToken;
+		console.log('stringified form data: ', stringify(data));
+
+		const response = await axios.post($config.baseURL,
+			stringify(data),
+			{
+				withCredentials: true,
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest',
+					'Content-Type': 'application/x-www-form-urlencoded',
+					Accept: 'application/json',
+					'X-CSRF-Token': csrfToken,
+				},
+				httpsAgent: new https.Agent({
+					rejectUnauthorized: false
+				})
+			},
+			
+		)
+		console.log('form response: ', response);
+		return response.data
+
 	},
 });
 
