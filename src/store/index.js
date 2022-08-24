@@ -18,11 +18,13 @@ export const getters = {
 	// Returns the primary navigation link elements from the EntrySettings results
 	getPrimaryNav(state) {
 		const linkArr = [];
+
 		state.primaryNav.forEach((obj) => {
 			const linkObj = {
 				target: obj.navLink.target ?? '_self',
 				type: obj.navLink.type === 'entry' ? 'internal' : 'external'
 			}
+
 			if(obj.navLink.type === 'entry' && obj.navLink.element) {
 				linkObj.label = obj.navLink.customText ?? obj.navLink.element.title;
 				linkObj.url = '/' + obj.navLink.element.uri;
@@ -30,8 +32,10 @@ export const getters = {
 				linkObj.label = obj.navLink.customText;
 				linkObj.url = obj.navLink.url;
 			}
+
 			linkArr.push(linkObj);
 		});
+
 		return linkArr;
 	},
 	getCsrfToken(state) {
@@ -52,6 +56,7 @@ export const actions = {
 		const { data: queryData, queryErrors } = await this.$axios.$post('/api', {
 			query: print(query),
 		});
+
 		commit('setPrimaryNav', queryData.entry.primaryNavigation);
 	},
 	/**
@@ -65,6 +70,7 @@ export const actions = {
 	 */
 	async queryAPI({ commit }, { name, variables, params }) {
 		const query = await import(`@/queries/${name}.gql`).then((module) => module.default);
+
 		return await this.$axios.$post(
 			'/api',
 			{
