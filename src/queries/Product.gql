@@ -21,6 +21,7 @@ query Product($slug: [String] = ["*"]) {
       sku
       size
       price
+      stock
       images {
         ... on images_Asset {
           id

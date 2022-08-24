@@ -38,6 +38,8 @@
 					<input
 						id="quantity_5"
 						name="quantity_5"
+						min="0"
+						:max="lineItem.stock"
 						class="block max-w-[64px] rounded-md border border-gray-300 py-1.5 text-base leading-5 font-medium text-gray-700 text-left shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 						type="number"
 						:value="lineItem.qty"

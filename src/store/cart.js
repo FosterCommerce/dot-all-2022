@@ -10,6 +10,7 @@ export const state = () => ({
     totalAsCurrency: '$0.00',
     number: null,
   },
+  cartErrors: []
  
 });
 
@@ -38,6 +39,12 @@ export const getters = {
    */
   getloading(state) {
     return state.loading;
+  },
+  /**
+   * Get Cart errors
+   */
+  getCartErrors(state) {
+    return state.cartErrors;
   },
 };
 
@@ -103,6 +110,12 @@ export const mutations = {
   setLoading(state, payload) {
     state.loading = payload;
   },
+  /**
+   * Set the cart error
+   */
+  setCartErrors(state, payload) {
+    state.cartErrors = payload;
+  },
 };
 
 export const actions = {
@@ -116,40 +129,75 @@ export const actions = {
    * Add a new item to the cart (to modify quantity, use setItemQty)
    */
   async addNewItem({ commit }, item) {
-    const { cart } = await this.$api.post('commerce/cart/update-cart', {
-      purchasableId: item.id,
-      qty: item.qty
-    });
-    const newItem = cart.lineItems.find(cartItem => String(cartItem.purchasableId) === String(item.id));
+    try {
+        const {cart} = await this.$api.post('commerce/cart/update-cart', {
+          purchasableId: item.id,
+          qty: item.qty
+        });
+        
+        const newItem = cart.lineItems.find(cartItem => String(cartItem.purchasableId) === String(item.id));
 
-    commit('addNewItem', {...item, itemId: newItem.id});
-    commit('setCurrentCart', cart);
+        commit('addNewItem', {...item, itemId: newItem.id});
+        commit('setCurrentCart', cart);
+    } catch (error) {
+      handleError(commit, error)
+    }
+    
+    
   },
   /**
    * Remove an item entirely from the cart
    */
-  async removeItem({ commit }, item) {
-    const { cart } = await this.$api.post('commerce/cart/update-cart', {
-      lineItems: {[item.itemId]: {'remove': true}},
-    });
+  async removeItem({ commit, dispatch }, item) {
+   
+    try {
+       const {
+         cart
+       } = await this.$api.post('commerce/cart/update-cart', {
+         lineItems: {
+           [item.itemId]: {
+             'remove': true
+           }
+         },
+       });
 
-    commit('removeItem', item);
-    commit('setCurrentCart', cart);
+       commit('removeItem', item);
+       commit('setCurrentCart', cart);
+    } catch (error) {
+       handleError(commit, error)
+    }
   },
   /**
    * Set the quantity of an item
    */
   async setItemQty({dispatch, commit }, item) {
-    const { cart } = await this.$api.post('commerce/cart/update-cart', {
-      purchasableId: item.id,
-      qty: item.qty
-    });
+    try {
+      const {
+        cart
+      } = await this.$api.post('commerce/cart/update-cart', {
+        purchasableId: item.id,
+        qty: item.qty
+      });
 
-    if (item.qty === 0) {
-      return dispatch('removeItem', item)
+      if (item.qty === 0) {
+        return dispatch('removeItem', item)
+      }
+
+      commit('setItemQty', item);
+      commit('setCurrentCart', cart);
+    } catch (error) {
+      handleError(commit, error)
     }
+  },
 
-    commit('setItemQty', item);
+  /**
+   * Clear Cart notices
+   */
+  async clearNotices({commit }) {
+    const { cart } = await this.$api.post('commerce/cart/update-cart', {
+      clearNotices: 'clearNotices'
+    });
+    console.log(cart)
     commit('setCurrentCart', cart);
   },
 
@@ -173,4 +221,29 @@ export const actions = {
     commit('setLoading', payload);
   },
 }
+
+ const handleError = (commit, error) =>{
+    let errors = []
+    if (error.response.status === 400) {
+      const cartErrors = Object.values(error.response.data.errors)
+      cartErrors.forEach(parentErrors => {
+        parentErrors.forEach(error => {
+          errors = [...errors, error]
+        })
+      })
+      commit('setCartErrors', errors)
+      setTimeout(() => {
+        commit('setCartErrors', [])
+      }, 6000);
+    } else {
+      commit('setCartErrors', ["Your request coud not be completed at the moment. Please try again"])
+      setTimeout(() => {
+        commit('setCartErrors', [])
+      }, 6000);
+    }
+    return {
+      success: false,
+      error
+    }
+  }
 
