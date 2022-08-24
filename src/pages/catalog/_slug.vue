@@ -4,7 +4,7 @@
 	export default {
 		async asyncData({$axios, route}) {
 
-			const { data } = await $axios.$post('/api',
+			const { data } = await $axios.$post('/graphql',
 				{
 					query: print(Product), variables: { slug: route.params.slug }
 				},
