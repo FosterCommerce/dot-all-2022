@@ -49,7 +49,7 @@ export const actions = {
 	async nuxtServerInit({ commit, dispatch }) {
 		// Fetch the settings entry to get the sites global navigation
 		const query = await import('@/queries/EntrySettings.gql').then((module) => module.default);
-		const { data: queryData, queryErrors } = await this.$axios.$post('/api', {
+		const { data: queryData, queryErrors } = await this.$axios.$post('/graphql', {
 			query: print(query),
 		});
 		commit('setPrimaryNav', queryData.entry.primaryNavigation);
@@ -66,7 +66,7 @@ export const actions = {
 	async queryAPI({ commit }, { name, variables, params }) {
 		const query = await import(`@/queries/${name}.gql`).then((module) => module.default);
 		return await this.$axios.$post(
-			'/api',
+			'/graphql',
 			{
 				query: print(query),
 				variables,
