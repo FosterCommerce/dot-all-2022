@@ -88,7 +88,13 @@ const api = ($config, store) => {
 		},
 		applyCoupon: async (item) => {
 			const data = {
-				couponCode: item.coupon
+				couponCode: item.couponCode
+			};
+			return await postAction('commerce/cart/update-cart', data);
+		},
+		clearNotices: async () => {
+			const data = {
+				clearNotices: 'clearNotices'
 			};
 			return await postAction('/commerce/cart/update-cart', data);
 		}

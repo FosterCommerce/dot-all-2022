@@ -10,6 +10,7 @@ export const state = () => ({
     totalAsCurrency: '$0.00',
     number: null,
   },
+  cartErrors: []
  
 });
 
@@ -39,6 +40,12 @@ export const getters = {
   getLoading(state) {
     return state.loading;
   },
+  /**
+   * Get Cart errors
+   */
+  getCartErrors(state) {
+    return state.cartErrors;
+  },
 };
 
 export const mutations = {
@@ -64,7 +71,8 @@ export const mutations = {
    * Remove an item entirely from the cart
    */
   removeItem(state, payload) {
-    state.items.splice(payload, 1);
+    const items = state.items.filter(item => item.id !== payload.id)
+    state.items = items
     localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
   },
   /**
@@ -100,6 +108,12 @@ export const mutations = {
   setLoading(state, payload) {
     state.loading = payload;
   },
+  /**
+   * Set the cart error
+   */
+  setCartErrors(state, payload) {
+    state.cartErrors = payload;
+  },
 };
 
 export const actions = {
@@ -112,29 +126,106 @@ export const actions = {
   /**
    * Add a new item to the cart (to modify quantity, use setItemQty)
    */
-  async addNewItem({ commit }, item) {
-    const response = await this.$api.addItem(item);
-    const newItem = response.cart.lineItems.find(cartItem => String(cartItem.purchasableId) === String(item.id))
-    commit('addNewItem', {...item, itemId: newItem.id});
-    commit('setCurrentCart', response.cart);
+  async addNewItem({ commit, dispatch }, item) {
+    try {
+        const {cart} = await this.$api.addItem({
+          id: item.id,
+          qty: item.qty
+        });
+       const errorNotices = handleNotices({commit, dispatch}, cart.notices)
+       if (errorNotices.length < 1) {
+         const newItem = cart.lineItems.find(cartItem => String(cartItem.purchasableId) === String(item.id));
+
+         commit('addNewItem', {
+           ...item,
+           itemId: newItem.id
+         });
+         commit('setCurrentCart', cart);
+       }
+    } catch (error) {
+      handleError(commit, error)
+    }
+    
+    
   },
   /**
    * Remove an item entirely from the cart
    */
-  async removeItem({ commit }, item) {
-      await this.$api.removeItem(item);
-      commit('removeItem', item);
+  async removeItem({ commit, dispatch }, item) {
+   
+    try {
+       const {
+         cart
+       } = await this.$api.removeItem({
+           itemId:item.itemId
+         },
+       );
+
+       const errorNotices = handleNotices({commit, dispatch}, cart.notices)
+       if (errorNotices.length < 1) {
+          commit('removeItem', item);
+          commit('setCurrentCart', cart);
+       }
+
+    } catch (error) {
+       handleError(commit, error)
+    }
   },
   /**
    * Set the quantity of an item
    */
   async setItemQty({dispatch, commit }, item) {
-    const response = await this.$api.updateQty(item);
-    if (item.qty === 0) {
-      return dispatch('removeItem', item)
+    try {
+      const {
+        cart
+      } = await this.$api.updateQty({
+        itemId: item.itemId,
+        qty: item.qty
+      });
+
+
+      const errorNotices = handleNotices({commit, dispatch}, cart.notices)
+      if (errorNotices.length < 1) {
+        if (item.qty === 0) {
+          return dispatch('removeItem', item)
+        }
+        commit('setItemQty', item);
+        commit('setCurrentCart', cart);
+        return true
+      }
+
+      
+    } catch (error) {
+      handleError(commit, error)
+      return false
     }
-    commit('setItemQty', item);
-    commit('setCurrentCart', response.cart);
+  },
+  /**
+   * Apply coupon
+   */
+  async applyCoupon({dispatch, commit }, item) {
+    try {
+       const {cart} = await this.$api.applyCoupon({couponCode: item.couponCode});
+
+      const errorNotices = handleNotices({commit, dispatch}, cart.notices)
+      if (errorNotices.length < 1) {
+        commit('setItemQty', item);
+        commit('setCurrentCart', cart);
+        return true
+      }
+
+    } catch (error) {
+      handleError(commit, error)
+      return false
+    }
+  },
+
+  /**
+   * Clear Cart notices
+   */
+  async clearNotices({commit }) {
+    const { cart } = await this.$api.clearNotices();
+    commit('setCurrentCart', cart);
   },
 
   /**
@@ -156,5 +247,51 @@ export const actions = {
   setLoading({ commit }, payload) {
     commit('setLoading', payload);
   },
+
+  /**
+   * set cart Errors
+   */
+  setCartErrors({ commit }, payload) {
+    commit('setCartErrors', payload);
+  },
 }
+
+const handleNotices = ({commit, dispatch}, notices) => {
+  let errors = []
+  notices.forEach(notice => {
+    errors = [...errors, notice.message]
+  })
+  commit('setCartErrors', errors)
+  setTimeout(() => {
+    dispatch('clearNotices')
+    commit('setCartErrors', [])
+  }, 6000);
+
+  return errors
+}
+
+ const handleError = (commit, error) =>{
+    let errors = []
+    if (error.response.status === 400) {
+      const cartErrors = Object.values(error.response.data.errors)
+      cartErrors.forEach(parentErrors => {
+        parentErrors.forEach(error => {
+          errors = [...errors, error]
+        })
+      })
+      commit('setCartErrors', errors)
+      setTimeout(() => {
+        commit('setCartErrors', [])
+      }, 6000);
+    } else {
+      commit('setCartErrors', ["Your request coud not be completed at the moment. Please try again"])
+      setTimeout(() => {
+        commit('setCartErrors', [])
+      }, 6000);
+    }
+    return {
+      success: false,
+      error
+    }
+  }
 
