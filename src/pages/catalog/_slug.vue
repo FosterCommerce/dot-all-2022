@@ -50,6 +50,25 @@
 			variantImage() {
 				return this.selectedVariant.image[0] ?? null
 			},
+			optionsMatrix() {
+				const matrix = {};
+				this.variants.forEach((sizeVariant) => {
+					matrix[sizeVariant.size] = this.variants.filter((variant) => {
+						return variant.size === sizeVariant.size;
+					}).map(colorVariant => colorVariant.color);
+				});
+				return matrix;
+			},
+			sizeOptions() {
+				const selectedColor = this.selectedVariant.color;
+				const filteredVariants = this.variants.filter((variant) => {
+					return variant.color === selectedColor;
+				});
+				return filteredVariants.map( variant => variant.size);
+			},
+			colorOptions() {
+				return this.optionsMatrix[this.selectedVariant.size]
+			},
 		},
 		methods: {
 			/** Adds the currently selected variant to the cart */
@@ -61,11 +80,11 @@
 				this.$store.dispatch('cart/addNewItem', item)
 			},
 			/** Selects the variant based on size */
-			sizeUpdated(size){
-				this.selectedVariant = this.variants.find(variant => variant.size === size)
+			sizeUpdated(payload) {
+				this.selectedVariant = this.variants.find(variant => variant.size === payload.value)
 			},
-			findVariant() {
-
+			colorUpdated(payload) {
+				this.selectedVariant = this.variants.find(variant => variant.color === payload.value)
 			}
 		},
 	};
@@ -109,9 +128,13 @@
 			<div class="mt-8 lg:col-span-5">
 
 				<form class="space-y-8">
-					<ProductColorPicker />
+					<ProductColorPicker
+						:colors="colorOptions"
+						:current="selectedVariant.color"
+					/>
 					<ProductSizePicker
-						:sizes="variants.map( variant => variant.size)"
+						:sizes="sizeOptions"
+						:current="selectedVariant.size"
 						@size-updated="sizeUpdated"
 					/>
 

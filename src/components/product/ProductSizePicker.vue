@@ -15,7 +15,10 @@
 		methods: {
 			updateSelected(size){
 				this.selected = size
-				this.$emit('size-updated', size)
+				this.$emit('size-updated', {
+					type: 'size',
+					value: size
+				});
 			}
 		}
 	}
