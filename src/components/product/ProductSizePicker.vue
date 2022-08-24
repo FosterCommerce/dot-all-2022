@@ -1,8 +1,8 @@
 <script>
 	export default {
 		name: 'ProductSizePicker',
-		props:{
-			sizes:{
+		props: {
+			sizes: {
 				type: Array,
 				default: () => [],
 			}

@@ -1,42 +1,71 @@
 <script>
-	import { print } from 'graphql';
-	import Product from '@/queries/Product.gql';
 	export default {
-		async asyncData({$axios, route}) {
+		async asyncData({ route, store }) {
+			// Check for Craft Live Preview params
+			let previewParams = null;
+			if (route.query['x-craft-live-preview']) {
+				previewParams = {
+					token: route.query.token,
+					'x-craft-live-preview': route.query['x-craft-live-preview'],
+				};
+			}
 
-			const { data } = await $axios.$post('/api',
-				{
-					query: print(Product), variables: { slug: route.params.slug }
+			// Call the query API method to get the product data from Craft
+			const { data: queryData } = await store.dispatch('queryAPI', {
+				name: 'ProductsCatalog',
+				variables: {
+					limit: 1,
+					slug: route.params.slug,
 				},
-				{
-					headers: {
-						'Content-Type': 'application/json',
-						Accept: 'application/json'
-					}
-				});
-			return{
-				product: data.product,
-				variants: data.variants,
-				selectedVariant: data.variants[0]
+				params: previewParams,
+			});
+
+			// Break out the result of the query into product, variants,
+			// and the default variant as the initially selected one
+			const product = queryData.products[0] ?? null;
+			const variants = product.variants ?? [];
+			const selectedVariant = variants.find(variant => variant.isDefault === true) ?? null;
+			const currentSize = selectedVariant.size ?? null;
+			const currentColor = selectedVariant.color ?? null;
+
+			return {
+				product,
+				variants,
+				selectedVariant,
+				currentSize,
+				currentColor,
 			}
 		},
 		data() {
 			return {
-				selectedVariant: null
+				product: null,
+				variants: [],
+				selectedVariant: null,
+				currentSize: null,
+				currentColor: null,
 			}
 		},
-		computed:{
-			productImageUrl(){
-				return this.selectedVariant.image[0].url
-			}
+		computed: {
+			/** Gets the currently selected variants primary image data */
+			variantImage() {
+				return this.selectedVariant.image[0] ?? null
+			},
 		},
 		methods: {
-			addToCart(products) {
-				const item = {...this.selectedVariant, qty: 1, slug: this.product.slug}
+			/** Adds the currently selected variant to the cart */
+			addToCart() {
+				const item = {
+					...this.selectedVariant,
+					qty: 1
+				}
 				this.$store.dispatch('cart/addNewItem', item)
 			},
+			/** Selects the variant based on size */
 			sizeUpdated(size){
 				this.selectedVariant = this.variants.find(variant => variant.size === size)
+			},
+			findVariant() {
+
 			}
 		},
 	};
@@ -47,8 +76,8 @@
 		<div class="lg:grid lg:grid-cols-12 lg:auto-rows-min lg:gap-x-8">
 			<div class="lg:col-start-8 lg:col-span-5">
 				<div class="flex justify-between">
-					<h1 class="text-xl font-medium text-gray-900">{{product.title}}</h1>
-					<p class="text-xl font-medium text-gray-900">${{selectedVariant.price}}</p>
+					<h1 class="text-xl font-medium text-gray-900">{{ product.title }}</h1>
+					<p class="text-xl font-medium text-gray-900">{{ selectedVariant.priceAsCurrency }}</p>
 				</div>
 			</div>
 
@@ -57,43 +86,49 @@
 				<h2 class="sr-only">Images</h2>
 				<div class="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-3 lg:gap-8">
 					<!-- Primary Image -->
-					<img :src="productImageUrl" alt="Back of women&#039;s Basic Tee in black." class="lg:col-span-2 lg:row-span-2 rounded-lg">
+					<nuxt-img
+						v-if="variantImage"
+						:src="variantImage.url"
+						:alt="variantImage.alt"
+						class="lg:col-span-2 lg:row-span-2 rounded-lg"
+						loading="lazy"
+					/>
 
-					<!-- Secondary Images -->
-					<img v-for="(image, id) in selectedVariant.images" :key="id" :src="image.url" alt="Side profile of women&#039;s Basic Tee in black." class="hidden lg:block rounded-lg">
+					<!-- Secondary (gallery) Images -->
+					<nuxt-img
+						v-for="image in selectedVariant.images"
+						:key="image.id"
+						:src="image.url"
+						:alt="image.alt"
+						class="hidden lg:block rounded-lg"
+						loading="lazy"
+					/>
 				</div>
 			</div>
 
 			<div class="mt-8 lg:col-span-5">
+
 				<form class="space-y-8">
 					<ProductColorPicker />
-					<ProductSizePicker :sizes="variants.map( variant => variant.size)" @size-updated="sizeUpdated" />
+					<ProductSizePicker
+						:sizes="variants.map( variant => variant.size)"
+						@size-updated="sizeUpdated"
+					/>
 
-					<!-- Add to Cart button -->
 					<button
+						v-if="selectedVariant.isAvailable"
 						type="button"
 						class="mt-8 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-						@click='addToCart({ id: selectedVariant.id, qty: 1 })'
+						@click='addToCart'
 					>
 						Add to cart
 					</button>
 				</form>
 
 				<div class="mt-10">
-					<h2 class="text-base font-medium text-gray-900">Description</h2>
-
-					<div class="mt-4 space-y-6 prose prose-sm text-gray-500">
-						<!-- Product Description (content blocks here) -->
-						<div>
-							<p>The Basic tee is an honest new take on a classic. The tee uses super soft, pre-shrunk cotton for true comfort and a dependable fit. They are hand cut and sewn locally, with a special dye technique that gives each tee it's own look.</p>
-							<p>Looking to stock your closet? The Basic tee also comes in a 3-pack or 5-pack at a bundle discount.</p>
-						</div>
-
-						<ul role="list">
-							<li>Quis elit egestas venenatis mattis dignissim.</li>
-							<li>Cras cras lobortis vitae vivamus ultricies facilisis tempus.</li>
-							<li>Orci in sit morbi dignissim metus diam arcu pretium.</li>
-						</ul>
+					<!-- Product Content Blocks -->
+					<div class="space-y-6 prose prose-sm text-gray-500">
+						<ContentBlocks :blocks="product.contentBlocks" />
 					</div>
 
 					<!-- Policies (Static Text) -->
