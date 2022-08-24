@@ -7,185 +7,93 @@ import { stringify } from 'qs';
 import merge from 'lodash/merge';
 */
 
-const api = ($config, store) => ({
-	get: async (uri) => {
-		const csrfToken = await store.getters.getCsrfToken;
-		const {
-			data
-		} = await axios.get(`${$config.baseURL}${uri}`, {
+const api = ($config, store) => {
+	/**
+	 * Utility to add default request config to requests, such as adding commonly used headers.
+	 *
+	 * @param {*} requestConfig custom request config to be merged with the default config.
+	 * @returns merged request config.
+	 */
+	const withDefaultConfig = (requestConfig = {}) => {
+		const config = {
+			...requestConfig,
 			withCredentials: true,
 			headers: {
 				'X-Requested-With': 'XMLHttpRequest',
 				'Content-Type': 'application/x-www-form-urlencoded',
 				Accept: 'application/json',
-				'X-CSRF-Token': csrfToken,
+				...requestConfig.headers,
 			},
 			httpsAgent: new https.Agent({
 				rejectUnauthorized: false
-			})
-		}, );
-
-		return data;
-	},
-	post: async (uri, postData) => {
-		const csrfToken = await store.getters.getCsrfToken;
-		const csrfTokeName = 'CRAFT_CSRF_TOKEN';
-		const data = {
-			action: uri,
-		};
-
-		data[csrfTokeName] = csrfToken;
-
-		if (Object.values(postData).length > 0) {
-			data.purchasableId = postData.id
-			data.qty = postData.qty
+			}),
 		}
 
-		console.log('stringified form data: ', stringify(data));
+		return config;
+	}
 
-		const response = await axios.post($config.baseURL,
-			stringify(data),
-			{
-				withCredentials: true,
-				headers: {
-					'X-Requested-With': 'XMLHttpRequest',
-					'Content-Type': 'application/x-www-form-urlencoded',
-					Accept: 'application/json',
-					'X-CSRF-Token': csrfToken,
-				},
-				httpsAgent: new https.Agent({
-					rejectUnauthorized: false
-				})
-			},
-			
-		)
-		console.log('form response: ', response);
-		return response.data
+	const get = async (action, config = {}) => {
+		const {
+			data
+		} = await axios.get(`${$config.baseURL}${action}`, withDefaultConfig({config}), );
 
-	},
-	updateQty: async (uri, postData) => {
-		const csrfToken = await store.getters.getCsrfToken;
-		const csrfTokeName = 'CRAFT_CSRF_TOKEN';
-		console.log(postData)
+		return data;
+	}
+
+	const postAction = async (action, postData, config = {}) => {
 		const data = {
-			action: uri,
-			lineItems: {[postData.itemId]: {'qty': postData.qty}}
+			action,
+			CRAFT_CSRF_TOKEN: await store.getters.getCsrfToken,
+			...postData,
 		};
 
-		data[csrfTokeName] = csrfToken;
-		console.log('stringified form data: ', stringify(data));
+		// console.log('stringified form data: ', stringify(data));
 
 		const response = await axios.post($config.baseURL,
 			stringify(data),
-			{
-				withCredentials: true,
-				headers: {
-					'X-Requested-With': 'XMLHttpRequest',
-					'Content-Type': 'application/x-www-form-urlencoded',
-					Accept: 'application/json',
-					'X-CSRF-Token': csrfToken,
-				},
-				httpsAgent: new https.Agent({
-					rejectUnauthorized: false
-				})
-			},
-			
+			withDefaultConfig(config),
+
 		)
-		console.log('form response: ', response);
+		// console.log('postAction form response', response);
 		return response.data
+	}
 
-	},
-	removeItem: async (uri, postData) => {
-		const csrfToken = await store.getters.getCsrfToken;
-		const csrfTokeName = 'CRAFT_CSRF_TOKEN';
-		console.log(postData)
-		const data = {
-			action: uri,
-			lineItems: {[postData.itemId]: {'remove': true}}
-		};
+	return {
+		get,
+		postAction,
+		addItem: async(item) => {
+			const data = {
+				purchasableId: item.id,
+				qty: item.qty,
+			};
 
-		data[csrfTokeName] = csrfToken;
-		console.log('stringified form data: ', stringify(data));
+			return await postAction('commerce/cart/update-cart', data);
+		},
+		updateQty: async (item) => {
+			const data = {
+				lineItems: {[item.itemId]: {'qty': item.qty}}
+			};
 
-		const response = await axios.post($config.baseURL,
-			stringify(data),
-			{
-				withCredentials: true,
-				headers: {
-					'X-Requested-With': 'XMLHttpRequest',
-					'Content-Type': 'application/x-www-form-urlencoded',
-					Accept: 'application/json',
-					'X-CSRF-Token': csrfToken,
-				},
-				httpsAgent: new https.Agent({
-					rejectUnauthorized: false
-				})
-			},
-			
-		)
-		console.log('form response: ', response);
-		return response.data
+			return await postAction('commerce/cart/update-cart', data)
+		},
+		removeItem: async (item) => {
+			const data = {
+				lineItems: {[item.itemId]: {'remove': true}}
+			};
 
-	},
-	getCart: async (uri) => {
-		const csrfToken = await store.getters.getCsrfToken;
-		const params = {
-			action: uri,
-			'CRAFT_CSRF_TOKEN': csrfToken,
-		};
-
-		const response = await axios.get($config.baseURL,
-			{
-				params,
-				withCredentials: true,
-				headers: {
-					'X-Requested-With': 'XMLHttpRequest',
-					'Content-Type': 'application/x-www-form-urlencoded',
-					Accept: 'application/json',
-					'X-CSRF-Token': csrfToken,
-				},
-				httpsAgent: new https.Agent({
-					rejectUnauthorized: false
-				})
-			}
-			
-		)
-		return response.data
-
-	},
-	applyCoupon: async (uri, postData) => {
-		const csrfToken = await store.getters.getCsrfToken;
-		const csrfTokeName = 'CRAFT_CSRF_TOKEN';
-		console.log(postData)
-		const data = {
-			action: uri,
-			couponCode: postData.coupon
-		};
-
-		data[csrfTokeName] = csrfToken;
-		console.log('stringified form data: ', stringify(data));
-
-		const response = await axios.post($config.baseURL,
-			stringify(data),
-			{
-				withCredentials: true,
-				headers: {
-					'X-Requested-With': 'XMLHttpRequest',
-					'Content-Type': 'application/x-www-form-urlencoded',
-					Accept: 'application/json',
-					'X-CSRF-Token': csrfToken,
-				},
-				httpsAgent: new https.Agent({
-					rejectUnauthorized: false
-				})
-			},
-			
-		)
-		console.log('form response: ', response);
-		return response.data
-
-	},
-});
+			return await postAction('commerce/cart/update-cart', data);
+		},
+		getCart: async () => {
+			return await get('/actions/commerce/cart/get-cart');
+		},
+		applyCoupon: async (item) => {
+			const data = {
+				couponCode: item.coupon
+			};
+			return await postAction('commerce/cart/update-cart', data);
+		}
+	}
+};
 
 export default ({ app, $config, store }, inject) => {
 	inject('api', api($config, store));
