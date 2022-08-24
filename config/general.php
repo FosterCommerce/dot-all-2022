@@ -43,6 +43,12 @@ return [
     // Whether crawlers should be allowed to index pages and following links
     'disallowRobots' => !$isProd,
 
-	//
+	// Gotta keep it locked down tight
 	'enableCsrfProtection' => true,
+
+	// The maximum number of revisions that should be stored for each element.
+	'maxRevisions' => 8,
+
+	// We're disabling auto-saving of drafts to improve entry saving performance
+	'autosaveDrafts' => false,
 ];

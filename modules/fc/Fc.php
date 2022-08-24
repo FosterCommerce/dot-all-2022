@@ -2,6 +2,9 @@
 
 namespace modules\fc;
 
+use craft\events\ElementEvent;
+use craft\helpers\ElementHelper;
+use craft\services\Elements;
 use yii\base\Event;
 use yii\base\Module;
 
@@ -59,5 +62,16 @@ class Fc extends Module
                 $variable->set('fc', FcVariable::class);
             }
         );
+
+		// Prevent the search index from getting updated for drafts
+		Event::on(
+			Elements::class,
+			Elements::EVENT_BEFORE_UPDATE_SEARCH_INDEX,
+			function (ElementEvent $event) {
+				if (ElementHelper::isDraft($event->element)) {
+					$event->isValid = false;
+				}
+			}
+		);
     }
 }

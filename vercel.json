@@ -8,5 +8,8 @@
         "serverFiles": ["src/queries/**"]
       }
     }
+  ],
+  "rewrites": [
+    { "source": "//:match*", "destination": process.env.CRAFT_BASE_URL +,:match*" }
   ]
 }
