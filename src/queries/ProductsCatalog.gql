@@ -58,7 +58,9 @@ fragment TypeProductsCatalog on ProductInterface {
 fragment VariantCatalog on VariantInterface {
     id
     price
+    priceAsCurrency
     salePrice
+    salePriceAsCurrency
     sku
     isDefault
     isAvailable
