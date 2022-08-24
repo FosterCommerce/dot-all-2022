@@ -31,7 +31,7 @@
 			});
 
 			return {
-				entry: queryData?.entries[0],
+				entry: queryData?.entries[0] ?? {},
 			};
 		},
 		computed: {
