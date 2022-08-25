@@ -20,9 +20,6 @@ const api = ($config, store) => {
 				Accept: 'application/json',
 				...requestConfig.headers,
 			},
-			httpsAgent: new https.Agent({
-				rejectUnauthorized: false,
-			}),
 		};
 	}
 

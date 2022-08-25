@@ -1,3 +1,5 @@
+import https from 'https';
+
 export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'server',
@@ -54,6 +56,9 @@ export default {
     proxyHeaders: false,
     credentials: true,
     proxy: true,
+		httpsAgent: new https.Agent({
+			rejectUnauthorized: process.env.CRAFT_ENVIRONMENT !== 'dev',
+		}),
   },
 
   proxy: {
