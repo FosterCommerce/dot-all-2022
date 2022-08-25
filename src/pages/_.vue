@@ -4,13 +4,14 @@
 
 	import PagesGeneral from '@/components/views/PagesGeneral';
 	import PagesCollection from '@/components/views/PagesCollection';
+	import EntriesPages from '@/queries/EntriesPages.gql';
 
 	export default {
 		components: {
 			PagesGeneral,
 			PagesCollection
 		},
-		async asyncData({ route, store }) {
+		async asyncData({ $api, route }) {
 			// Check for Craft Live Preview params
 			let previewParams = null;
 			if (route.query['x-craft-live-preview']) {
@@ -21,14 +22,14 @@
 			}
 
 			// Call the query API method to get the data from Craft
-			const { data: queryData } = await store.dispatch('queryAPI', {
-				name: 'EntriesPages',
-				variables: {
+			const {data: queryData} = await $api.graphqlQuery(
+				EntriesPages,
+				{
 					limit: 1,
 					uri: route.params.pathMatch,
 				},
-				params: previewParams,
-			});
+				previewParams
+			);
 
 			return {
 				entry: queryData?.entries[0],

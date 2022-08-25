@@ -33,55 +33,41 @@ const api = ($config, store) => {
 	}
 
 	const postAction = async (action, postData, config = {}) => {
-		let useConfig;
-		let data;
+		const data = {
+			action,
+			CRAFT_CSRF_TOKEN: await store.getters.getCsrfToken,
+			...postData,
+		};
 
-		if (action && !postData.query) { // Non-GQL
-			useConfig = withDefaultConfig(config);
-			data = {
-				action,
-				CRAFT_CSRF_TOKEN: await store.getters.getCsrfToken,
-				...postData,
-			};
+		const response = await axios.post(`/api`,
+			stringify(data),
+			withDefaultConfig(config),
 
-			data = stringify(data);
-		} else { // GQL
-			useConfig = {
-				withCredentials: true,
-				headers: {
-					'X-Requested-With': 'XMLHttpRequest',
-					'Content-Type': 'application/json',
-					Accept: 'application/json',
-				},
-			};
-			data = {
-				query: print(postData.query)
-			};
+		)
 
-			if (postData.vars) {
-				data.variables = postData.vars;
-			}
-		}
-
-		const response = await axios.post('/api',
-			data,
-			useConfig,
-		);
-
-		return response.data;
+		return response.data
 	}
 
 	return {
 		get,
 		postAction,
-		fetchCatalog: async(query, vars) => {
-			const data = { query }
+		graphqlQuery: async(query, variables, params) => {
+			const data = {
+				query: print(query),
+				variables,
+				params
+			};
 
-			if (vars) {
-				data.vars = vars;
-			}
+			const response = await axios.post(`/graphql`,
+				data,
+				withDefaultConfig({
+					headers: {
+						'Content-Type': 'application/json',
+					}
+				}),
+			)
 
-			return await postAction(null, data, {});
+			return response.data;
 		},
 		addItem: async(item) => {
 			const data = {
