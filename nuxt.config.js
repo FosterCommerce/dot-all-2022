@@ -1,5 +1,7 @@
 import https from 'https';
 
+let isDev = process.env.CRAFT_ENVIRONMENT === 'dev';
+
 export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'server',
@@ -57,16 +59,16 @@ export default {
     credentials: true,
     proxy: true,
 		httpsAgent: new https.Agent({
-			rejectUnauthorized: process.env.CRAFT_ENVIRONMENT !== 'dev',
+			rejectUnauthorized: !isDev,
 		}),
   },
 
   proxy: {
 		// This will proxy https://<nuxt host>/api/... to https://craft host/... _without_ the /api part.
-		'/api': { target: process.env.CRAFT_BASE_URL, pathRewrite: { '^/api': '' } },
+		'/api': { target: process.env.CRAFT_BASE_URL, pathRewrite: { '^/api': '' }, secure: !isDev},
 		// This will proxy https://<nuxt host>/graphql to https://<craft host>/graphql. The proxy module will include
 		// the /graphql path unless it's explicitly removed with pathRewrite.
-		'/graphql': { target: process.env.CRAFT_BASE_URL },
+		'/graphql': { target: process.env.CRAFT_BASE_URL, secure: !isDev },
     '/*sitemap.xml': process.env.CRAFT_BASE_URL,
     '/*sitemap.xsl': process.env.CRAFT_BASE_URL,
     '/sitemap.xml': process.env.CRAFT_BASE_URL,
