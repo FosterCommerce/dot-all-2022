@@ -45,6 +45,7 @@
 			pageViewComponent() {
 				const section = this.entry?.sectionHandle.charAt(0).toUpperCase() + this.entry?.sectionHandle.slice(1);
 				const type = this.entry?.typeHandle.charAt(0).toUpperCase() + this.entry?.typeHandle.slice(1);
+
 				return section + type;
 			},
 		}

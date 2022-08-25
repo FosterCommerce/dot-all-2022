@@ -1,11 +1,7 @@
 import https from 'https';
 import axios from 'axios';
 import { stringify } from 'qs';
-
-/*
-import { stringify } from 'qs';
-import merge from 'lodash/merge';
-*/
+import { print } from 'graphql';
 
 const api = ($config, store) => {
 	/**
@@ -15,7 +11,7 @@ const api = ($config, store) => {
 	 * @returns merged request config.
 	 */
 	const withDefaultConfig = (requestConfig = {}) => {
-		const config = {
+		return {
 			...requestConfig,
 			withCredentials: true,
 			headers: {
@@ -25,42 +21,67 @@ const api = ($config, store) => {
 				...requestConfig.headers,
 			},
 			httpsAgent: new https.Agent({
-				rejectUnauthorized: false
+				rejectUnauthorized: false,
 			}),
-		}
-
-		return config;
+		};
 	}
 
 	const get = async (action, config = {}) => {
-		const {
-			data
-		} = await axios.get(`/api${action}`, withDefaultConfig({config}), );
+		const { data } = await axios.get(`/api${action}`, withDefaultConfig({ config }));
 
 		return data;
 	}
 
 	const postAction = async (action, postData, config = {}) => {
-		const data = {
-			action,
-			CRAFT_CSRF_TOKEN: await store.getters.getCsrfToken,
-			...postData,
-		};
+		let url;
+		let useConfig;
+		let data;
 
-		console.log('post', action)
+		if (action && !postData.query) { // Non-GQL
+			url = '/api';
+			useConfig = withDefaultConfig(config);
+			data = {
+				action,
+				CRAFT_CSRF_TOKEN: await store.getters.getCsrfToken,
+				...postData,
+			};
+		} else { // GQL
+			url = `${$config.baseURL}/api`;
+			useConfig = {
+				withCredentials: true,
+				'X-Requested-With': 'XMLHttpRequest',
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+			};
+			data = {
+				query: print(postData.query)
+			};
 
-		const response = await axios.post(`/api`,
+			if (postData.vars) {
+				data.variables = postData.vars;
+			}
+		}
+
+		const response = await axios.post(url,
 			stringify(data),
-			withDefaultConfig(config),
+			useConfig,
+		);
 
-		)
-
-		return response.data
+		return response.data;
 	}
 
 	return {
 		get,
 		postAction,
+		fetchCatalog: async(query, vars) => {
+			const data = { query }
+
+			if (vars) {
+				data.vars = vars;
+			}
+
+			return await postAction(null, data, {});
+		},
 		addItem: async(item) => {
 			const data = {
 				purchasableId: item.id,
@@ -71,14 +92,14 @@ const api = ($config, store) => {
 		},
 		updateQty: async (item) => {
 			const data = {
-				lineItems: {[item.itemId]: {'qty': item.qty}}
+				lineItems: {[item.itemId]: {'qty': item.qty}},
 			};
 
-			return await postAction('/commerce/cart/update-cart', data)
+			return await postAction('/commerce/cart/update-cart', data);
 		},
 		removeItem: async (item) => {
 			const data = {
-				lineItems: {[item.itemId]: {'remove': true}}
+				lineItems: {[item.itemId]: {'remove': true}},
 			};
 
 			return await postAction('/commerce/cart/update-cart', data);
@@ -88,14 +109,16 @@ const api = ($config, store) => {
 		},
 		applyCoupon: async (item) => {
 			const data = {
-				couponCode: item.couponCode
+				couponCode: item.couponCode,
 			};
+
 			return await postAction('commerce/cart/update-cart', data);
 		},
 		clearNotices: async () => {
 			const data = {
-				clearNotices: 'clearNotices'
+				clearNotices: 'clearNotices',
 			};
+
 			return await postAction('/commerce/cart/update-cart', data);
 		}
 	}
