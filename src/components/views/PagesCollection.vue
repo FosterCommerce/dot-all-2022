@@ -21,7 +21,7 @@
 				categories.push(parseInt(category.id));
 			}
 
-			const products = await this.$api.fetchCatalog(
+			const products = await this.$api.graphqlQuery(
 				ProductsCatalog,
 				{ categories }
 			);

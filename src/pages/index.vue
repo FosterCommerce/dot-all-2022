@@ -1,6 +1,8 @@
 <script>
+	import EntryHome from '@/queries/EntryHome.gql';
+
 	export default {
-		async asyncData({ route, store }) {
+		async asyncData({ $api, route }) {
 			// Check for Craft Live Preview params
 			let previewParams = null;
 			if (route.query['x-craft-live-preview']) {
@@ -11,13 +13,11 @@
 			}
 
 			// Call the query API method to get the data from Craft
-			const { data: queryData } = await store.dispatch('queryAPI', {
-				name: 'EntryHome',
-				variables: {
-					limit: 1
-				},
-				params: previewParams,
-			});
+			const {data: queryData} = await $api.graphqlQuery(
+				EntryHome,
+				{limit: 1},
+				previewParams,
+			);
 
 			return {
 				entry: queryData?.entry,
