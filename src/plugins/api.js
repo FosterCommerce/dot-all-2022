@@ -33,25 +33,26 @@ const api = ($config, store) => {
 	}
 
 	const postAction = async (action, postData, config = {}) => {
-		let url;
 		let useConfig;
 		let data;
 
 		if (action && !postData.query) { // Non-GQL
-			url = '/api';
 			useConfig = withDefaultConfig(config);
 			data = {
 				action,
 				CRAFT_CSRF_TOKEN: await store.getters.getCsrfToken,
 				...postData,
 			};
+
+			data = stringify(data);
 		} else { // GQL
-			url = `${$config.baseURL}/api`;
 			useConfig = {
 				withCredentials: true,
-				'X-Requested-With': 'XMLHttpRequest',
-				'Content-Type': 'application/json',
-				Accept: 'application/json',
+				headers: {
+					'X-Requested-With': 'XMLHttpRequest',
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
 			};
 			data = {
 				query: print(postData.query)
@@ -62,8 +63,8 @@ const api = ($config, store) => {
 			}
 		}
 
-		const response = await axios.post(url,
-			stringify(data),
+		const response = await axios.post('/api',
+			data,
 			useConfig,
 		);
 
