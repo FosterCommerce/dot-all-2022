@@ -18,18 +18,11 @@
 			}
 		},
 		methods:{
-			async applyCoupon(){
+			applyCoupon(){
 				if (this.coupon === '') {
 					return
 				}
-				const {cart} = await this.$api.applyCoupon({coupon: this.coupon});
-				if (cart.notices.length > 0 && !cart.couponCode && cart.notices[cart.notices.length -1].type === 'invalidCouponRemoved') {
-					this.error = cart.notices[cart.notices.length -1].message.split(':')[1]
-					setTimeout(() => {
-						this.error = null
-					}, 5000);
-				}
-				await this.$store.dispatch('cart/setCurrentCart', cart);
+				this.$store.dispatch('cart/applyCoupon', {couponCode: this.coupon})
 			}
 		}
 	};

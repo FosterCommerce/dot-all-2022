@@ -1,4 +1,4 @@
-dateModified: 1660570504
+dateModified: 1661402423
 elementSources:
   craft\elements\Entry:
     -
@@ -53,7 +53,7 @@ meta:
     81d425d5-6a7f-4da9-b64d-3752b8286594: Other # Other
     148bf625-3ed8-48e1-9a43-70fc218ce67c: Manual # Manual
     430acb24-9641-4661-b62e-0cdc21c0fe56: 'Menu Item' # Menu Item
-    460addb0-40aa-48c7-ac8c-21f2f621ffbb: 'Site Schema' # Site schema
+    460addb0-40aa-48c7-ac8c-21f2f621ffbb: 'Site Schema' # Site Schema
     652c2871-27c1-4b30-8190-0a05255eb19b: Relations # Relations
     4188fa88-45c2-4d45-bc06-3a135bab0725: Collection # Collection
     6208c751-b47b-4315-ac54-cd1f33debd7a: Images # Images
@@ -141,7 +141,7 @@ plugins:
         - twitter
         - facebook
       siteGroupsSeparate: true
-      siteUrlOverride: ''
+      siteUrlOverride: $NUXT_BASE_URL
       sitemapsEnabled: true
       socialMediaPreviewTarget: true
       submitSitemaps: true

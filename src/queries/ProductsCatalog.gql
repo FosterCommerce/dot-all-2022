@@ -7,6 +7,7 @@ query ProductsCatalog (
     $uri: [String] = ["*", null]
     $limit: Int = 100
     $offset: Int = 0
+    $categories: [QueryArgument]
 ) {
     products (
         id: $id
@@ -14,6 +15,7 @@ query ProductsCatalog (
         uri: $uri
         limit: $limit
         offset: $offset
+        relatedToCategories: {id: $categories}
     ) {
         id
         title

@@ -53,15 +53,20 @@ export default {
   axios: {
     proxyHeaders: false,
     credentials: true,
-    // proxy: true,
+    proxy: true,
   },
 
-  // proxy: {
-  //   '/proxy': {
-  //     target: process.env.CRAFT_BASE_URL,
-  //     pathRewrite: {'^/proxy': '/'}
-  //   },
-  // },
+  proxy: {
+		// This will proxy https://<nuxt host>/api/... to https://craft host/... _without_ the /api part.
+		'/api': { target: process.env.CRAFT_BASE_URL, pathRewrite: { '^/api': '' } },
+		// This will proxy https://<nuxt host>/graphql to https://<craft host>/graphql. The proxy module will include
+		// the /graphql path unless it's explicitly removed with pathRewrite.
+		'/graphql': { target: process.env.CRAFT_BASE_URL },
+    '/*sitemap.xml': process.env.CRAFT_BASE_URL,
+    '/*sitemap.xsl': process.env.CRAFT_BASE_URL,
+    '/sitemap.xml': process.env.CRAFT_BASE_URL,
+    '/sitemap.xsl': process.env.CRAFT_BASE_URL,
+  },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
@@ -82,7 +87,7 @@ export default {
       });
     },
   },
-  
+
   env: {
     currentEnv: process.env.CRAFT_ENVIRONMENT || 'dev'
   },
@@ -92,14 +97,12 @@ export default {
     graphQLBearerToken: process.env.CRAFT_API_TOKEN,
     axios: {
       retry: 4,
-      baseURL: process.env.CRAFT_BASE_URL,
     }
   },
   publicRuntimeConfig: {
     baseURL: process.env.CRAFT_BASE_URL,
     axios: {
       retry: true,
-      browserBaseURL: process.env.CRAFT_BASE_URL,
     }
   }
 }

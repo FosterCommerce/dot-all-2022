@@ -1,11 +1,7 @@
 import https from 'https';
 import axios from 'axios';
 import { stringify } from 'qs';
-
-/*
-import { stringify } from 'qs';
-import merge from 'lodash/merge';
-*/
+import { print } from 'graphql';
 
 const api = ($config, store) => {
 	/**
@@ -15,7 +11,7 @@ const api = ($config, store) => {
 	 * @returns merged request config.
 	 */
 	const withDefaultConfig = (requestConfig = {}) => {
-		const config = {
+		return {
 			...requestConfig,
 			withCredentials: true,
 			headers: {
@@ -25,17 +21,13 @@ const api = ($config, store) => {
 				...requestConfig.headers,
 			},
 			httpsAgent: new https.Agent({
-				rejectUnauthorized: false
+				rejectUnauthorized: false,
 			}),
-		}
-
-		return config;
+		};
 	}
 
 	const get = async (action, config = {}) => {
-		const {
-			data
-		} = await axios.get(`${$config.baseURL}${action}`, withDefaultConfig({config}), );
+		const { data } = await axios.get(`/api${action}`, withDefaultConfig({ config }));
 
 		return data;
 	}
@@ -47,50 +39,74 @@ const api = ($config, store) => {
 			...postData,
 		};
 
-		// console.log('stringified form data: ', stringify(data));
-
-		const response = await axios.post($config.baseURL,
+		const response = await axios.post(`/api`,
 			stringify(data),
 			withDefaultConfig(config),
 
 		)
-		// console.log('postAction form response', response);
+
 		return response.data
 	}
 
 	return {
 		get,
 		postAction,
+		graphqlQuery: async(query, variables, params) => {
+			const data = {
+				query: print(query),
+				variables,
+				params
+			};
+
+			const response = await axios.post(`/graphql`,
+				data,
+				withDefaultConfig({
+					headers: {
+						'Content-Type': 'application/json',
+					}
+				}),
+			)
+
+			return response.data;
+		},
 		addItem: async(item) => {
 			const data = {
 				purchasableId: item.id,
 				qty: item.qty,
 			};
 
-			return await postAction('commerce/cart/update-cart', data);
+			return await postAction('/commerce/cart/update-cart', data);
 		},
 		updateQty: async (item) => {
 			const data = {
-				lineItems: {[item.itemId]: {'qty': item.qty}}
+				lineItems: {[item.itemId]: {'qty': item.qty}},
 			};
 
-			return await postAction('commerce/cart/update-cart', data)
+			return await postAction('/commerce/cart/update-cart', data);
 		},
 		removeItem: async (item) => {
 			const data = {
-				lineItems: {[item.itemId]: {'remove': true}}
+				lineItems: {[item.itemId]: {'remove': true}},
 			};
 
-			return await postAction('commerce/cart/update-cart', data);
+			return await postAction('/commerce/cart/update-cart', data);
 		},
 		getCart: async () => {
 			return await get('/actions/commerce/cart/get-cart');
 		},
 		applyCoupon: async (item) => {
 			const data = {
-				couponCode: item.coupon
+				couponCode: item.couponCode,
 			};
+
 			return await postAction('commerce/cart/update-cart', data);
+		},
+		clearNotices: async () => {
+			const data = {
+				clearNotices: 'clearNotices',
+			};
+
+			return await postAction('/commerce/cart/update-cart', data);
 		}
 	}
 };
