@@ -1,24 +1,5 @@
-dateModified: 1661397449
+dateModified: 1661402423
 elementSources:
-  craft\commerce\elements\Product:
-    -
-      disabled: false
-      key: '*'
-      tableAttributes:
-        - type
-        - postDate
-        - expiryDate
-        - defaultPrice
-        - defaultSku
-        - link
-        - 'field:d7d54391-72ab-425b-87f9-d3b982cbd69d' # Categories
-      type: native
-    -
-      heading: 'Product Types'
-      type: heading
-    -
-      key: 'productType:8f9a9f81-cbc4-41eb-a70b-5eaeadea8840' # Catalog
-      type: native
   craft\elements\Entry:
     -
       key: '*'
@@ -160,7 +141,7 @@ plugins:
         - twitter
         - facebook
       siteGroupsSeparate: true
-      siteUrlOverride: ''
+      siteUrlOverride: $NUXT_BASE_URL
       sitemapsEnabled: true
       socialMediaPreviewTarget: true
       submitSitemaps: true
