@@ -49,32 +49,8 @@ export const actions = {
 	async nuxtServerInit({ commit, dispatch }) {
 		// Fetch the settings entry to get the sites global navigation
 		const query = await import('@/queries/EntrySettings.gql').then((module) => module.default);
-		const { data: queryData, queryErrors } = await this.$axios.$post('/graphql', {
-			query: print(query),
-		});
+		const {data: queryData} = await this.$api.graphqlQuery(query);
 		commit('setPrimaryNav', queryData.entry.primaryNavigation);
-	},
-	/**
-	 *
-	 * Imports a GQL file to be used for a fetch request, then
-	 * querying the GraphQL API with the relevant query string.
-	 * Utilizes graphql/language/printer to convert from AST to a string for Craft.
-	 * @param {dispatch, commit, state} param0
-	 * @param {name, variables, params}
-	 * @returns
-	 */
-	async queryAPI({ commit }, { name, variables, params }) {
-		const query = await import(`@/queries/${name}.gql`).then((module) => module.default);
-		return await this.$axios.$post(
-			'/graphql',
-			{
-				query: print(query),
-				variables,
-			},
-			{
-				params,
-			}
-		);
 	},
 	setCsrfToken({ commit }, csrfData) {
 		commit('setCsrfToken', csrfData);

@@ -57,8 +57,11 @@ export default {
   },
 
   proxy: {
+		// This will proxy https://<nuxt host>/api/... to https://craft host/... _without_ the /api part.
 		'/api': { target: process.env.CRAFT_BASE_URL, pathRewrite: { '^/api': '' } },
-		'/graphql': { target: process.env.CRAFT_BASE_URL + '/api', pathRewrite: { '^/graphql': '' } },
+		// This will proxy https://<nuxt host>/graphql to https://<craft host>/graphql. The proxy module will include
+		// the /graphql path unless it's explicitly removed with pathRewrite.
+		'/graphql': { target: process.env.CRAFT_BASE_URL },
     '/*sitemap.xml': process.env.CRAFT_BASE_URL,
     '/*sitemap.xsl': process.env.CRAFT_BASE_URL,
     '/sitemap.xml': process.env.CRAFT_BASE_URL,
