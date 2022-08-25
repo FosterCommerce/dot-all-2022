@@ -31,8 +31,13 @@
 					}
 
 					// Define the Tailwind color name
+					// NOTE: The dynamic Tailwind classes produced are listed below so they are not removed in JIT mode
+					// bg-black bg-white bg-gray-400 bg-red-600 bg-blue-600 bg-green-600 bg-yellow-600 bg-orange-600
 					let colorName = '';
 					switch (option) {
+						case 'white':
+							colorName = 'white';
+							break;
 						case 'black':
 							colorName = 'black';
 							break;
