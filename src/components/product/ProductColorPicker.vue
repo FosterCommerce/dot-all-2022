@@ -34,7 +34,7 @@
 					let colorName = '';
 					switch (option) {
 						case 'black':
-							colorName = 'gray-900';
+							colorName = 'black';
 							break;
 						case 'gray':
 							colorName = 'gray-400';
@@ -91,7 +91,7 @@
 						:id="`color-choice-${index}`"
 						type="radio"
 						name="color-choice"
-						value="Black"
+						:value="option.value"
 						class="sr-only"
 						:aria-labelledby="`color-choice-${index}-label`"
 						:disabled="option.disabled"

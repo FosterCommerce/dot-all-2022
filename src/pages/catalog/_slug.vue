@@ -1,46 +1,129 @@
 <script>
-	import { print } from 'graphql';
-	import Product from '@/queries/Product.gql';
-	export default {
-		async asyncData({$api, route}) {
+	import ProductsCatalog from '@/queries/ProductsCatalog.gql';
 
-			const { data } = await $api.graphqlQuery(Product, { slug: route.params.slug });
+	export default {
+		async asyncData({ $api, route }) {
+			// Check for Craft Live Preview params
+			let previewParams = null;
+			if (route.query['x-craft-live-preview']) {
+				previewParams = {
+					token: route.query.token,
+					'x-craft-live-preview': route.query['x-craft-live-preview'],
+				};
+			}
+
+			const { data } = await $api.graphqlQuery(
+				ProductsCatalog,
+				{
+					limit: 1,
+					slug: route.params.slug,
+				},
+				previewParams
+			);
+
+			// Break out the result of the query into product, variants,
+			// and the default variant as the initially selected one
+			const product = data.products[0] ?? null;
+			const variants = product.variants ?? [];
+			const selectedVariant = variants.find(variant => variant.isDefault === true) ?? null;
 
 			return {
-				product: data.product,
-				variants: data.variants,
-				selectedVariant: data.variants[0]
+				product,
+				variants,
+				selectedVariant,
 			}
 		},
 		data() {
 			return {
-				selectedVariant: null
+				product: null,
+				variants: [],
+				selectedVariant: null,
 			}
 		},
 		computed:{
-			productImageUrl(){
-				return this.selectedVariant.image[0].url
-			}
+			/** Gets the currently selected variants primary image data */
+			variantImage() {
+				return this.selectedVariant.image[0] ?? null
+			},
+			allColors() {
+				return [...new Set(
+					this.variants.map((variant) => {
+						return variant.color;
+					})
+				)];
+			},
+			allSizes() {
+				return [...new Set(
+					this.variants.map((variant) => {
+						return variant.size;
+					})
+				)];
+			},
+			/** Returns a relational matrix for sizes to available colors */
+			sizeToColorMatrix() {
+				const matrix = {};
+				this.variants.forEach((sizeVariant) => {
+					matrix[sizeVariant.size] = this.variants.filter((variant) => {
+						return variant.size === sizeVariant.size;
+					}).map(colorVariant => colorVariant.color);
+				});
+				return matrix;
+			},
+			/** Returns a relational matrix for colors to available sizes */
+			colorToSizeMatrix() {
+				const matrix = {};
+				this.variants.forEach((colorVariant) => {
+					matrix[colorVariant.color] = this.variants.filter((variant) => {
+						return variant.color === colorVariant.color;
+					}).map(sizeVariant => sizeVariant.size);
+				});
+				return matrix;
+			},
+			availableSizes() {
+				return this.colorToSizeMatrix[this.selectedVariant.color];
+			},
+			availableColors() {
+				return this.sizeToColorMatrix[this.selectedVariant.size];
+			},
 		},
 		methods: {
-			addToCart(products) {
-				const item = {...this.selectedVariant, qty: 1, slug: this.product.slug}
-				this.$store.dispatch('cart/addNewItem', item)
+			/** Selects the variant based on the options set (size and color) */
+			selectVariant(option) {
+				let colorOption = this.selectedVariant.color;
+				let sizeOption = this.selectedVariant.size;
+
+				if (option.type === 'color') {
+					colorOption = option.value;
+					sizeOption = this.selectedVariant.size;
+				} else if (option.type === 'size') {
+					colorOption = this.selectedVariant.color;
+					sizeOption = option.value;
+				}
+
+				this.selectedVariant = this.variants.find(
+					variant =>
+						variant.color === colorOption && variant.size === sizeOption
+				);
 			},
-			sizeUpdated(size){
-				this.selectedVariant = this.variants.find(variant => variant.size === size)
+			/** Adds the currently selected variant to the cart */
+			addToCart() {
+				const item = {
+					...this.selectedVariant,
+					qty: 1
+				}
+				this.$store.dispatch('cart/addNewItem', item)
 			}
 		},
 	};
 </script>
 
-<template >
+<template>
 	<div>
 		<div class="lg:grid lg:grid-cols-12 lg:auto-rows-min lg:gap-x-8">
 			<div class="lg:col-start-8 lg:col-span-5">
 				<div class="flex justify-between">
-					<h1 class="text-xl font-medium text-gray-900">{{product.title}}</h1>
-					<p class="text-xl font-medium text-gray-900">${{selectedVariant.price}}</p>
+					<h1 class="text-xl font-medium text-gray-900">{{ product.title }}</h1>
+					<p class="text-xl font-medium text-gray-900">{{ selectedVariant.priceAsCurrency }}</p>
 				</div>
 			</div>
 
@@ -49,43 +132,53 @@
 				<h2 class="sr-only">Images</h2>
 				<div class="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-3 lg:gap-8">
 					<!-- Primary Image -->
-					<img :src="productImageUrl" alt="Back of women&#039;s Basic Tee in black." class="lg:col-span-2 lg:row-span-2 rounded-lg">
+					<nuxt-img
+						v-if="variantImage"
+						:src="variantImage.url"
+						:alt="variantImage.alt"
+						class="lg:col-span-2 lg:row-span-2 rounded-lg"
+						loading="lazy"
+					/>
 
-					<!-- Secondary Images -->
-					<img v-for="(image, id) in selectedVariant.images" :key="id" :src="image.url" alt="Side profile of women&#039;s Basic Tee in black." class="hidden lg:block rounded-lg">
+					<!-- Secondary (gallery) Images -->
+					<nuxt-img
+						v-for="image in selectedVariant.images"
+						:key="image.id"
+						:src="image.url"
+						:alt="image.alt"
+						class="hidden lg:block rounded-lg"
+						loading="lazy"
+					/>
 				</div>
 			</div>
 
 			<div class="mt-8 lg:col-span-5">
-				<form class="space-y-8">
-					<ProductColorPicker />
-					<ProductSizePicker :sizes="variants.map( variant => variant.size)" @size-updated="sizeUpdated" />
 
-					<!-- Add to Cart button -->
+				<form class="space-y-8">
+					<ProductColorPicker
+						:options="allColors"
+						:available="availableColors"
+						@option-selected="selectVariant"
+					/>
+					<ProductSizePicker
+						:options="allSizes"
+						:available="availableSizes"
+						@option-selected="selectVariant"
+					/>
 					<button
+						v-if="selectedVariant.isAvailable"
 						type="button"
 						class="mt-8 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-						@click='addToCart({ id: selectedVariant.id, qty: 1 })'
+						@click='addToCart'
 					>
 						Add to cart
 					</button>
 				</form>
 
 				<div class="mt-10">
-					<h2 class="text-base font-medium text-gray-900">Description</h2>
-
-					<div class="mt-4 space-y-6 prose prose-sm text-gray-500">
-						<!-- Product Description (content blocks here) -->
-						<div>
-							<p>The Basic tee is an honest new take on a classic. The tee uses super soft, pre-shrunk cotton for true comfort and a dependable fit. They are hand cut and sewn locally, with a special dye technique that gives each tee it's own look.</p>
-							<p>Looking to stock your closet? The Basic tee also comes in a 3-pack or 5-pack at a bundle discount.</p>
-						</div>
-
-						<ul role="list">
-							<li>Quis elit egestas venenatis mattis dignissim.</li>
-							<li>Cras cras lobortis vitae vivamus ultricies facilisis tempus.</li>
-							<li>Orci in sit morbi dignissim metus diam arcu pretium.</li>
-						</ul>
+					<!-- Product Content Blocks -->
+					<div class="space-y-6 prose prose-sm text-gray-500">
+						<ContentBlocks :blocks="product.contentBlocks" />
 					</div>
 
 					<!-- Policies (Static Text) -->

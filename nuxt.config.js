@@ -56,7 +56,7 @@ export default {
     proxy: true,
   },
 
-  proxy: {
+  /* proxy: {
 		// This will proxy https://<nuxt host>/api/... to https://craft host/... _without_ the /api part.
 		'/api': { target: process.env.CRAFT_BASE_URL, pathRewrite: { '^/api': '' } },
 		// This will proxy https://<nuxt host>/graphql to https://<craft host>/graphql. The proxy module will include
@@ -66,7 +66,16 @@ export default {
     '/*sitemap.xsl': process.env.CRAFT_BASE_URL,
     '/sitemap.xml': process.env.CRAFT_BASE_URL,
     '/sitemap.xsl': process.env.CRAFT_BASE_URL,
-  },
+  }, */
+
+	proxy: {
+		'/api': { target: process.env.CRAFT_BASE_URL, pathRewrite: { '^/api': '' }, secure: false },
+		'/graphql': { target: process.env.CRAFT_BASE_URL, secure: false },
+		'/*sitemap.xml': process.env.CRAFT_BASE_URL,
+		'/*sitemap.xsl': process.env.CRAFT_BASE_URL,
+		'/sitemap.xml': process.env.CRAFT_BASE_URL,
+		'/sitemap.xsl': process.env.CRAFT_BASE_URL,
+	},
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
