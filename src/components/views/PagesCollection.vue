@@ -15,10 +15,14 @@
 			};
 		},
 		async fetch() {
-			const categories = [];
+			let categories = [];
 
 			for (const category of this.entry.categories) {
 				categories.push(parseInt(category.id));
+			}
+
+			if (!categories.length) {
+				categories = null;
 			}
 
 			const products = await this.$api.graphqlQuery(
