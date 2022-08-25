@@ -1,15 +1,15 @@
-import https from 'https';
 import axios from 'axios';
 import { stringify } from 'qs';
 import { print } from 'graphql';
 
-const api = ($config, store) => {
+const api = ({$axios}, $config, store) => {
 	/**
 	 * Utility to add default request config to requests, such as adding commonly used headers.
 	 *
 	 * @param {*} requestConfig custom request config to be merged with the default config.
 	 * @returns merged request config.
 	 */
+
 	const withDefaultConfig = (requestConfig = {}) => {
 		return {
 			...requestConfig,
@@ -20,14 +20,11 @@ const api = ($config, store) => {
 				Accept: 'application/json',
 				...requestConfig.headers,
 			},
-			httpsAgent: new https.Agent({
-				rejectUnauthorized: false,
-			}),
 		};
 	}
 
 	const get = async (action, config = {}) => {
-		const { data } = await axios.get(`/api${action}`, withDefaultConfig({ config }));
+		const { data } = await $axios.get(`/api${action}`, withDefaultConfig({ config }));
 
 		return data;
 	}
@@ -39,7 +36,7 @@ const api = ($config, store) => {
 			...postData,
 		};
 
-		const response = await axios.post(`/api`,
+		const response = await $axios.post(`/api`,
 			stringify(data),
 			withDefaultConfig(config),
 
@@ -58,7 +55,7 @@ const api = ($config, store) => {
 				params
 			};
 
-			const response = await axios.post(`/graphql`,
+			const response = await $axios.post(`/graphql`,
 				data,
 				withDefaultConfig({
 					headers: {
@@ -112,5 +109,5 @@ const api = ($config, store) => {
 };
 
 export default ({ app, $config, store }, inject) => {
-	inject('api', api($config, store));
+	inject('api', api(app, $config, store));
 };
