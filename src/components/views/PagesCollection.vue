@@ -18,8 +18,9 @@
 			};
 		},
 		async fetch() {
+			const categories = this.categories;
 			const limit = parseInt(this.entry.pagination);
-			const numProducts = await this.$api.graphqlQuery(ProductsCount);
+			const numProducts = await this.$api.graphqlQuery(ProductsCount, { categories });
 			let count = 1;
 
 			if (numProducts) {
@@ -35,10 +36,8 @@
 				await this.fetchProducts();
 			}
 		},
-		methods: {
-			async fetchProducts() {
-				const limit = parseInt(this.entry.pagination);
-				const offset = (this.page - 1) * limit;
+		computed: {
+			categories() {
 				let categories = [];
 
 				for (const category of this.entry.categories) {
@@ -48,6 +47,15 @@
 				if (!categories.length) {
 					categories = null;
 				}
+
+				return categories;
+			},
+		},
+		methods: {
+			async fetchProducts() {
+				const limit = parseInt(this.entry.pagination);
+				const offset = (this.page - 1) * limit;
+				const categories = this.categories;
 
 				const products = await this.$api.graphqlQuery(
 					ProductsCatalog,
