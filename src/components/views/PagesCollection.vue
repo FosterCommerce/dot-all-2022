@@ -51,7 +51,7 @@
 
 				const products = await this.$api.graphqlQuery(
 					ProductsCatalog,
-					{ categories, limit, offset }
+					{ categories, limit, offset, orderBy: "dateCreated DESC" }
 				);
 
 				this.products = products?.data?.products;
