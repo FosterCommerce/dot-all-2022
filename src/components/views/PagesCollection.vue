@@ -1,5 +1,6 @@
 <script>
 	import ProductsCatalog from '@/queries/ProductsCatalog.gql';
+	import ProductsCount from '@/queries/ProductsCount.gql';
 
 	export default {
 		name: 'PagesCollection',
@@ -11,26 +12,55 @@
 		},
 		data() {
 			return {
+				page: 1,
+				numPages: 1,
 				products: [],
 			};
 		},
 		async fetch() {
-			let categories = [];
+			const limit = parseInt(this.entry.pagination);
+			const numProducts = await this.$api.graphqlQuery(ProductsCount);
+			let count = 1;
 
-			for (const category of this.entry.categories) {
-				categories.push(parseInt(category.id));
+			if (numProducts) {
+				count = parseInt(numProducts.data?.count);
 			}
 
-			if (!categories.length) {
-				categories = null;
+			this.numPages = Math.ceil(count / limit);
+
+			await this.fetchProducts();
+		},
+		watch: {
+			async page() {
+				await this.fetchProducts();
 			}
+		},
+		methods: {
+			async fetchProducts() {
+				const limit = parseInt(this.entry.pagination);
+				const offset = (this.page - 1) * limit;
+				let categories = [];
 
-			const products = await this.$api.graphqlQuery(
-				ProductsCatalog,
-				{ categories }
-			);
+				for (const category of this.entry.categories) {
+					categories.push(parseInt(category.id));
+				}
 
-			this.products = products?.data?.products;
+				if (!categories.length) {
+					categories = null;
+				}
+
+				const products = await this.$api.graphqlQuery(
+					ProductsCatalog,
+					{ categories, limit, offset }
+				);
+
+				this.products = products?.data?.products;
+			},
+			setPage(page) {
+				if (page > 0 && page <= this.numPages) {
+					this.page = page;
+				}
+			},
 		},
 	};
 </script>
@@ -52,6 +82,10 @@
 		</section>
 
 		<!-- Collection Pagination -->
-		<Pagination />
+		<Pagination
+			:num-pages="numPages"
+			:page="page"
+			@set-page="setPage"
+		/>
 	</div>
 </template>
