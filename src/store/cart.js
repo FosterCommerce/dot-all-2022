@@ -11,7 +11,7 @@ export const state = () => ({
     number: null,
   },
   cartErrors: []
- 
+
 });
 
 export const getters = {
@@ -20,7 +20,7 @@ export const getters = {
    */
   getItems(state) {
     return state.items;
-  },  
+  },
   /**
    * Get the current cart id
    */
@@ -145,14 +145,14 @@ export const actions = {
     } catch (error) {
       handleError(commit, error)
     }
-    
-    
+
+
   },
   /**
    * Remove an item entirely from the cart
    */
   async removeItem({ commit, dispatch }, item) {
-   
+
     try {
        const {
          cart
@@ -194,7 +194,7 @@ export const actions = {
         return true
       }
 
-      
+
     } catch (error) {
       handleError(commit, error)
       return false
