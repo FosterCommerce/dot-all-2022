@@ -1,4 +1,5 @@
 <script>
+	import { mapGetters, mapActions } from 'vuex';
 	import ProductsCatalog from '@/queries/ProductsCatalog.gql';
 
 	export default {
@@ -40,7 +41,10 @@
 				selectedVariant: null,
 			}
 		},
-		computed:{
+		computed: {
+			...mapGetters('cart', [
+				'getAdding'
+			]),
 			/** Gets the currently selected variants primary image data */
 			variantImage() {
 				return this.selectedVariant.image[0] ?? null
@@ -106,12 +110,13 @@
 				);
 			},
 			/** Adds the currently selected variant to the cart */
-			addToCart() {
+			async addToCart() {
 				const item = {
 					...this.selectedVariant,
 					qty: 1
 				}
-				this.$store.dispatch('cart/addNewItem', item)
+				await this.$store.dispatch('cart/addNewItem', item);
+				window.location.href = '/cart';
 			}
 		},
 	};
@@ -168,10 +173,13 @@
 					<button
 						v-if="selectedVariant.isAvailable"
 						type="button"
+						:class="{ 'opacity-25 cursor-not-allowed': getAdding }"
 						class="mt-8 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+						:disabled="getAdding"
 						@click='addToCart'
 					>
-						Add to cart
+						<span v-if="getAdding">Adding to cart ...</span>
+						<span v-else>Add to cart</span>
 					</button>
 				</form>
 
