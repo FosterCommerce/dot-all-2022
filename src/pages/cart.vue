@@ -41,23 +41,23 @@
 				<dl class="mt-6 space-y-4">
 					<div class="flex items-center justify-between">
 						<dt class="text-sm text-gray-600">Subtotal</dt>
-						<dd class="text-sm font-medium text-gray-900">{{cart.itemSubtotalAsCurrency}}</dd>
+						<dd class="text-sm font-medium text-gray-900">{{ cart.itemSubtotalAsCurrency }}</dd>
 					</div>
 					<div class="border-t border-gray-200 pt-4 flex items-center justify-between">
 						<dt class="flex items-center text-sm text-gray-600">
 							<span>Shipping</span>
 						</dt>
-						<dd class="text-sm font-medium text-gray-900">{{cart.totalShippingCostAsCurrency}}</dd>
+						<dd class="text-sm font-medium text-gray-900">{{ cart.totalShippingCostAsCurrency }}</dd>
 					</div>
 					<div class="border-t border-gray-200 pt-4 flex items-center justify-between">
 						<dt class="flex text-sm text-gray-600">
 							<span>Tax</span>
 						</dt>
-						<dd class="text-sm font-medium text-gray-900">{{cart.totalTaxAsCurrency}}</dd>
+						<dd class="text-sm font-medium text-gray-900">{{ cart.totalTaxAsCurrency }}</dd>
 					</div>
 					<div class="border-t border-gray-200 pt-4 flex items-center justify-between">
 						<dt class="text-base font-medium text-gray-900">Order total</dt>
-						<dd class="text-base font-medium text-gray-900">{{cart.totalAsCurrency}}</dd>
+						<dd class="text-base font-medium text-gray-900">{{ cart.totalAsCurrency }}</dd>
 					</div>
 				</dl>
 

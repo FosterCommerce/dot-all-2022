@@ -51,6 +51,14 @@
 </script>
 
 <template>
-	<nuxt-link v-if="isInternal" :to="url" :target="target" :class="styles">{{ label }}</nuxt-link>
-	<a v-else :href="url" :target="target" :class="styles">{{ label }}</a>
+	<div class="my-6 buttonBlock">
+		<nuxt-link v-if="isInternal" :to="url" :target="target" :class="styles">{{ label }}</nuxt-link>
+		<a v-else :href="url" :target="target" :class="styles">{{ label }}</a>
+	</div>
 </template>
+
+<style lang="postcss" scoped>
+	.buttonBlock:last-child {
+		margin-bottom: 0;
+	}
+</style>

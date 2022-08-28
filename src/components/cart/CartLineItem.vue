@@ -29,7 +29,13 @@
 <template>
 	<div class="flex py-6 sm:py-10">
 		<div class="flex-shrink-0">
-			<img :src="item.image[0].url" alt="Front of men&#039;s Basic Tee in black." class="w-24 h-24 rounded-md object-center object-cover sm:w-48 sm:h-48">
+			<nuxt-img
+				v-if="item.image[0].url"
+				:src="item.image[0].url"
+				:alt="item.image[0].alt"
+				class="w-24 h-24 rounded-md object-center object-cover sm:w-48 sm:h-48"
+				loading="lazy"
+			/>
 		</div>
 
 		<div class="ml-4 flex-1 flex flex-col justify-between sm:ml-6">
@@ -37,19 +43,19 @@
 				<div>
 					<div class="flex justify-between">
 						<h3 class="text-sm">
-							<nuxt-link :to="`catalog/${item.slug}`" class="font-medium text-gray-700 hover:text-gray-800">{{item.title}}</nuxt-link>
+							<nuxt-link :to="`catalog/${item.slug}`" class="font-medium text-gray-700 hover:text-gray-800">{{ item.title }}</nuxt-link>
 						</h3>
 					</div>
 					<div class="mt-1 flex text-sm">
-						<p class="text-gray-500">Black</p>
-						<p class="ml-4 pl-4 border-l border-gray-200 text-gray-500 uppercase">{{item.size}}</p>
+						<p class="text-gray-500">{{ item.color.charAt(0).toUpperCase() + item.color.slice(1) }}</p>
+						<p class="ml-4 pl-4 border-l border-gray-200 text-gray-500 uppercase">{{ item.size }}</p>
 					</div>
-					<p class="mt-1 text-sm font-medium text-gray-900">${{item.price}}</p>
+					<p class="mt-1 text-sm font-medium text-gray-900">{{ item.priceAsCurrency }}</p>
 				</div>
 
 				<div class="mt-4 sm:mt-0 sm:pr-9">
 					<div>
-						<label for="quantity_6" class="sr-only">Quantity, {{item.title}}</label>
+						<label for="quantity_6" class="sr-only">Quantity, {{ item.title }}</label>
 						<input
 							id="quantity_6"
 							v-model="quantity"

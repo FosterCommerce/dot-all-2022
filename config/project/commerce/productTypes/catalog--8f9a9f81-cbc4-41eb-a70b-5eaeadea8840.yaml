@@ -1,4 +1,4 @@
-descriptionFormat: '{product.title} - {color} - {size}'
+descriptionFormat: '{product.title} - {color|capitalize} - {size|upper}'
 handle: catalog
 hasDimensions: true
 hasProductTitleField: true
@@ -212,4 +212,4 @@ variantFieldLayouts:
         name: Content
         uid: 16f80699-3a80-4e62-b456-3e62a1db7f06
         userCondition: null
-variantTitleFormat: '{product.title} - {color} - {size}'
+variantTitleFormat: '{product.title}'

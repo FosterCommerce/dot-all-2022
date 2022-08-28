@@ -11,7 +11,6 @@ export const state = () => ({
     number: null,
   },
   cartErrors: []
-
 });
 
 export const getters = {
@@ -40,6 +39,7 @@ export const getters = {
   getLoading(state) {
     return state.loading;
   },
+
   /**
    * Get Cart errors
    */
@@ -108,6 +108,7 @@ export const mutations = {
   setLoading(state, payload) {
     state.loading = payload;
   },
+
   /**
    * Set the cart error
    */
