@@ -1,7 +1,6 @@
 export const state = () => ({
   items: [],
   loading: true,
-	adding: false,
   currentCart: {
     couponCode: null,
     itemSubtotalAsCurrency: '$0.00',
@@ -41,12 +40,6 @@ export const getters = {
     return state.loading;
   },
 
-	/**
-	 * Get the current cart
-	 */
-	getAdding(state) {
-		return state.adding;
-	},
   /**
    * Get Cart errors
    */
@@ -116,12 +109,6 @@ export const mutations = {
     state.loading = payload;
   },
 
-	/**
-	 * Set the loading state
-	 */
-	setAdding(state, payload) {
-		state.adding = payload;
-	},
   /**
    * Set the cart error
    */
@@ -142,12 +129,10 @@ export const actions = {
    */
   async addNewItem({ commit, dispatch }, item) {
     try {
-    	commit('setAdding', true);
         const {cart} = await this.$api.addItem({
           id: item.id,
           qty: item.qty
         });
-			commit('setAdding', false);
        const errorNotices = handleNotices({commit, dispatch}, cart.notices)
        if (errorNotices.length < 1) {
          const newItem = cart.lineItems.find(cartItem => String(cartItem.purchasableId) === String(item.id));
@@ -159,7 +144,6 @@ export const actions = {
          commit('setCurrentCart', cart);
        }
     } catch (error) {
-			commit('setAdding', false);
       handleError(commit, error)
     }
 

@@ -1,5 +1,4 @@
 <script>
-	import { mapGetters, mapActions } from 'vuex';
 	import ProductsCatalog from '@/queries/ProductsCatalog.gql';
 
 	export default {
@@ -42,9 +41,6 @@
 			}
 		},
 		computed: {
-			...mapGetters('cart', [
-				'getAdding'
-			]),
 			/** Gets the currently selected variants primary image data */
 			variantImage() {
 				return this.selectedVariant.image[0] ?? null
@@ -109,15 +105,6 @@
 						variant.color === colorOption && variant.size === sizeOption
 				);
 			},
-			/** Adds the currently selected variant to the cart */
-			async addToCart() {
-				const item = {
-					...this.selectedVariant,
-					qty: 1
-				}
-				await this.$store.dispatch('cart/addNewItem', item);
-				window.location.href = '/cart';
-			}
 		},
 	};
 </script>
@@ -170,17 +157,12 @@
 						:available="availableSizes"
 						@option-selected="selectVariant"
 					/>
-					<button
+					<ProductAddToCart
 						v-if="selectedVariant.isAvailable"
-						type="button"
-						:class="{ 'opacity-25 cursor-not-allowed': getAdding }"
-						class="mt-8 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-						:disabled="getAdding"
-						@click='addToCart'
-					>
-						<span v-if="getAdding">Adding to cart ...</span>
-						<span v-else>Add to cart</span>
-					</button>
+						:purchasable="selectedVariant"
+						qty="1"
+						redirect="/cart"
+					/>
 				</form>
 
 				<div class="mt-10">
