@@ -8,6 +8,7 @@ query ProductsCatalog (
     $limit: Int = 100
     $offset: Int = 0
     $categories: [QueryArgument]
+    $orderBy: String
 ) {
     products (
         id: $id
@@ -16,6 +17,7 @@ query ProductsCatalog (
         limit: $limit
         offset: $offset
         relatedToCategories: {id: $categories}
+        orderBy: $orderBy
     ) {
         id
         title
