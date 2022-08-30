@@ -42,9 +42,6 @@ query EntriesPages (
 
 fragment TypePagesGeneral on EntryInterface {
     ... on pages_general_Entry {
-        image {
-            ...Images
-        }
         contentBlocks {
             ...FieldContentBlocks
         }
