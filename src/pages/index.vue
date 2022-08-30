@@ -1,9 +1,7 @@
 <script>
-	import BaseHomeHero from '../components/base/BaseHomeHero';
 	import EntryHome from '@/queries/EntryHome.gql';
 
 	export default {
-		components: { BaseHomeHero },
 		async asyncData({ $api, route }) {
 			// Check for Craft Live Preview params
 			let previewParams = null;
