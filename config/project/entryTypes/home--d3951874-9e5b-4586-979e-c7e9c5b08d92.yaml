@@ -56,6 +56,18 @@ fieldLayouts:
             width: 100
           -
             elementCondition: null
+            fieldUid: b20289ca-0de7-4d8b-bc7d-abb37d6f9dcb # Summary
+            instructions: null
+            label: 'Hero Summary'
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 5fa077c6-e565-4fc4-af88-8943646e30ac
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            elementCondition: null
             fieldUid: 8aa229ec-7643-48c3-947d-9d2c1882b8f2 # Content Blocks
             instructions: null
             label: null

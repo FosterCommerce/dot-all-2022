@@ -21,6 +21,7 @@ query EntryHome {
             image {
                 ...Images
             }
+            summary
             contentBlocks {
                 ...FieldContentBlocks
             }
