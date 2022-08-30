@@ -31,11 +31,6 @@
 
 			await this.fetchProducts();
 		},
-		watch: {
-			async page() {
-				await this.fetchProducts();
-			}
-		},
 		computed: {
 			categories() {
 				let categories = [];
@@ -50,6 +45,11 @@
 
 				return categories;
 			},
+		},
+		watch: {
+			async page() {
+				await this.fetchProducts();
+			}
 		},
 		methods: {
 			async fetchProducts() {

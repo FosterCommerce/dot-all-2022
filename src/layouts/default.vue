@@ -35,7 +35,7 @@
 				const localCartItems = JSON.parse(items)
 				const syncedCartItems = [];
 			
-				if (cart.lineItems.length > 0) {
+				if (cart.lineItems.length && localCartItems) {
 					cart.lineItems.forEach(lineItem => {
 						localCartItems.forEach(localCartItem => {
 							if (lineItem.id === localCartItem.itemId) {
