@@ -1,4 +1,4 @@
-dateModified: 1661537396
+dateModified: 1661858484
 elementSources:
   craft\elements\Entry:
     -
@@ -70,6 +70,7 @@ meta:
     a1b271b7-b466-4c87-8201-986bcb728a78: 'Rich Text' # Rich Text
     a9b1834c-4af7-44b5-81de-00dc035a0515: 'Preview Text' # Preview Text
     a1418b5d-f2c0-4a47-a789-f6ce3f3b0387: Image # Image
+    b20289ca-0de7-4d8b-bc7d-abb37d6f9dcb: Summary # Summary
     d7d54391-72ab-425b-87f9-d3b982cbd69d: Categories # Categories
     d3951874-9e5b-4586-979e-c7e9c5b08d92: Home # Home
     dee4f4f1-d8b0-4f5c-a6ff-b5f10e5a577f: Compound # Compound
