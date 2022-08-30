@@ -22,7 +22,8 @@
 							this.page - 1,
 						]);
 					} else {
-						let numToShow = (this.page + 6) - this.numPages;
+						const offset = this.numPages > 6 ? this.page + 6 : this.page + 5;
+						let numToShow = offset - this.numPages;
 
 						while (numToShow) {
 							result.push(this.page - numToShow);

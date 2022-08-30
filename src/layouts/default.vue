@@ -1,5 +1,6 @@
 <script>
 	import { mapGetters } from "vuex";
+
 	export default {
 		fetchOnServer: false,
 		async fetch() {
@@ -9,14 +10,11 @@
 
 			/** Get current cart from craft */
 			const {cart} = await this.$api.getCart();
-			
 
 			await this.$store.dispatch('cart/setCartId', cart.number);
 			await this.$store.dispatch('cart/setCurrentCart', cart);
 
-			
-			this.syncCartItems(cart)
-
+			await this.syncCartItems(cart);
 		},
 		computed: {
 			header() {
@@ -27,28 +25,28 @@
 			}),
 		},
 		methods:{
-			async syncCartItems(cart){
+			async syncCartItems(cart) {
 				/** Get current cart items from local storage */
-				const items = await localStorage.getItem(cart.number);
+				const items = localStorage.getItem(cart.number);
 				
 				/** Sync local and craft cart items  */
-				const localCartItems = JSON.parse(items)
+				const localCartItems = JSON.parse(items);
 				const syncedCartItems = [];
 			
 				if (cart.lineItems.length && localCartItems) {
 					cart.lineItems.forEach(lineItem => {
 						localCartItems.forEach(localCartItem => {
 							if (lineItem.id === localCartItem.itemId) {
-								syncedCartItems.push({...localCartItem, qty: lineItem.qty})
+								syncedCartItems.push({...localCartItem, qty: lineItem.qty});
 							}
-						})
-					})
+						});
+					});
 				}
 
 				await localStorage.setItem(cart.number, JSON.stringify(syncedCartItems));
 
-				await this.$store.dispatch('cart/setItems', syncedCartItems)
-				this.$store.dispatch('cart/setLoading', false)
+				await this.$store.dispatch('cart/setItems', syncedCartItems);
+				await this.$store.dispatch('cart/setLoading', false);
 			}
 		}
 	
@@ -69,10 +67,13 @@
 			<div v-for="(error, i) in cartErrors" :key="i" class="px-2 py-2 text-sm rounded bg-red-500 text-white">{{error}}</div>
 		</div>  
 	 </transition>
+
     <component :is="header" />
+
     <main class="mt-8 max-w-2xl mx-auto pb-16 px-4 sm:pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
       <Nuxt />
     </main>
+
     <TheFooter />
   </div>
 </template>
