@@ -4,7 +4,7 @@
 		props: {
 			entry: {
 				type: Object,
-				required: true
+				required: true,
 			}
 		}
 	};
