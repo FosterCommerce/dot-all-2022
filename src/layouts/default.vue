@@ -69,8 +69,9 @@
 			...mapGetters({
 				cartErrors: 'cart/getCartErrors',
 			}),
-			header() {
-				return this.$helpers.header();
+			/** Checks the route for the checkout page (to swap site headers) */
+			isCheckout() {
+				return this.$route.path === '/checkout';
 			},
 		},
 		watch: {
@@ -141,15 +142,19 @@
 	>
 		<div v-if="cartErrors.length > 0" class="fixed w-full top-0 right-0 bg-white py-2 px-4 z-50 max-w-md space-y-3">
 			<div v-for="(error, i) in cartErrors" :key="i" class="px-2 py-2 text-sm rounded bg-red-500 text-white">{{error}}</div>
-		</div>  
+		</div>
 	 </transition>
 
-    <component :is="header" />
+		<!-- Display the checkout header or the site header -->
+    <CheckoutHeader v-if="isCheckout" />
+		<TheHeader v-else />
 
+		<!-- Main content area -->
     <main class="mt-8 max-w-2xl mx-auto pb-16 px-4 sm:pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
       <Nuxt />
     </main>
 
+		<!-- Site footer -->
     <TheFooter />
   </div>
 </template>
