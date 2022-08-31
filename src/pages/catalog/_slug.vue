@@ -111,6 +111,8 @@
 
 <template>
 	<div>
+		<CartErrors />
+
 		<div class="lg:grid lg:grid-cols-12 lg:auto-rows-min lg:gap-x-8">
 			<div class="lg:col-start-8 lg:col-span-5">
 				<div class="flex justify-between">

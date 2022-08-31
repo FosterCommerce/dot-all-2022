@@ -1,5 +1,4 @@
 <script>
-	import { mapGetters } from "vuex";
 	import SEOMaticQuery from '@/queries/SEOMatic.gql';
 
 	export default {
@@ -23,6 +22,7 @@
 
 			await this.syncCartItems(cart);
 		},
+		/** Sets the meta-data in the head */
 		head() {
 			const tags = [];
 			const result = {
@@ -66,9 +66,6 @@
 			return result;
 		},
 		computed: {
-			...mapGetters({
-				cartErrors: 'cart/getCartErrors',
-			}),
 			/** Checks the route for the checkout page (to swap site headers) */
 			isCheckout() {
 				return this.$route.path === '/checkout';
@@ -132,19 +129,6 @@
 
 <template>
   <div class="bg-white">
-	 <transition
-		enter-active-class="transform transition ease-in-out duration-300"
-		enter-class="translate-x-full"
-		enter-to-class="translate-x-0"
-		leave-active-class="transform transition ease-in-out duration-300"
-		leave-from-class="translate-x-0"
-		leave-to-class="translate-x-full"
-	>
-		<div v-if="cartErrors.length > 0" class="fixed w-full top-0 right-0 bg-white py-2 px-4 z-50 max-w-md space-y-3">
-			<div v-for="(error, i) in cartErrors" :key="i" class="px-2 py-2 text-sm rounded bg-red-500 text-white">{{error}}</div>
-		</div>
-	 </transition>
-
 		<!-- Display the checkout header or the site header -->
     <CheckoutHeader v-if="isCheckout" />
 		<TheHeader v-else />
