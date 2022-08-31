@@ -1,6 +1,6 @@
 import https from 'https';
 
-let isDev = process.env.CRAFT_ENVIRONMENT === 'dev';
+const isDev = process.env.CRAFT_ENVIRONMENT === 'dev';
 
 export default {
   // Target: https://go.nuxtjs.dev/config-target
