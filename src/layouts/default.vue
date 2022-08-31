@@ -10,19 +10,8 @@
 			};
 		},
 		async fetch() {
-			// await this.$store.dispatch('cart/populateCart');
-
-			const sessionInfo = await this.$api.get('/actions/users/session-info');
-
-			await this.$store.dispatch('setCsrfToken', sessionInfo.csrfTokenValue);
-
-			/** Get current cart from craft */
-			const {cart} = await this.$api.getCart();
-
-			await this.$store.dispatch('cart/setCartId', cart.number);
-			await this.$store.dispatch('cart/setCurrentCart', cart);
-
-			await this.syncCartItems(cart);
+			// Populate and sync the cart
+			await this.$store.dispatch('cart/populateCart');
 		},
 		/** Sets the meta-data in the head */
 		head() {
@@ -81,30 +70,7 @@
 		mounted() {
 			this.seoData(this.$route.fullPath);
 		},
-		methods:{
-			async syncCartItems(cart) {
-				/** Get current cart items from local storage */
-				const items = localStorage.getItem(cart.number);
-
-				/** Sync local and craft cart items  */
-				const localCartItems = JSON.parse(items);
-				const syncedCartItems = [];
-
-				if (cart.lineItems.length && localCartItems) {
-					cart.lineItems.forEach(lineItem => {
-						localCartItems.forEach(localCartItem => {
-							if (lineItem.id === localCartItem.itemId) {
-								syncedCartItems.push({...localCartItem, qty: lineItem.qty});
-							}
-						});
-					});
-				}
-
-				await localStorage.setItem(cart.number, JSON.stringify(syncedCartItems));
-
-				await this.$store.dispatch('cart/setItems', syncedCartItems);
-				await this.$store.dispatch('cart/setLoading', false);
-			},
+		methods: {
 			async seoData(uri) {
 				const seoData = await this.$api.graphqlQuery(SEOMaticQuery, { uri });
 
