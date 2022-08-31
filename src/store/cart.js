@@ -130,12 +130,6 @@ export const actions = {
 	 * and places it into state
 	 * */
 	async populateCart({ dispatch }) {
-		// Get the session data from Craft
-		const sessionInfo = await this.$api.get('/actions/users/session-info');
-
-		// Set the CSRF Token in the root store
-		dispatch('setCsrfToken', sessionInfo.csrfTokenValue, {root: true});
-
 		// Get the cart from commerce and set it into state
 		const { cart } = await this.$api.getCart();
 		dispatch('setCartId', cart.number);

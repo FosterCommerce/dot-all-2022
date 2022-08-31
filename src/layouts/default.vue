@@ -10,6 +10,8 @@
 			};
 		},
 		async fetch() {
+			// Set the session data
+			await this.$store.dispatch('fetchSessionData');
 			// Populate and sync the cart
 			await this.$store.dispatch('cart/populateCart');
 		},

@@ -46,13 +46,16 @@ export const actions = {
 	 * @param {commit, dispatch} VuexContext
 	 * @param {*} NuxtContext
 	 */
-	async nuxtServerInit({ commit, dispatch }) {
+	async nuxtServerInit({ commit }) {
 		// Fetch the settings entry to get the sites global navigation
 		const query = await import('@/queries/EntrySettings.gql').then((module) => module.default);
 		const {data: queryData} = await this.$api.graphqlQuery(query);
 		commit('setPrimaryNav', queryData.entry.primaryNavigation);
 	},
-	setCsrfToken({ commit }, csrfData) {
-		commit('setCsrfToken', csrfData);
-	},
+	/** Gets the session data an saves it into state */
+	async fetchSessionData({ commit }) {
+		// Get the session data from Craft and set it into state
+		const sessionInfo = await this.$api.get('/actions/users/session-info');
+		commit('setCsrfToken', sessionInfo.csrfTokenValue);
+	}
 }
