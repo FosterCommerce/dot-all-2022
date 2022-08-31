@@ -10,6 +10,8 @@
 			};
 		},
 		async fetch() {
+			// await this.$store.dispatch('cart/populateCart');
+
 			const sessionInfo = await this.$api.get('/actions/users/session-info');
 
 			await this.$store.dispatch('setCsrfToken', sessionInfo.csrfTokenValue);
