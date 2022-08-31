@@ -1,5 +1,4 @@
 <script>
-	import { mapGetters } from "vuex";
 	import SEOMaticQuery from '@/queries/SEOMatic.gql';
 
 	export default {
@@ -11,18 +10,10 @@
 			};
 		},
 		async fetch() {
-			const sessionInfo = await this.$api.get('/actions/users/session-info');
-
-			await this.$store.dispatch('setCsrfToken', sessionInfo.csrfTokenValue);
-
-			/** Get current cart from craft */
-			const {cart} = await this.$api.getCart();
-
-			await this.$store.dispatch('cart/setCartId', cart.number);
-			await this.$store.dispatch('cart/setCurrentCart', cart);
-
-			await this.syncCartItems(cart);
+			// Populate and sync the cart
+			await this.$store.dispatch('cart/populateCart');
 		},
+		/** Sets the meta-data in the head */
 		head() {
 			const tags = [];
 			const result = {
@@ -66,11 +57,9 @@
 			return result;
 		},
 		computed: {
-			...mapGetters({
-				cartErrors: 'cart/getCartErrors',
-			}),
-			header() {
-				return this.$helpers.header();
+			/** Checks the route for the checkout page (to swap site headers) */
+			isCheckout() {
+				return this.$route.path === '/checkout';
 			},
 		},
 		watch: {
@@ -81,30 +70,7 @@
 		mounted() {
 			this.seoData(this.$route.fullPath);
 		},
-		methods:{
-			async syncCartItems(cart) {
-				/** Get current cart items from local storage */
-				const items = localStorage.getItem(cart.number);
-
-				/** Sync local and craft cart items  */
-				const localCartItems = JSON.parse(items);
-				const syncedCartItems = [];
-
-				if (cart.lineItems.length && localCartItems) {
-					cart.lineItems.forEach(lineItem => {
-						localCartItems.forEach(localCartItem => {
-							if (lineItem.id === localCartItem.itemId) {
-								syncedCartItems.push({...localCartItem, qty: lineItem.qty});
-							}
-						});
-					});
-				}
-
-				await localStorage.setItem(cart.number, JSON.stringify(syncedCartItems));
-
-				await this.$store.dispatch('cart/setItems', syncedCartItems);
-				await this.$store.dispatch('cart/setLoading', false);
-			},
+		methods: {
 			async seoData(uri) {
 				const seoData = await this.$api.graphqlQuery(SEOMaticQuery, { uri });
 
@@ -131,25 +97,16 @@
 
 <template>
   <div class="bg-white">
-	 <transition
-		enter-active-class="transform transition ease-in-out duration-300"
-		enter-class="translate-x-full"
-		enter-to-class="translate-x-0"
-		leave-active-class="transform transition ease-in-out duration-300"
-		leave-from-class="translate-x-0"
-		leave-to-class="translate-x-full"
-	>
-		<div v-if="cartErrors.length > 0" class="fixed w-full top-0 right-0 bg-white py-2 px-4 z-50 max-w-md space-y-3">
-			<div v-for="(error, i) in cartErrors" :key="i" class="px-2 py-2 text-sm rounded bg-red-500 text-white">{{error}}</div>
-		</div>  
-	 </transition>
+		<!-- Display the checkout header or the site header -->
+    <CheckoutHeader v-if="isCheckout" />
+		<TheHeader v-else />
 
-    <component :is="header" />
-
+		<!-- Main content area -->
     <main class="mt-8 max-w-2xl mx-auto pb-16 px-4 sm:pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
       <Nuxt />
     </main>
 
+		<!-- Site footer -->
     <TheFooter />
   </div>
 </template>

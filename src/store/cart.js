@@ -124,6 +124,54 @@ export const actions = {
   setItems({ commit }, items) {
     commit('setItems', items);
   },
+
+	/**
+	 * Fetches the session info and cart data from Craft/Commerce
+	 * and places it into state
+	 * */
+	async populateCart({ dispatch }) {
+		// Get the session data from Craft
+		const sessionInfo = await this.$api.get('/actions/users/session-info');
+
+		// Set the CSRF Token in the root store
+		dispatch('setCsrfToken', sessionInfo.csrfTokenValue, {root: true});
+
+		// Get the cart from commerce and set it into state
+		const { cart } = await this.$api.getCart();
+		dispatch('setCartId', cart.number);
+		dispatch('setCurrentCart', cart);
+
+		// Sync the cart items with local storage
+		await dispatch('syncCartItems', cart);
+	},
+
+	/**
+	 * Syncs the cart items with local storage in the browser
+	 * */
+	async syncCartItems({ dispatch }, cart) {
+		// Get current cart items from local storage
+		const items = localStorage.getItem(cart.number);
+
+		// Sync local and craft cart items
+		const localCartItems = JSON.parse(items);
+		const syncedCartItems = [];
+
+		if (cart.lineItems.length && localCartItems) {
+			cart.lineItems.forEach(lineItem => {
+				localCartItems.forEach(localCartItem => {
+					if (lineItem.id === localCartItem.itemId) {
+						syncedCartItems.push({...localCartItem, qty: lineItem.qty});
+					}
+				});
+			});
+		}
+
+		// Set the data into local storage and dispatch setters
+		await localStorage.setItem(cart.number, JSON.stringify(syncedCartItems));
+		dispatch('setItems', syncedCartItems);
+		dispatch('setLoading', false);
+	},
+
   /**
    * Add a new item to the cart (to modify quantity, use setItemQty)
    */
@@ -146,14 +194,12 @@ export const actions = {
     } catch (error) {
       handleError(commit, error)
     }
-
-
   },
+
   /**
    * Remove an item entirely from the cart
    */
   async removeItem({ commit, dispatch }, item) {
-
     try {
        const {
          cart
@@ -172,6 +218,7 @@ export const actions = {
        handleError(commit, error)
     }
   },
+
   /**
    * Set the quantity of an item
    */
@@ -201,6 +248,7 @@ export const actions = {
       return false
     }
   },
+
   /**
    * Apply coupon
    */
@@ -235,6 +283,7 @@ export const actions = {
   setCartId({ commit }, payload) {
     commit('setCartId', payload);
   },
+
   /**
    * set the current cart
    */
@@ -271,28 +320,28 @@ const handleNotices = ({commit, dispatch}, notices) => {
   return errors
 }
 
- const handleError = (commit, error) =>{
-    let errors = []
-    if (error.response.status === 400) {
-      const cartErrors = Object.values(error.response.data.errors)
-      cartErrors.forEach(parentErrors => {
-        parentErrors.forEach(error => {
-          errors = [...errors, error]
-        })
-      })
-      commit('setCartErrors', errors)
-      setTimeout(() => {
-        commit('setCartErrors', [])
-      }, 6000);
-    } else {
-      commit('setCartErrors', ["Your request coud not be completed at the moment. Please try again"])
-      setTimeout(() => {
-        commit('setCartErrors', [])
-      }, 6000);
-    }
-    return {
-      success: false,
-      error
-    }
-  }
+const handleError = (commit, error) =>{
+	let errors = []
+	if (error.response.status === 400) {
+		const cartErrors = Object.values(error.response.data.errors)
+		cartErrors.forEach(parentErrors => {
+			parentErrors.forEach(error => {
+				errors = [...errors, error]
+			})
+		})
+		commit('setCartErrors', errors)
+		setTimeout(() => {
+			commit('setCartErrors', [])
+		}, 6000);
+	} else {
+		commit('setCartErrors', ["Your request coud not be completed at the moment. Please try again"])
+		setTimeout(() => {
+			commit('setCartErrors', [])
+		}, 6000);
+	}
+	return {
+		success: false,
+		error
+	}
+}
 
