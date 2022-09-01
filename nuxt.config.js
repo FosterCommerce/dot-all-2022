@@ -1,5 +1,6 @@
 import https from 'https';
 
+// Whether the environment is local or staging/production based on Craft's .env
 const isDev = process.env.CRAFT_ENVIRONMENT === 'dev';
 
 export default {
@@ -46,6 +47,7 @@ export default {
     '@nuxtjs/tailwindcss',
   ],
 
+  // Set the port to 3000
   server: {
     host: '0.0.0.0',
     strictPort: true,
@@ -94,6 +96,7 @@ export default {
     },
   },
 
+  // Environment configuration
   env: {
     currentEnv: process.env.CRAFT_ENVIRONMENT || 'dev'
   },
@@ -105,6 +108,8 @@ export default {
       retry: 4,
     }
   },
+
+  // Client runtime config
   publicRuntimeConfig: {
     baseURL: process.env.CRAFT_BASE_URL,
     axios: {

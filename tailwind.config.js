@@ -1,5 +1,7 @@
 module.exports = {
+  // Compiler mode
   mode: 'jit',
+  // Locations of source files
   content: [
     './src/components/**/*.{vue,js}',
     './src/layouts/**/*.vue',
@@ -34,9 +36,12 @@ module.exports = {
       },
     },
   },
+  // If you want to generate extra variants for certain properties, they can be added here
+  // See: https://v2.tailwindcss.com/docs/configuring-variants
   variants: {
     extend: {},
   },
+  // Extra Tailwind plugins
   plugins: [
     require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),
