@@ -1,125 +1,218 @@
+/**
+ * The main Vuex state for the cart.
+ */
 export const state = () => ({
+  /**
+   * Items in the cart.
+   */
   items: [],
+  /**
+   * Whether or not the app is loading.
+   */
   loading: true,
+  /**
+   * The cart properties.
+   */
   currentCart: {
+    /**
+     * Applied coupon code (if any).
+     */
     couponCode: null,
+    /**
+     * Subtotal of all items in the cart.
+     */
     itemSubtotalAsCurrency: '$0.00',
+    /**
+     * Taxes.
+     */
     totalTaxAsCurrency: '$0.00',
+    /**
+     * Discount, iff applicable.
+     */
     totalDiscountAsCurrency: '$0.00',
+    /**
+     * Shipping cost for the order.
+     */
     totalShippingCostAsCurrency: '$0.00',
+    /**
+     * Total for everything (subtotal + tax - discount + shipping).
+     */
     totalAsCurrency: '$0.00',
+    /**
+     * Unique identifier for the cart in Craft.
+     */
     number: null,
   },
-  cartErrors: []
+  /**
+   * Errors, if any.
+   */
+  cartErrors: [],
 });
 
+/**
+ * Getters. These return properties of the state.
+ */
 export const getters = {
   /**
-   * Get all items in the cart
+   * Get all items in the cart.
+   *
+   * NOTE: The `state` property is pulled in automatically.
    */
   getItems(state) {
     return state.items;
   },
   /**
-   * Get the current cart id
+   * Get the current cart id.
+   *
+   * NOTE: The `state` property is pulled in automatically.
    */
   getCartId(state) {
     return state.cartId;
   },
   /**
-   * Get the current cart
+   * Get the current cart.
+   *
+   * NOTE: The `state` property is pulled in automatically.
    */
   getCurrentCart(state) {
     return state.currentCart;
   },
 
   /**
-   * Get the current cart
+   * Get the loading status.
+   *
+   * NOTE: The `state` property is pulled in automatically.
    */
   getLoading(state) {
     return state.loading;
   },
 
   /**
-   * Get Cart errors
+   * Get Cart errors.
+   *
+   * NOTE: The `state` property is pulled in automatically.
    */
   getCartErrors(state) {
     return state.cartErrors;
   },
 };
 
+/**
+ * Mutations. These set/modify properties of the state.
+ */
 export const mutations = {
   /**
-   * Set the entire items array. Probably only useful for emptying an entire cart
+   * Set the entire items array. Probably only useful for emptying an entire cart.
+   *
+   * NOTE: The `state` property is pulled in automatically.
+   *
+   * @property {object} payload - Array of items in the cart.
    */
   setItems(state, payload) {
     state.items = payload || [];
   },
   /**
-   * Add a new item to the cart (to modify quantity, use setItemQty)
+   * Add a new item to the cart (to modify quantity, use setItemQty).
+   *
+   * NOTE: The `state` property is pulled in automatically.
+   *
+   * @property {object} payload - The item object to add to the cart.
    */
   addNewItem(state, payload) {
     const availableItemIndex = state.items.findIndex(item => String(item.id) === String(payload.id));
+
     if (availableItemIndex === -1) {
       state.items = [...state.items, payload];
     } else {
-      state.items[availableItemIndex].qty = state.items[availableItemIndex].qty + 1
+      state.items[availableItemIndex].qty = state.items[availableItemIndex].qty + 1;
     }
+
     localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
   },
   /**
-   * Remove an item entirely from the cart
+   * Remove an item entirely from the cart.
+   *
+   * NOTE: The `state` property is pulled in automatically.
+   *
+   * @property {object} payload - The item object to remove from the cart.
    */
   removeItem(state, payload) {
-    const items = state.items.filter(item => item.id !== payload.id)
-    state.items = items
+    state.items = state.items.filter(item => item.id !== payload.id);
     localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
   },
   /**
-   * Set the quantity of an item
+   * Set the quantity of an item.
+   *
+   * NOTE: The `state` property is pulled in automatically.
+   *
+   * @property {object} payload - The item object to set the quantity for.
    */
   setItemQty(state, payload) {
-    const cartItems = state.items
+    const cartItems = state.items;
+
     if (parseInt(payload.qty) !== 0) {
       const availableItemIndex = cartItems.findIndex(item => String(item.id) === String(payload.id));
+
       cartItems[availableItemIndex] = payload;
-      state.items = [...cartItems]
+      state.items = [...cartItems];
     } else {
-      const filteredCart = cartItems.filter(item => String(item.id) !== String(payload.id));
-      state.items = filteredCart
+      state.items = cartItems.filter(item => String(item.id) !== String(payload.id));
     }
-     localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
+
+    localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
   },
   /**
-   * Set the current cart id
+   * Set the current cart id.
+   *
+   * NOTE: The `state` property is pulled in automatically.
+   *
+   * @property {string} payload - The cart ID from Craft.
    */
   setCartId(state, payload) {
     state.cartId = payload;
   },
   /**
-   * Set the current cart
+   * Set the current cart.
+   *
+   * NOTE: The `state` property is pulled in automatically.
+   *
+   * @property {object} payload - The cart object to set int he state.
    */
   setCurrentCart(state, payload) {
     state.currentCart = payload;
   },
   /**
-   * Set the loading state
+   * Set the loading state.
+   *
+   * NOTE: The `state` property is pulled in automatically.
+   *
+   * @property {boolean} payload - Whether or not the app is loading.
    */
   setLoading(state, payload) {
     state.loading = payload;
   },
 
   /**
-   * Set the cart error
+   * Set the cart error.
+   *
+   * NOTE: The `state` property is pulled in automatically.
+   *
+   * @property {object} payload - Array of errors to set in the cart.
    */
   setCartErrors(state, payload) {
     state.cartErrors = payload;
   },
 };
 
+/**
+ * Actions. These run the mutations which set the properties of the state.
+ */
 export const actions = {
   /**
-   * Set the entire items array. Probably only useful for emptying an entire cart
+   * Set the entire items array. Probably only useful for emptying an entire cart.
+   *
+   * @property {function} commit - Vuex commit method.
+   * @property {object}   items  - Array of items in the cart.
    */
   setItems({ commit }, items) {
     commit('setItems', items);
@@ -167,175 +260,227 @@ export const actions = {
 	},
 
   /**
-   * Add a new item to the cart (to modify quantity, use setItemQty)
+   * Add a new item to the cart (to modify quantity, use setItemQty).
+   *
+   * @property {function} dispatch - Vuex dispatch method.
+   * @property {function} commit   - Vuex commit method.
+   * @property {object}   item     - The item object to add to the cart.
    */
   async addNewItem({ commit, dispatch }, item) {
     try {
         const {cart} = await this.$api.addItem({
           id: item.id,
-          qty: item.qty
+          qty: item.qty,
         });
-       const errorNotices = handleNotices({commit, dispatch}, cart.notices)
+       const errorNotices = handleNotices({commit, dispatch}, cart.notices);
+
        if (errorNotices.length < 1) {
-         const newItem = cart.lineItems.find(cartItem => String(cartItem.purchasableId) === String(item.id));
+         const newItem = cart.lineItems.find(
+           cartItem => String(cartItem.purchasableId) === String(item.id)
+         );
 
          commit('addNewItem', {
            ...item,
-           itemId: newItem.id
+           itemId: newItem.id,
          });
+
          commit('setCurrentCart', cart);
        }
     } catch (error) {
-      handleError(commit, error)
+      handleError(commit, error);
     }
   },
-
   /**
-   * Remove an item entirely from the cart
+   * Remove an item entirely from the cart.
+   *
+   * @property {function} dispatch - Vuex dispatch method.
+   * @property {function} commit   - Vuex commit method.
+   * @property {object}   item     - The item object to remove from the cart.
    */
   async removeItem({ commit, dispatch }, item) {
     try {
-       const {
-         cart
-       } = await this.$api.removeItem({
-           itemId:item.itemId
-         },
-       );
+       const { cart } = await this.$api.removeItem({ itemId:item.itemId },);
+       const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
-       const errorNotices = handleNotices({commit, dispatch}, cart.notices)
        if (errorNotices.length < 1) {
           commit('removeItem', item);
           commit('setCurrentCart', cart);
        }
-
     } catch (error) {
-       handleError(commit, error)
+       handleError(commit, error);
     }
   },
 
   /**
-   * Set the quantity of an item
+   * Set the quantity of an item.
+   *
+   * @property {function} dispatch - Vuex dispatch method.
+   * @property {function} commit   - Vuex commit method.
+   * @property {object}   item     - The item object to set the quantity for.
    */
-  async setItemQty({dispatch, commit }, item) {
+  async setItemQty({ dispatch, commit }, item) {
     try {
-      const {
-        cart
-      } = await this.$api.updateQty({
+      const { cart } = await this.$api.updateQty({
         itemId: item.itemId,
-        qty: item.qty
+        qty: item.qty,
       });
+      const errorNotices = handleNotices({commit, dispatch}, cart.notices);
 
-
-      const errorNotices = handleNotices({commit, dispatch}, cart.notices)
       if (errorNotices.length < 1) {
         if (item.qty === 0) {
-          return dispatch('removeItem', item)
+          return dispatch('removeItem', item);
         }
+
         commit('setItemQty', item);
         commit('setCurrentCart', cart);
-        return true
+
+        return true;
       }
-
-
     } catch (error) {
-      handleError(commit, error)
-      return false
+      handleError(commit, error);
+
+      return false;
     }
   },
 
   /**
-   * Apply coupon
+   * Apply coupon.
+   *
+   * @property {function} dispatch - Vuex dispatch method.
+   * @property {function} commit   - Vuex commit method.
+   * @property {object}   item     - The object that contains the coupon code property.
    */
-  async applyCoupon({dispatch, commit }, item) {
+  async applyCoupon({ dispatch, commit }, item) {
     try {
-       const {cart} = await this.$api.applyCoupon({couponCode: item.couponCode});
+      const { cart } = await this.$api.applyCoupon({couponCode: item.couponCode});
+      const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
-      const errorNotices = handleNotices({commit, dispatch}, cart.notices)
       if (errorNotices.length < 1) {
         commit('setItemQty', item);
         commit('setCurrentCart', cart);
-        return true
-      }
 
+        return true;
+      }
     } catch (error) {
-      handleError(commit, error)
-      return false
+      handleError(commit, error);
+
+      return false;
     }
   },
 
   /**
-   * Clear Cart notices
+   * Clear Cart notices.
+   *
+   * @property {function} commit - Vuex commit method.
    */
-  async clearNotices({commit }) {
+  async clearNotices({ commit }) {
     const { cart } = await this.$api.clearNotices();
     commit('setCurrentCart', cart);
   },
 
   /**
-   * set the cart id
+   * Set the cart id.
+   *
+   * @property {function} commit  - Vuex commit method.
+   * @property {string}   payload - The cart ID from Craft.
    */
   setCartId({ commit }, payload) {
     commit('setCartId', payload);
   },
 
   /**
-   * set the current cart
+   * Set the current cart.
+   *
+   * @property {function} commit  - Vuex commit method.
+   * @property {object}   payload - The cart object.
    */
   setCurrentCart({ commit }, payload) {
     commit('setCurrentCart', payload);
   },
 
   /**
-   * set the current cart
+   * Set the loading state of the app.
+   *
+   * @property {function} commit  - Vuex commit method.
+   * @property {boolean}  payload - Whether or not the app is loading.
    */
   setLoading({ commit }, payload) {
     commit('setLoading', payload);
   },
 
   /**
-   * set cart Errors
+   * Set cart errors.
+   *
+   * @property {function} commit  - Vuex commit method.
+   * @property {object}   payload - Array of errors in the cart.
    */
   setCartErrors({ commit }, payload) {
     commit('setCartErrors', payload);
   },
-}
+};
 
-const handleNotices = ({commit, dispatch}, notices) => {
-  let errors = []
+/**
+ * Sets cart notices and errors.
+ *
+ * @property {function} dispatch - Vuex dispatch method.
+ * @property {function} commit   - Vuex commit method.
+ * @property {object}   notices  - Array of notices for the cart.
+ */
+const handleNotices = ({ commit, dispatch }, notices) => {
+  let errors = [];
+
   notices.forEach(notice => {
-    errors = [...errors, notice.message]
-  })
-  commit('setCartErrors', errors)
+    errors = [...errors, notice.message];
+  });
+
+  commit('setCartErrors', errors);
+
+  // Remove the errors after 6 seconds.
   setTimeout(() => {
-    dispatch('clearNotices')
-    commit('setCartErrors', [])
+    dispatch('clearNotices');
+    commit('setCartErrors', []);
   }, 6000);
 
-  return errors
-}
+  return errors;
+};
 
-const handleError = (commit, error) =>{
-	let errors = []
-	if (error.response.status === 400) {
-		const cartErrors = Object.values(error.response.data.errors)
-		cartErrors.forEach(parentErrors => {
-			parentErrors.forEach(error => {
-				errors = [...errors, error]
-			})
-		})
-		commit('setCartErrors', errors)
-		setTimeout(() => {
-			commit('setCartErrors', [])
-		}, 6000);
-	} else {
-		commit('setCartErrors', ["Your request coud not be completed at the moment. Please try again"])
-		setTimeout(() => {
-			commit('setCartErrors', [])
-		}, 6000);
-	}
-	return {
-		success: false,
-		error
-	}
-}
+/**
+ * Handles errors that come back from the API.
+ *
+ * @property {function} commit - Vuex commit method.
+ * @property {object}   error  - The error object from the server.
+ */
+const handleError = (commit, error) => {
+  let errors = [];
 
+  if (error.response.status === 400) {
+    const cartErrors = Object.values(error.response.data.errors);
+
+    cartErrors.forEach(parentErrors => {
+      parentErrors.forEach(error => {
+        errors = [...errors, error];
+      });
+    });
+
+    commit('setCartErrors', errors);
+
+    // Remove the errors after 6 seconds.
+    setTimeout(() => {
+      commit('setCartErrors', []);
+    }, 6000);
+  } else {
+    commit('setCartErrors', [
+      "Your request could not be completed at the moment. Please try again.",
+    ]);
+
+    // Remove the errors after 6 seconds.
+    setTimeout(() => {
+      commit('setCartErrors', []);
+    }, 6000);
+  }
+
+  return {
+    success: false,
+    error,
+  };
+};

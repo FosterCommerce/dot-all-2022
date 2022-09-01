@@ -1,8 +1,6 @@
-import https from 'https';
-
 export default function ({
     $axios,
-    store
+    store,
 }) {
 	// Any extra runtime config.
 }
