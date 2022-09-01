@@ -1,15 +1,16 @@
-import axios from 'axios';
 import { stringify } from 'qs';
 import { print } from 'graphql';
 
+/**
+ * Methods for interfacing with the Craft back end.
+ */
 const api = ({$axios}, $config, store) => {
 	/**
 	 * Utility to add default request config to requests, such as adding commonly used headers.
 	 *
-	 * @param {*} requestConfig custom request config to be merged with the default config.
+	 * @param {object} requestConfig - Custom request config to be merged with the default config.
 	 * @returns merged request config.
 	 */
-
 	const withDefaultConfig = (requestConfig = {}) => {
 		return {
 			...requestConfig,
@@ -21,14 +22,27 @@ const api = ({$axios}, $config, store) => {
 				...requestConfig.headers,
 			},
 		};
-	}
+	};
 
+	/**
+	 * For making GET requests to the Craft back end.
+	 *
+	 * @property {string} action - The Craft action URI.
+	 * @property {object} config - Custom request configuration (such as headers).
+	 */
 	const get = async (action, config = {}) => {
 		const { data } = await $axios.get(`/api${action}`, withDefaultConfig({ config }));
 
 		return data;
-	}
+	};
 
+	/**
+	 * For making POST requests to the Craft back end.
+	 *
+	 * @property {string} action   - The Craft action URI.
+	 * @property {object} postData - The data to post.
+	 * @property {object} config   - Custom request configuration (such as headers).
+	 */
 	const postAction = async (action, postData, config = {}) => {
 		const data = {
 			action,
@@ -39,20 +53,29 @@ const api = ({$axios}, $config, store) => {
 		const response = await $axios.post(`/api`,
 			stringify(data),
 			withDefaultConfig(config),
+		);
 
-		)
+		return response.data;
+	};
 
-		return response.data
-	}
-
+	/**
+	 * All of the methods we are exporting from this file.
+	 */
 	return {
 		get,
 		postAction,
+		/**
+		 * For sending GQL queries to the Craft back end.
+		 *
+		 * @property {object} query    - The query to run.
+		 * @property {object} variable - The variables to pass into the query.
+		 * @property {object} params   - Any extra params to post with the request.
+		 */
 		graphqlQuery: async(query, variables, params) => {
 			const data = {
 				query: print(query),
 				variables,
-				params
+				params,
 			};
 
 			const response = await $axios.post(`/graphql`,
@@ -60,12 +83,17 @@ const api = ({$axios}, $config, store) => {
 				withDefaultConfig({
 					headers: {
 						'Content-Type': 'application/json',
-					}
+					},
 				}),
-			)
+			);
 
 			return response.data;
 		},
+		/**
+		 * For adding an item to the cart.
+		 *
+		 * @property {object} item - The item to add to the cart.
+		 */
 		addItem: async(item) => {
 			const data = {
 				purchasableId: item.id,
@@ -74,6 +102,11 @@ const api = ({$axios}, $config, store) => {
 
 			return await postAction('/commerce/cart/update-cart', data);
 		},
+		/**
+		 * For updating the quantity of an item in the cart.
+		 *
+		 * @property {object} item - The item to update the quantity for.
+		 */
 		updateQty: async (item) => {
 			const data = {
 				lineItems: {[item.itemId]: {'qty': item.qty}},
@@ -81,6 +114,11 @@ const api = ({$axios}, $config, store) => {
 
 			return await postAction('/commerce/cart/update-cart', data);
 		},
+		/**
+		 * For removing an item from the cart.
+		 *
+		 * @property {object} item - The item to remove from the cart.
+		 */
 		removeItem: async (item) => {
 			const data = {
 				lineItems: {[item.itemId]: {'remove': true}},
@@ -88,9 +126,17 @@ const api = ({$axios}, $config, store) => {
 
 			return await postAction('/commerce/cart/update-cart', data);
 		},
+		/**
+		 * Get the user's cart from the Craft back end.
+		 */
 		getCart: async () => {
 			return await get('/actions/commerce/cart/get-cart');
 		},
+		/**
+		 * Apply a coupon to the cart.
+		 *
+		 * @property {object} item - The coupon object.
+		 */
 		applyCoupon: async (item) => {
 			const data = {
 				couponCode: item.couponCode,
@@ -98,16 +144,23 @@ const api = ({$axios}, $config, store) => {
 
 			return await postAction('commerce/cart/update-cart', data);
 		},
+		/**
+		 * Clears errors/notices from the Craft back end for the cart.
+		 */
 		clearNotices: async () => {
 			const data = {
 				clearNotices: 'clearNotices',
 			};
 
 			return await postAction('/commerce/cart/update-cart', data);
-		}
-	}
+		},
+	};
 };
 
+/**
+ * Injects the api method into Vue so it can be used globally throughout the app.
+ * Example usage: this.$api.graphqlQuery([query], [vars], [params]);
+ */
 export default ({ app, $config, store }, inject) => {
 	inject('api', api(app, $config, store));
 };
