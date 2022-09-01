@@ -67,9 +67,9 @@ const api = ({$axios}, $config, store) => {
 		/**
 		 * For sending GQL queries to the Craft back end.
 		 *
-		 * @property {object} query    - The query to run.
-		 * @property {object} variable - The variables to pass into the query.
-		 * @property {object} params   - Any extra params to post with the request.
+		 * @property {object} query     - The query to run.
+		 * @property {object} variables - The variables to pass into the query.
+		 * @property {object} params    - Any extra params to post with the request.
 		 */
 		graphqlQuery: async(query, variables, params) => {
 			const data = {
