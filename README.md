@@ -40,12 +40,11 @@ get this project up and running quickly by doing the following:
 
         ddev start
 
-4. Once DDEV has finished downloading and configuring its Docker containers and starts to run, install the project's
-composer dependencies :
+4. Once DDEV has finished downloading and configuring its Docker containers and starts to run, install the project's composer dependencies :
 
         ddev composer install
-        
-5. Import the projects seed database into DDEV :
+            
+6. Import the projects seed database into DDEV :
 
         ddev import-db --src=project_db.sql.tar.gz
         
@@ -60,17 +59,23 @@ composer dependencies :
         
         // Using SequelAce
         ddev sequelace
+        
+7. Get Craft up and running and apply any changes to the config:
 
-6. Next we need to install Nuxt and the other dependencies for the front end build. In your terminal
+        ddev exec php craft up
+        
+*Note* Run this command whenever you pull down an update from the repository in order to apply any config changes that have been made since you last pulled down the repo.
+    
+8. Next we need to install Nuxt and the other dependencies for the front end build. In your terminal
 run the following command :
 
         ddev exec yarn install
         
-7. To run the front end of the project in dev mode, you then use the following command :
+9. To run the front end of the project in dev mode, you then use the following command :
 
         ddev exec yarn dev
 
-7. In your browser you can now access the site running locally in DDEV :
+10. In your browser you can now access the site running locally in DDEV :
     
     * **Craft Admin**
 
