@@ -64,7 +64,7 @@ get this project up and running quickly by doing the following:
 
         ddev exec php craft up
         
-*Note* Run this command whenever you pull down an update from the repository in order to apply any config changes that have been made since you last pulled down the repo.
+*Note You should run the above command whenever you pull down an update from the repository in order to apply any config changes that have been made since you last pulled down the repo.*
     
 8. Next we need to install Nuxt and the other dependencies for the front end build. In your terminal
 run the following command :
