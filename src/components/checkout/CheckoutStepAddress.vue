@@ -54,7 +54,13 @@
 			}
 		},
 		created() {
-			this.$store.dispatch('checkout/populateShippingAddressOptions', this.getCurrentCart, this.getAddresses);
+
+			if (this.getNewShippingAddress) this.newShippingAddress = {...this.getNewShippingAddress};
+
+			this.$store.dispatch('checkout/populateShippingAddressOptions', {
+				cart: this.getCurrentCart, 
+				existingAddresses: this.getAddresses
+			});
 		}
 	}
 </script>

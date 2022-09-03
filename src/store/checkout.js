@@ -437,7 +437,7 @@ export const actions = {
 		}
 
 	},
-	async populateShippingAddressOptions({ dispatch, commit }, cart, existingAddresses) {
+	async populateShippingAddressOptions({ dispatch, commit }, { cart, existingAddresses }) {
 
 		existingAddresses = existingAddresses ?? [];
 		
