@@ -443,10 +443,14 @@ export const actions = {
 		
 		const addresses = [...existingAddresses];
 
-		const { address } = await this.$api.getAddress(cart.shippingAddressId);
-		
-		addresses.push(await dispatch('normalizeAddressFieldsFromCraft', address))
+		if (cart.shippingAddressId) {
 
+			const { address } = await this.$api.getAddress(cart.shippingAddressId);
+
+			addresses.push(await dispatch('normalizeAddressFieldsFromCraft', address));
+
+		}
+		
 		commit('setShippingAddressOptions', addresses);
 
 	},
