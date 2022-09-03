@@ -13,15 +13,15 @@ export const state = () => ({
 		{
 			// The ID of an address (addresses are referenced by this ID in store/checkout.js)
 			id: 1,
-			firstName: 'Michael',
-			lastName: 'Van Dorth',
-			company: 'Foster Commerce',
-			address1: '1234 Test Street',
-			address2: 'Apt. 3D',
-			city: 'Los Angeles',
-			region: 'California',
-			country: 'US',
-			zipCode: '93277',
+			firstName: 'Frodo',
+			lastName: 'Baggins',
+			company: 'Fellowship of the Ring',
+			address1: '3 Bagshot Row',
+			address2: '',
+			city: 'Hobbiton Hill',
+			region: 'The Shire',
+			country: 'UK',
+			zipCode: 'SL6',
 			phone: '(555) 555-5555',
 		},
 	],
@@ -46,5 +46,8 @@ export const getters = {
 	 */
 	getAddresses(state) {
 		return state.addresses;
+	},
+	populateAddresses() {
+
 	}
 };

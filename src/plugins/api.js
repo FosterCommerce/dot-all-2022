@@ -114,6 +114,24 @@ const api = ({$axios}, $config, store) => {
 
 			return await postAction('/commerce/cart/update-cart', data);
 		},
+		updateAddress: async (address) => {
+
+			const data = {
+				address
+			}
+
+			return await postAction('/fc/addresses/update-address', data);
+
+		},
+		updateCartShippingAddress: async (address) => {
+
+			const data = {
+				shippingAddress: address
+			}
+
+			return await postAction('/commerce/cart/update-cart', data);
+
+		},
 		/**
 		 * For removing an item from the cart.
 		 *
@@ -126,11 +144,20 @@ const api = ({$axios}, $config, store) => {
 
 			return await postAction('/commerce/cart/update-cart', data);
 		},
+
 		/**
 		 * Get the user's cart from the Craft back end.
 		 */
 		getCart: async () => {
 			return await get('/actions/commerce/cart/get-cart');
+		},
+		/**
+		 * Get an address.
+		 * 
+		 *  @property {number} id - The ID for the address.
+		 */
+		getAddress: async (id) => {
+			return await get(`/actions/fc/addresses/get-address?addressId=${id}`);
 		},
 		/**
 		 * Apply a coupon to the cart.
@@ -142,7 +169,7 @@ const api = ({$axios}, $config, store) => {
 				couponCode: item.couponCode,
 			};
 
-			return await postAction('commerce/cart/update-cart', data);
+			return await postAction('/commerce/cart/update-cart', data);
 		},
 		/**
 		 * Clears errors/notices from the Craft back end for the cart.

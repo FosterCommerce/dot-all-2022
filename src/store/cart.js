@@ -225,6 +225,7 @@ export const actions = {
 	async populateCart({ dispatch }) {
 		// Get the cart from commerce and set it into state
 		const { cart } = await this.$api.getCart();
+    console.log('Cart', cart);
 		dispatch('setCartId', cart.number);
 		dispatch('setCurrentCart', cart);
 

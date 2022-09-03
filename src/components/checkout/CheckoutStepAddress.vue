@@ -3,19 +3,42 @@
 
 	export default {
 		name: "CheckoutStepAddress",
+		data() {
+			return { 
+				newShippingAddress: {
+					id: 0,
+					firstName: '',
+					lastName: '',
+					company: '',
+					address1: '',
+					address2: '',
+					city: '',
+					region: '',
+					country: '',
+					zipCode: '',
+					phone: ''
+				},
+			}
+		},
 		computed: {
 			...mapGetters('user', [
 				'getIsLoggedIn',
 				'getAddresses'
 			]),
+			...mapGetters('cart', [
+				'getCurrentCart'
+			]),
 			...mapGetters('checkout', [
 				'getShippingAddressId',
+				'getNewShippingAddress',
+				'getShippingAddressOptions'
 			])
 		},
 		methods: {
 			...mapMutations('checkout', [
 				'setShippingAddressId',
-				'setModal'
+				'setNewShippingAddress',
+				'setModal',
 			]),
 			editAddress() {
 				this.setModal({ context: 'addressEdit', payload: true })
@@ -25,7 +48,19 @@
 			},
 			setShippingAddress(id) {
 				this.setShippingAddressId(id);
+			},
+			updateNewShippingAddress() {
+				this.setNewShippingAddress({...this.newShippingAddress});
 			}
+		},
+		created() {
+
+			if (this.getNewShippingAddress) this.newShippingAddress = {...this.getNewShippingAddress};
+
+			this.$store.dispatch('checkout/populateShippingAddressOptions', {
+				cart: this.getCurrentCart, 
+				existingAddresses: this.getAddresses
+			});
 		}
 	}
 </script>
@@ -34,11 +69,11 @@
 	<section aria-labelledby="address-heading">
 
 		<h2 id="address-heading" class="text-xl font-medium text-gray-900 lg:text-2xl">Where should we mail your order?</h2>
-		<p v-if="getAddresses.length" class="text-sm text-gray-500">Select one of your saved addresses or add a new one.</p>
+		<p v-if="getShippingAddressOptions.length" class="text-sm text-gray-500">Select one of your saved addresses or add a new one.</p>
 
-		<div v-if="getAddresses.length" class="mt-6 divide-y divide-gray-200">
+		<div v-if="getShippingAddressOptions.length" class="mt-6 divide-y divide-gray-200">
 
-			<div v-for="address in getAddresses" :key="address.id" class="relative flex items-start py-4">
+			<div v-for="address in getShippingAddressOptions" :key="address.id" class="relative flex items-start py-4">
 				<div class="min-w-0 flex-1 text-sm">
 					<label :for="`address_${address.id}`" class="font-medium text-gray-700">
 						<span v-if="address.company">{{ address.company }} - {{ address.firstName }} {{ address.lastName }}</span>
@@ -78,7 +113,7 @@
 						:value="address.id"
 						:checked="parseInt(getShippingAddressId) === parseInt(address.id)"
 						class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-						@change="setShippingAddress(address.id)"
+						@change="setShippingAddressId(address.id)"
 					/>
 				</div>
 			</div>
@@ -97,16 +132,16 @@
 						value="0"
 						:checked="getShippingAddressId === 0 || getAddresses.length === 0"
 						class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-						@change="setShippingAddress(0)"
+						@change="setShippingAddressId(0)"
 					/>
 				</div>
 			</div>
 
 		</div>
 
-		<div v-show="getShippingAddressId === 0 || getAddresses.length === 0">
+		<div v-show="getShippingAddressId === 0 || getShippingAddressOptions.length === 0">
 
-			<CheckoutAddressFields context="shipping" />
+			<CheckoutAddressFields context="shipping" :address-obj="newShippingAddress" @changedAddress="updateNewShippingAddress" />
 
 			<div v-if="!getIsLoggedIn" class="mt-6 sm:col-span-6">
 				<div class="relative flex items-start">
