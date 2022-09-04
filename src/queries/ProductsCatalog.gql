@@ -86,4 +86,9 @@ fragment VariantCatalog on VariantInterface {
         size
         color
     }
+    product {
+        id
+        uri
+        slug
+    }
 }
