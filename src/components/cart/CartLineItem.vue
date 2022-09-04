@@ -43,7 +43,7 @@
 				<div>
 					<div class="flex justify-between">
 						<h3 class="text-sm">
-							<nuxt-link :to="`catalog/${item.slug}`" class="font-medium text-gray-700 hover:text-gray-800">{{ item.title }}</nuxt-link>
+							<nuxt-link :to="item.product.uri" class="font-medium text-gray-700 hover:text-gray-800">{{ item.title }}</nuxt-link>
 						</h3>
 					</div>
 					<div class="mt-1 flex text-sm">
