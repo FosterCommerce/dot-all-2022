@@ -41,7 +41,7 @@
 				await this.addNewItem({ ...this.purchasable, qty: Number(this.qty) });
 				this.adding = false;
 				if (this.redirect && this.getCartErrors.length === 0) {
-					window.location.href = this.redirect
+					await this.$router.push(this.redirect);
 				}
 			}
 		}

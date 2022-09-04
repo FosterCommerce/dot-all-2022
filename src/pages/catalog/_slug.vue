@@ -163,7 +163,7 @@
 						v-if="selectedVariant.isAvailable"
 						:purchasable="selectedVariant"
 						qty="1"
-						redirect="/cart"
+						redirect="cart"
 					/>
 				</form>
 
