@@ -29,7 +29,15 @@
 		computed: {
 			...mapGetters('cart', [
 				'getCartErrors'
-			])
+			]),
+			/** Returns the redirect path with a forward slash if it does not have one */
+			redirectPath() {
+				if (this.redirect) {
+					return this.redirect.startsWith('/') ? this.redirect : ('/' + this.redirect);
+				} else {
+					return null;
+				}
+			}
 		},
 		methods: {
 			...mapActions('cart', [
@@ -38,10 +46,10 @@
 			/** Adds the item to the cart via the cart Vuex action */
 			async addToCart() {
 				this.adding = true;
-				await this.addNewItem({ ...this.purchasable, qty: this.qty });
+				await this.addNewItem({ ...this.purchasable, qty: Number(this.qty) });
 				this.adding = false;
-				if (this.redirect && this.getCartErrors.length === 0) {
-					window.location.href = this.redirect
+				if (this.redirectPath && this.getCartErrors.length === 0) {
+					await this.$router.push(this.redirectPath);
 				}
 			}
 		}
