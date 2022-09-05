@@ -100,7 +100,7 @@ const api = ({$axios}, $config, store) => {
 				qty: item.qty,
 			};
 
-			return await postAction('/commerce/cart/update-cart', data);
+			return await postAction('/fc/cart/update-cart', data);
 		},
 		/**
 		 * For updating the quantity of an item in the cart.
@@ -112,7 +112,7 @@ const api = ({$axios}, $config, store) => {
 				lineItems: {[item.itemId]: {'qty': item.qty}},
 			};
 
-			return await postAction('/commerce/cart/update-cart', data);
+			return await postAction('/fc/cart/update-cart', data);
 		},
 		updateAddress: async (address) => {
 
@@ -129,7 +129,7 @@ const api = ({$axios}, $config, store) => {
 				shippingAddress: address
 			}
 
-			return await postAction('/commerce/cart/update-cart', data);
+			return await postAction('/fc/cart/update-cart', data);
 
 		},
 		/**
@@ -142,18 +142,18 @@ const api = ({$axios}, $config, store) => {
 				lineItems: {[item.itemId]: {'remove': true}},
 			};
 
-			return await postAction('/commerce/cart/update-cart', data);
+			return await postAction('/fc/cart/update-cart', data);
 		},
 
 		/**
 		 * Get the user's cart from the Craft back end.
 		 */
 		getCart: async () => {
-			return await get('/actions/commerce/cart/get-cart');
+			return await get('/actions/fc/cart/get-cart');
 		},
 		/**
 		 * Get an address.
-		 * 
+		 *
 		 *  @property {number} id - The ID for the address.
 		 */
 		getAddress: async (id) => {
@@ -169,7 +169,7 @@ const api = ({$axios}, $config, store) => {
 				couponCode: item.couponCode,
 			};
 
-			return await postAction('/commerce/cart/update-cart', data);
+			return await postAction('/fc/cart/update-cart', data);
 		},
 		/**
 		 * Clears errors/notices from the Craft back end for the cart.
@@ -179,7 +179,7 @@ const api = ({$axios}, $config, store) => {
 				clearNotices: 'clearNotices',
 			};
 
-			return await postAction('/commerce/cart/update-cart', data);
+			return await postAction('/fc/cart/update-cart', data);
 		},
 	};
 };
