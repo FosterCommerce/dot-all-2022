@@ -225,38 +225,9 @@ export const actions = {
 	async populateCart({ dispatch }) {
 		// Get the cart from commerce and set it into state
 		const { cart } = await this.$api.getCart();
-    console.log('Cart', cart);
 		dispatch('setCartId', cart.number);
 		dispatch('setCurrentCart', cart);
-
-		// Sync the cart items with local storage
-		await dispatch('syncCartItems', cart);
-	},
-
-	/**
-	 * Syncs the cart items with local storage in the browser
-	 * */
-	async syncCartItems({ dispatch }, cart) {
-		// Get current cart items from local storage
-		const items = localStorage.getItem(cart.number);
-
-		// Sync local and craft cart items
-		const localCartItems = JSON.parse(items);
-		const syncedCartItems = [];
-
-		if (cart.lineItems.length && localCartItems) {
-			cart.lineItems.forEach(lineItem => {
-				localCartItems.forEach(localCartItem => {
-					if (lineItem.id === localCartItem.itemId) {
-						syncedCartItems.push({...localCartItem, qty: lineItem.qty});
-					}
-				});
-			});
-		}
-
-		// Set the data into local storage and dispatch setters
-		await localStorage.setItem(cart.number, JSON.stringify(syncedCartItems));
-		dispatch('setItems', syncedCartItems);
+		dispatch('setItems', cart.lineItems);
 		dispatch('setLoading', false);
 	},
 
@@ -273,19 +244,11 @@ export const actions = {
           id: item.id,
           qty: item.qty,
         });
-       const errorNotices = handleNotices({commit, dispatch}, cart.notices);
+       const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
        if (errorNotices.length < 1) {
-         const newItem = cart.lineItems.find(
-           cartItem => String(cartItem.purchasableId) === String(item.id)
-         );
-
-         commit('addNewItem', {
-           ...item,
-           itemId: newItem.id,
-         });
-
          commit('setCurrentCart', cart);
+         commit('setItems', cart.lineItems);
        }
     } catch (error) {
       handleError(commit, error);
@@ -300,12 +263,12 @@ export const actions = {
    */
   async removeItem({ commit, dispatch }, item) {
     try {
-       const { cart } = await this.$api.removeItem({ itemId:item.itemId },);
+       const { cart } = await this.$api.removeItem({ itemId: item.id },);
        const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
        if (errorNotices.length < 1) {
-          commit('removeItem', item);
           commit('setCurrentCart', cart);
+          commit('setItems', cart.lineItems);
        }
     } catch (error) {
        handleError(commit, error);
@@ -320,26 +283,24 @@ export const actions = {
    * @property {object}   item     - The item object to set the quantity for.
    */
   async setItemQty({ dispatch, commit }, item) {
+  	console.log(item.id)
     try {
       const { cart } = await this.$api.updateQty({
-        itemId: item.itemId,
-        qty: item.qty,
+        itemId: Number(item.id),
+        qty: Number(item.qty),
       });
-      const errorNotices = handleNotices({commit, dispatch}, cart.notices);
+      const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
       if (errorNotices.length < 1) {
         if (item.qty === 0) {
           return dispatch('removeItem', item);
         }
-
-        commit('setItemQty', item);
         commit('setCurrentCart', cart);
-
+				commit('setItems', cart.lineItems);
         return true;
       }
     } catch (error) {
       handleError(commit, error);
-
       return false;
     }
   },
@@ -353,18 +314,16 @@ export const actions = {
    */
   async applyCoupon({ dispatch, commit }, item) {
     try {
-      const { cart } = await this.$api.applyCoupon({couponCode: item.couponCode});
+      const { cart } = await this.$api.applyCoupon({ couponCode: item.couponCode });
       const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
       if (errorNotices.length < 1) {
-        commit('setItemQty', item);
         commit('setCurrentCart', cart);
-
+				commit('setItems', cart.lineItems);
         return true;
       }
     } catch (error) {
       handleError(commit, error);
-
       return false;
     }
   },
@@ -377,6 +336,7 @@ export const actions = {
   async clearNotices({ commit }) {
     const { cart } = await this.$api.clearNotices();
     commit('setCurrentCart', cart);
+		commit('setItems', cart.lineItems);
   },
 
   /**
