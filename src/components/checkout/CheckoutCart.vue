@@ -21,7 +21,7 @@
 <template>
 	<ul v-if="cartItems.length > 0" role="list" :class="style">
 		<li v-for="item in cartItems" :key="item.id" class="flex py-6 space-x-6">
-			<CheckoutLineItem :line-item="item" />
+			<CheckoutLineItem :item="item" />
 		</li>
 	</ul>
 	<div v-else class="w-full py-12 flex justify-center items-center">

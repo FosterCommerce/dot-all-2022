@@ -3,24 +3,24 @@
 		name: 'CheckoutLineItem',
 		props: {
 			/** The line item data from Craft */
-			lineItem: {
+			item: {
 				type: Object,
 				required: true
 			}
 		},
 		data() {
 			return {
-				quantity: this.lineItem.qty
+				quantity: this.item.qty
 			}
 		},
 		methods: {
 			removeItem(){
-				this.$store.dispatch('cart/removeItem', this.lineItem)
+				this.$store.dispatch('cart/removeItem', this.item)
 			},
 			async updateQuantity(e){
-				const successfull = await this.$store.dispatch('cart/setItemQty', {...this.lineItem, qty: Number(e.target.value)})
+				const successfull = await this.$store.dispatch('cart/setItemQty', {...this.item, qty: Number(e.target.value)})
 				if (!successfull) {
-					this.quantity = this.lineItem.qty
+					this.quantity = this.item.qty
 				}
 			}
 		},
@@ -29,20 +29,19 @@
 
 <template>
 	<div class="flex py-6 space-x-6">
-		<img :src="lineItem.image[0].url" :alt="lineItem.title" class="flex-none w-40 h-40 object-center object-cover bg-gray-200 rounded-md">
+		<img :src="item.image[0].url" :alt="item.title" class="flex-none w-40 h-40 object-center object-cover bg-gray-200 rounded-md">
 		<div class="flex flex-col justify-between space-y-4">
 			<div class="text-sm font-medium space-y-1">
-				<h3 class="text-gray-900 sm:text-base">{{lineItem.title}}</h3>
+				<h3 class="text-gray-900 sm:text-base">{{ item.title }}</h3>
 				<div class="mt-1 flex text-sm">
-					<p class="text-gray-500">Size</p>
-
-					<p class="ml-4 pl-4 border-l border-gray-200 text-gray-500">{{lineItem.size}}</p>
+					<p class="text-gray-500">{{ item.color.charAt(0).toUpperCase() + item.color.slice(1) }}</p>
+					<p class="ml-4 pl-4 border-l border-gray-200 text-gray-500 uppercase">{{ item.size }}</p>
 				</div>
-				<p class="text-gray-900">${{lineItem.price}}</p>
+				<p class="text-gray-900">{{ item.priceAsCurrency }}</p>
 			</div>
 			<div class="space-y-4 sm:flex sm:space-x-4 sm:space-y-0">
 				<div>
-					<label for="quantity_5" class="sr-only">Quantity, {{lineItem.title}}</label>
+					<label for="quantity_5" class="sr-only">Quantity, {{ item.title }}</label>
 					<input
 						id="quantity_5"
 						v-model="quantity"
