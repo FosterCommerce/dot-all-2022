@@ -3,10 +3,6 @@
  */
 export const state = () => ({
   /**
-   * Items in the cart.
-   */
-  items: [],
-  /**
    * Whether or not the app is loading.
    */
   loading: true,
@@ -42,6 +38,10 @@ export const state = () => ({
      * Unique identifier for the cart in Craft.
      */
     number: null,
+		/**
+		 * Line items in the cart
+		 */
+		lineItems: [],
   },
   /**
    * Errors, if any.
@@ -54,22 +54,6 @@ export const state = () => ({
  */
 export const getters = {
   /**
-   * Get all items in the cart.
-   *
-   * NOTE: The `state` property is pulled in automatically.
-   */
-  getItems(state) {
-    return state.currentCart.lineItems;
-  },
-  /**
-   * Get the current cart id.
-   *
-   * NOTE: The `state` property is pulled in automatically.
-   */
-  getCartId(state) {
-    return state.cartId;
-  },
-  /**
    * Get the current cart.
    *
    * NOTE: The `state` property is pulled in automatically.
@@ -77,6 +61,15 @@ export const getters = {
   getCurrentCart(state) {
     return state.currentCart;
   },
+
+	/**
+	 * Get all items in the cart.
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 */
+	getItems(state) {
+		return state.currentCart.lineItems;
+	},
 
   /**
    * Get the loading status.
@@ -101,16 +94,6 @@ export const getters = {
  * Mutations. These set/modify properties of the state.
  */
 export const mutations = {
-  /**
-   * Set the current cart id.
-   *
-   * NOTE: The `state` property is pulled in automatically.
-   *
-   * @property {string} payload - The cart ID from Craft.
-   */
-  setCartId(state, payload) {
-    state.cartId = payload;
-  },
   /**
    * Set the current cart.
    *
@@ -148,30 +131,16 @@ export const mutations = {
  * Actions. These run the mutations which set the properties of the state.
  */
 export const actions = {
-  /**
-   * Set the entire items array. Probably only useful for emptying an entire cart.
-   *
-   * @property {function} commit - Vuex commit method.
-   * @property {object}   items  - Array of items in the cart.
-   */
-  setItems({ commit }, items) {
-    commit('setItems', items);
-  },
-
 	/**
 	 * Fetches the session info and cart data from Craft/Commerce and places it into state.
 	 *
-	 * @property {function} dispatch - Vuex dispatch method.
 	 * @property {function} commit   - Vuex commit method.
-	 * @property {object}   item     - The item object to add to the cart.
 	 */
-
-	async populateCart({ dispatch }) {
+	async populateCart({ commit }) {
 		// Get the cart from commerce and set it into state
 		const { cart } = await this.$api.getCart();
-		dispatch('setCartId', cart.number);
-		dispatch('setCurrentCart', cart);
-		dispatch('setLoading', false);
+		commit('setCurrentCart', cart);
+		commit('setLoading', false);
 	},
 
   /**
@@ -183,7 +152,7 @@ export const actions = {
    */
   async addNewItem({ commit, dispatch }, item) {
     try {
-        const {cart} = await this.$api.addItem({
+        const { cart } = await this.$api.addItem({
           id: item.id,
           qty: item.qty,
         });
@@ -205,7 +174,7 @@ export const actions = {
    */
   async removeItem({ commit, dispatch }, item) {
     try {
-       const { cart } = await this.$api.removeItem({ itemId: item.id },);
+       const { cart } = await this.$api.removeItem({ itemId: item.id });
        const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
        if (errorNotices.length < 1) {
@@ -275,46 +244,6 @@ export const actions = {
   async clearNotices({ commit }) {
     const { cart } = await this.$api.clearNotices();
     commit('setCurrentCart', cart);
-  },
-
-  /**
-   * Set the cart id.
-   *
-   * @property {function} commit  - Vuex commit method.
-   * @property {string}   payload - The cart ID from Craft.
-   */
-  setCartId({ commit }, payload) {
-    commit('setCartId', payload);
-  },
-
-  /**
-   * Set the current cart.
-   *
-   * @property {function} commit  - Vuex commit method.
-   * @property {object}   payload - The cart object.
-   */
-  setCurrentCart({ commit }, payload) {
-    commit('setCurrentCart', payload);
-  },
-
-  /**
-   * Set the loading state of the app.
-   *
-   * @property {function} commit  - Vuex commit method.
-   * @property {boolean}  payload - Whether or not the app is loading.
-   */
-  setLoading({ commit }, payload) {
-    commit('setLoading', payload);
-  },
-
-  /**
-   * Set cart errors.
-   *
-   * @property {function} commit  - Vuex commit method.
-   * @property {object}   payload - Array of errors in the cart.
-   */
-  setCartErrors({ commit }, payload) {
-    commit('setCartErrors', payload);
   },
 };
 
