@@ -59,7 +59,7 @@ export const getters = {
    * NOTE: The `state` property is pulled in automatically.
    */
   getItems(state) {
-    return state.items;
+    return state.currentCart.lineItems;
   },
   /**
    * Get the current cart id.
@@ -101,66 +101,6 @@ export const getters = {
  * Mutations. These set/modify properties of the state.
  */
 export const mutations = {
-  /**
-   * Set the entire items array. Probably only useful for emptying an entire cart.
-   *
-   * NOTE: The `state` property is pulled in automatically.
-   *
-   * @property {object} payload - Array of items in the cart.
-   */
-  setItems(state, payload) {
-    state.items = payload || [];
-  },
-  /**
-   * Add a new item to the cart (to modify quantity, use setItemQty).
-   *
-   * NOTE: The `state` property is pulled in automatically.
-   *
-   * @property {object} payload - The item object to add to the cart.
-   */
-  addNewItem(state, payload) {
-    const availableItemIndex = state.items.findIndex(item => String(item.id) === String(payload.id));
-
-    if (availableItemIndex === -1) {
-      state.items = [...state.items, payload];
-    } else {
-      state.items[availableItemIndex].qty = state.items[availableItemIndex].qty + 1;
-    }
-
-    localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
-  },
-  /**
-   * Remove an item entirely from the cart.
-   *
-   * NOTE: The `state` property is pulled in automatically.
-   *
-   * @property {object} payload - The item object to remove from the cart.
-   */
-  removeItem(state, payload) {
-    state.items = state.items.filter(item => item.id !== payload.id);
-    localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
-  },
-  /**
-   * Set the quantity of an item.
-   *
-   * NOTE: The `state` property is pulled in automatically.
-   *
-   * @property {object} payload - The item object to set the quantity for.
-   */
-  setItemQty(state, payload) {
-    const cartItems = state.items;
-
-    if (parseInt(payload.qty) !== 0) {
-      const availableItemIndex = cartItems.findIndex(item => String(item.id) === String(payload.id));
-
-      cartItems[availableItemIndex] = payload;
-      state.items = [...cartItems];
-    } else {
-      state.items = cartItems.filter(item => String(item.id) !== String(payload.id));
-    }
-
-    localStorage.setItem(state.currentCart.number, JSON.stringify(state.items));
-  },
   /**
    * Set the current cart id.
    *
@@ -219,15 +159,18 @@ export const actions = {
   },
 
 	/**
-	 * Fetches the session info and cart data from Craft/Commerce
-	 * and places it into state
-	 * */
+	 * Fetches the session info and cart data from Craft/Commerce and places it into state.
+	 *
+	 * @property {function} dispatch - Vuex dispatch method.
+	 * @property {function} commit   - Vuex commit method.
+	 * @property {object}   item     - The item object to add to the cart.
+	 */
+
 	async populateCart({ dispatch }) {
 		// Get the cart from commerce and set it into state
 		const { cart } = await this.$api.getCart();
 		dispatch('setCartId', cart.number);
 		dispatch('setCurrentCart', cart);
-		dispatch('setItems', cart.lineItems);
 		dispatch('setLoading', false);
 	},
 
@@ -248,7 +191,6 @@ export const actions = {
 
        if (errorNotices.length < 1) {
          commit('setCurrentCart', cart);
-         commit('setItems', cart.lineItems);
        }
     } catch (error) {
       handleError(commit, error);
@@ -268,7 +210,6 @@ export const actions = {
 
        if (errorNotices.length < 1) {
           commit('setCurrentCart', cart);
-          commit('setItems', cart.lineItems);
        }
     } catch (error) {
        handleError(commit, error);
@@ -296,7 +237,6 @@ export const actions = {
           return dispatch('removeItem', item);
         }
         commit('setCurrentCart', cart);
-				commit('setItems', cart.lineItems);
         return true;
       }
     } catch (error) {
@@ -319,7 +259,6 @@ export const actions = {
 
       if (errorNotices.length < 1) {
         commit('setCurrentCart', cart);
-				commit('setItems', cart.lineItems);
         return true;
       }
     } catch (error) {
@@ -336,7 +275,6 @@ export const actions = {
   async clearNotices({ commit }) {
     const { cart } = await this.$api.clearNotices();
     commit('setCurrentCart', cart);
-		commit('setItems', cart.lineItems);
   },
 
   /**
