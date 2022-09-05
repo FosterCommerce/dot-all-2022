@@ -30,9 +30,9 @@
 	<div class="flex py-6 sm:py-10">
 		<div class="flex-shrink-0">
 			<nuxt-img
-				v-if="item.image[0].url"
-				:src="item.image[0].url"
-				:alt="item.image[0].alt"
+				v-if="item.image.url"
+				:src="item.image.url"
+				:alt="item.image.alt"
 				class="w-24 h-24 rounded-md object-center object-cover sm:w-48 sm:h-48"
 				loading="lazy"
 			/>
@@ -43,7 +43,7 @@
 				<div>
 					<div class="flex justify-between">
 						<h3 class="text-sm">
-							<nuxt-link :to="item.product.uri" class="font-medium text-gray-700 hover:text-gray-800">{{ item.title }}</nuxt-link>
+							<nuxt-link :to="item.uri" class="font-medium text-gray-700 hover:text-gray-800">{{ item.title }}</nuxt-link>
 						</h3>
 					</div>
 					<div class="mt-1 flex text-sm">
