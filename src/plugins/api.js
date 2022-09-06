@@ -32,7 +32,6 @@ const api = ({$axios}, $config, store) => {
 	 */
 	const get = async (action, config = {}) => {
 		const { data } = await $axios.get(`/api${action}`, withDefaultConfig({ config }));
-
 		return data;
 	};
 
@@ -77,7 +76,6 @@ const api = ({$axios}, $config, store) => {
 				variables,
 				params,
 			};
-
 			const response = await $axios.post(`/graphql`,
 				data,
 				withDefaultConfig({
@@ -86,7 +84,6 @@ const api = ({$axios}, $config, store) => {
 					},
 				}),
 			);
-
 			return response.data;
 		},
 		/**
@@ -99,7 +96,6 @@ const api = ({$axios}, $config, store) => {
 				purchasableId: item.id,
 				qty: item.qty,
 			};
-
 			return await postAction('/fc/cart/update-cart', data);
 		},
 		/**
@@ -109,28 +105,9 @@ const api = ({$axios}, $config, store) => {
 		 */
 		updateQty: async (item) => {
 			const data = {
-				lineItems: {[item.itemId]: {'qty': item.qty}},
+				lineItems: { [item.itemId]: {'qty': item.qty} },
 			};
-
 			return await postAction('/fc/cart/update-cart', data);
-		},
-		updateAddress: async (address) => {
-
-			const data = {
-				address
-			}
-
-			return await postAction('/fc/addresses/update-address', data);
-
-		},
-		updateCartShippingAddress: async (address) => {
-
-			const data = {
-				shippingAddress: address
-			}
-
-			return await postAction('/fc/cart/update-cart', data);
-
 		},
 		/**
 		 * For removing an item from the cart.
@@ -141,7 +118,6 @@ const api = ({$axios}, $config, store) => {
 			const data = {
 				lineItems: {[item.itemId]: {'remove': true}},
 			};
-
 			return await postAction('/fc/cart/update-cart', data);
 		},
 
@@ -152,14 +128,6 @@ const api = ({$axios}, $config, store) => {
 			return await get('/actions/fc/cart/get-cart');
 		},
 		/**
-		 * Get an address.
-		 *
-		 *  @property {number} id - The ID for the address.
-		 */
-		getAddress: async (id) => {
-			return await get(`/actions/fc/addresses/get-address?addressId=${id}`);
-		},
-		/**
 		 * Apply a coupon to the cart.
 		 *
 		 * @property {object} item - The coupon object.
@@ -168,7 +136,6 @@ const api = ({$axios}, $config, store) => {
 			const data = {
 				couponCode: item.couponCode,
 			};
-
 			return await postAction('/fc/cart/update-cart', data);
 		},
 		/**
@@ -178,7 +145,6 @@ const api = ({$axios}, $config, store) => {
 			const data = {
 				clearNotices: 'clearNotices',
 			};
-
 			return await postAction('/fc/cart/update-cart', data);
 		},
 	};

@@ -1,5 +1,5 @@
 <script>
-	import { mapGetters, mapMutations } from "vuex";
+	import { mapGetters } from "vuex";
 
 	export default {
 		name: 'AddressFormDelete',
@@ -12,15 +12,12 @@
 			}
 		},
 		methods: {
-			...mapMutations('checkout', [
-				'setModal'
-			]),
-			closeModal() {
-				this.setModal({ context: 'addressDelete', payload: false });
+			close() {
+				this.$emit('close');
 			},
 			deleteAddress() {
 				console.log('Delete address code here');
-				this.closeModal();
+				this.close();
 			}
 		}
 	};
@@ -66,7 +63,7 @@
 			<button
 				type="button"
 				class="flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
-				@click="closeModal"
+				@click="close"
 			>
 				Cancel
 			</button>
@@ -74,4 +71,3 @@
 
 	</form>
 </template>
-

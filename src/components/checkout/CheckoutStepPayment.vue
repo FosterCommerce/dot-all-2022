@@ -1,5 +1,5 @@
 <script>
-	import { mapGetters, mapMutations } from "vuex";
+	import { mapGetters, mapMutations, mapActions } from "vuex";
 
 	export default {
 		name: 'CheckoutStepPayment',
@@ -7,6 +7,9 @@
 			...mapGetters('checkout', [
 				'getBillingAddressId',
 				'getBillingSameAsShipping'
+			]),
+			...mapGetters('cart', [
+				'getCurrentCart'
 			]),
 			billingSameAsShipping: {
 				set(value) {
@@ -22,6 +25,20 @@
 				'setBillingAddressId',
 				'setBillingSameAsShipping'
 			]),
+			...mapActions('checkout', [
+				'decrementStep',
+				'incrementStep'
+			]),
+			nextStep() {
+				// ... Code to save the data back to Commerce here
+				// and if there are no errors we can then increment the step
+				this.incrementStep();
+			},
+			previousStep() {
+				// ... Any code that needs to happen here before
+				// stepping back in the process
+				this.decrementStep();
+			}
 		}
 	};
 </script>
@@ -29,7 +46,6 @@
 <template>
 	<div>
 		<section aria-labelledby="payment-heading">
-
 			<div class="space-y-2 sm:flex sm:justify-between sm:items-center sm:space-y-0">
 				<h2 id="payment-heading" class="text-xl font-medium text-gray-900 lg:text-2xl">Payment details</h2>
 
@@ -116,8 +132,29 @@
 			<div v-if="!getBillingSameAsShipping">
 				<CheckoutAddressFields context="billing" />
 			</div>
-
 		</section>
 
+		<div class="flex flex-col justify-start items-stretch gap-y-4 pt-8 sm:flex-row-reverse sm:justify-between sm:items-center lg:pt-16">
+			<button
+				class="flex justify-center items-center px-8 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
+				@click.prevent="nextStep"
+			>
+				<span>Pay {{ getCurrentCart.totalAsCurrency }}</span>
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 -mr-1 ml-3 hidden sm:inline-block" viewBox="0 0 20 20" fill="currentColor">
+					<path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+					<path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
+				</svg>
+			</button>
+
+			<button
+				class="flex justify-center items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
+				@click.prevent="previousStep"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 -ml-1 mr-3 hidden sm:inline-block" viewBox="0 0 20 20" fill="currentColor">
+					<path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+				</svg>
+				<span>Return to Shipping</span>
+			</button>
+		</div>
 	</div>
 </template>

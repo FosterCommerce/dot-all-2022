@@ -55,7 +55,7 @@
 
 					<p class="flex items-center justify-between text-sm font-medium text-gray-900 border-t border-gray-200 pt-6 mt-6">
 						<span class="text-base">Total</span>
-						<span class="text-base">{{cart.totalAsCurrency}}</span>
+						<span class="text-base">{{ cart.totalAsCurrency }}</span>
 					</p>
 				</div>
 			</section>
@@ -84,7 +84,6 @@
 						<CheckoutStepAddress v-if="getCurrentStep.handle === 'address'" />
 						<CheckoutStepShipping v-if="getCurrentStep.handle === 'shipping'" />
 						<CheckoutStepPayment v-if="getCurrentStep.handle === 'payment'" />
-						<CheckoutNavigation />
 					</form>
 				</div>
 			</section>

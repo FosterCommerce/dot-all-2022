@@ -46,10 +46,6 @@ export const state = () => ({
 	 */
 	shippingAddressId: 1,
 	/**
-	 * The new address address. Can be null or an Object.
-	 */
-	newShippingAddress: null,
-	/**
 	 * Whether billing and shipping addresses are the same.
 	 */
 	billingSameAsShipping: true,
@@ -78,24 +74,6 @@ export const state = () => ({
 			price: '$5.00'
 		}
 	],
-	/**
-	 * The options for shipping addresses.
-	 */
-	shippingAddressOptions: [
-
-	],
-	/**
-	 * The cart itself.
-	 */
-	cart: [],
-	/**
-	 * The various modals and whether or not they're open.
-	 */
-	modals: {
-		login: false,
-		addressEdit: false,
-		addressDelete: false,
-	}
 });
 
 /**
@@ -159,38 +137,6 @@ export const getters = {
 		return state.currentStepNumber === 0;
 	},
 	/**
-	 * Whether or not the current step is the email step.
-	 *
-	 * NOTE: The `state` property is pulled in automatically.
-	 */
-	 getIsEmailStep(state) {
-		return state.handle === "email"
-	},
-	/**
-	 * Whether or not the current step is the address step.
-	 *
-	 * NOTE: The `state` property is pulled in automatically.
-	 */
-	 getIsAddressStep(state) {
-		return state.steps[state.currentStepNumber].handle === "address"
-	},
-	/**
-	 * Whether or not the current step is the shipping step.
-	 *
-	 * NOTE: The `state` property is pulled in automatically.
-	 */
-	 getIsShippingStep(state) {
-		return state.handle === "shipping"
-	},
-	/**
-	 * Whether or not the current step is the payment step.
-	 *
-	 * NOTE: The `state` property is pulled in automatically.
-	 */
-	getIsPaymentStep(state) {
-		return state.handle === "payment"
-	},
-	/**
 	 * Whether or not the current step is the last one.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
@@ -205,14 +151,6 @@ export const getters = {
 	 */
 	getShippingAddressId(state) {
 		return state.shippingAddressId;
-	},
-	/**
-	 * Get the shipping address ID to use.
-	 *
-	 * NOTE: The `state` property is pulled in automatically.
-	 */
-	getShippingAddressOptions(state) {
-		return state.shippingAddressOptions;
 	},
 	/**
 	 * Whether or not the billing address is the same as the shipping address.
@@ -246,30 +184,6 @@ export const getters = {
 	getShippingMethodOptions(state) {
 		return state.shippingMethodOptions;
 	},
-	/**
-	 * Get the modals.
-	 *
-	 * NOTE: The `state` property is pulled in automatically.
-	 */
-	getModals(state) {
-		return state.modals;
-	},
-	/**
-	 * Get the cart.
-	 *
-	 * NOTE: The `state` property is pulled in automatically.
-	 */
-	getCart(state) {
-		return state.cart;
-	},
-	/**
-	 * Get the the new shipping address
-	 *
-	 * NOTE: The `state` property is pulled in automatically.
-	 */
-	getNewShippingAddress(state) {
-		return state.newShippingAddress
-	}
 };
 
 /**
@@ -295,29 +209,6 @@ export const mutations = {
 	 */
 	setShippingAddressId(state, payload) {
 		state.shippingAddressId = payload;
-
-	},
-	/**
-	 * Set the available address options.
-	 *
-	 * NOTE: The `state` property is pulled in automatically.
-	 *
-	 * @property {array} payload - The array of objects containing the shipping addresses.
-	 */
-	 setShippingAddressOptions(state, payload) {
-		state.shippingAddressOptions = payload;
-
-	},
-	/**
-	 * Set the new shipping address.
-	 *
-	 * NOTE: The `state` property is pulled in automatically.
-	 *
-	 * @property {object} payload - The Object of the shipping address to use.
-	 */
-	setNewShippingAddress(state, payload) {
-		state.newShippingAddress = payload;
-
 	},
 	/**
 	 * Set whether or not the billing and shipping addresses are the same.
@@ -349,17 +240,6 @@ export const mutations = {
 	setShippingMethodId(state, payload) {
 		state.shippingMethodId = payload;
 	},
-	/**
-	 * Set the properties for a modal.
-	 *
-	 * NOTE: The `state` property is pulled in automatically.
-	 *
-	 * @property {string}  context - Which modal in the state.modals object to set.
-	 * @property {boolean} payload - The new modal open/active state.
-	 */
-	setModal(state, { context, payload }) {
-		state.modals[context] = payload;
-	},
 };
 
 /**
@@ -384,134 +264,9 @@ export const actions = {
 	 * @property {function} dispatch - Vuex dispatch method.
 	 * @property {object} getters - Vuex getters object.
 	 */
-	async incrementStep({ commit, dispatch, getters }) {
-
-		const output = {};
-
-		if (getters.getIsAddressStep) {
-
-			if (getters.getShippingAddressId === 0) {
-
-				output.shippingAddress = {
-					"fields": await dispatch('normalizeAddressFieldsForCraft', getters.getNewShippingAddress)
-				};
-
-			}
-
-			dispatch('updateShippingAddress', output);
-
-		}
-
+	incrementStep({ commit, getters }) {
 		if (!getters.getIsLastStep) {
 			commit('setCurrentStepNumber', (getters.getCurrentStepNumber + 1));
 		}
 	},
-	normalizeAddressFieldsForCraft({ commit }, data) {
-
-		return {
-			"id": data.id,
-			"fullName": `${data.firstName} ${data.lastName}`,
-			"organization": data.company,
-			"addressLine1": data.address1,
-			"addressLine2": data.address2,
-			"locality": data.city,
-			"administrativeArea": data.region,
-			"countryCode": data.country,
-			"postalCode": data.zipCode
-		}
-
-	},
-	normalizeAddressFieldsFromCraft({ commit }, data) {
-
-		return {
-			"id": data.id,
-			"firstName": data.firstName,
-			"lastName": data.lastName,
-			"company": data.organization,
-			"address1": data.addressLine1,
-			"address2": data.addressLine2,
-			"city": data.locality,
-			"region": data.administrativeArea,
-			"country": data.countryCode,
-			"zipCode": data.postalCode
-		}
-
-	},
-	async populateShippingAddressOptions({ dispatch, commit }, { cart, existingAddresses }) {
-
-		existingAddresses = existingAddresses ?? [];
-		
-		const addresses = [...existingAddresses];
-
-		if (cart.shippingAddressId) {
-
-			const { address } = await this.$api.getAddress(cart.shippingAddressId);
-
-			addresses.push(await dispatch('normalizeAddressFieldsFromCraft', address));
-
-		}
-		
-		commit('setShippingAddressOptions', addresses);
-
-	},
-	async updateShippingAddress({ dispatch, commit }, payload) {
-		try {
-
-		  const { cart } = await this.$api.updateCartShippingAddress(payload.shippingAddress.fields);
-		  //const errorNotices = handleNotices({commit, dispatch}, cart.notices);
-
-
-		} catch (error) {
-
-			handleError(commit, error);
-
-		  return false;
-		}
-	  },
 };
-
-/**
- * Handles errors that come back from the API.
- *
- * @property {function} commit - Vuex commit method.
- * @property {object}   error  - The error object from the server.
- */
-const handleError = (commit, error) => {
-	let errors = [];
-  
-	if (error.response.status === 400) {
-
-	  const responseErrors = Object.values(error.response.data.errors);
-  
-	  responseErrors.forEach(parentErrors => {
-		parentErrors.forEach(error => {
-		  errors = [...errors, error];
-		});
-	  });
-
-	  console.log('Errors', responseErrors);
-
-	}
-  
-	//   commit('setCheckoutErrors', errors);
-  
-	//   // Remove the errors after 6 seconds.
-	//   setTimeout(() => {
-	// 	commit('setCheckoutErrors', []);
-	//   }, 6000);
-	// } else {
-	//   commit('setCheckoutErrors', [
-	// 	"Your request could not be completed at the moment. Please try again.",
-	//   ]);
-  
-	//   // Remove the errors after 6 seconds.
-	//   setTimeout(() => {
-	// 	commit('setCartErrors', []);
-	//   }, 6000);
-	// }
-  
-	return {
-	  success: false,
-	  error,
-	};
-  };

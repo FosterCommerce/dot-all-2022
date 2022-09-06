@@ -1,23 +1,12 @@
 <script>
-	import { mapGetters, mapMutations } from "vuex";
+	import { mapGetters, mapMutations, mapActions } from "vuex";
 
 	export default {
 		name: "CheckoutStepAddress",
 		data() {
-			return { 
-				newShippingAddress: {
-					id: 0,
-					firstName: '',
-					lastName: '',
-					company: '',
-					address1: '',
-					address2: '',
-					city: '',
-					region: '',
-					country: '',
-					zipCode: '',
-					phone: ''
-				},
+			return {
+				editModalOpen: false,
+				deleteModalOpen: false,
 			}
 		},
 		computed: {
@@ -25,55 +14,57 @@
 				'getIsLoggedIn',
 				'getAddresses'
 			]),
-			...mapGetters('cart', [
-				'getCurrentCart'
-			]),
 			...mapGetters('checkout', [
 				'getShippingAddressId',
-				'getNewShippingAddress',
-				'getShippingAddressOptions'
 			])
 		},
 		methods: {
 			...mapMutations('checkout', [
 				'setShippingAddressId',
-				'setNewShippingAddress',
-				'setModal',
 			]),
+			...mapActions('checkout', [
+				'decrementStep',
+				'incrementStep'
+			]),
+			toggleEditAddressModal() {
+				this.editModalOpen = !this.editModalOpen;
+			},
 			editAddress() {
-				this.setModal({ context: 'addressEdit', payload: true })
+				// Code here to load in the address the user will edit, then open the modal
+				this.toggleEditAddressModal();
+			},
+			toggleDeleteAddressModal() {
+				this.deleteModalOpen = !this.deleteModalOpen;
 			},
 			deleteAddress() {
-				this.setModal({ context: 'addressDelete', payload: true })
+				// Code here to load in the address the user will delete, then open the modal
+				this.toggleDeleteAddressModal();
 			},
 			setShippingAddress(id) {
 				this.setShippingAddressId(id);
 			},
-			updateNewShippingAddress() {
-				this.setNewShippingAddress({...this.newShippingAddress});
+			nextStep() {
+				// ... Code to save the data back to Commerce here
+				// and if there are no errors we can then increment the step
+				this.incrementStep();
+			},
+			previousStep() {
+				// ... Any code that needs to happen here before
+				// stepping back in the process
+				this.decrementStep();
 			}
-		},
-		created() {
-
-			if (this.getNewShippingAddress) this.newShippingAddress = {...this.getNewShippingAddress};
-
-			this.$store.dispatch('checkout/populateShippingAddressOptions', {
-				cart: this.getCurrentCart, 
-				existingAddresses: this.getAddresses
-			});
 		}
 	}
 </script>
 
 <template>
 	<section aria-labelledby="address-heading">
-
 		<h2 id="address-heading" class="text-xl font-medium text-gray-900 lg:text-2xl">Where should we mail your order?</h2>
-		<p v-if="getShippingAddressOptions.length" class="text-sm text-gray-500">Select one of your saved addresses or add a new one.</p>
+		<p v-if="getAddresses.length" class="text-sm text-gray-500">Select one of your saved addresses or add a new one.</p>
 
-		<div v-if="getShippingAddressOptions.length" class="mt-6 divide-y divide-gray-200">
+		<div v-if="getAddresses.length" class="mt-6 divide-y divide-gray-200">
 
-			<div v-for="address in getShippingAddressOptions" :key="address.id" class="relative flex items-start py-4">
+			<div v-for="address in getAddresses" :key="address.id" class="relative flex items-start py-4">
 				<div class="min-w-0 flex-1 text-sm">
 					<label :for="`address_${address.id}`" class="font-medium text-gray-700">
 						<span v-if="address.company">{{ address.company }} - {{ address.firstName }} {{ address.lastName }}</span>
@@ -113,7 +104,7 @@
 						:value="address.id"
 						:checked="parseInt(getShippingAddressId) === parseInt(address.id)"
 						class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-						@change="setShippingAddressId(address.id)"
+						@change="setShippingAddress(address.id)"
 					/>
 				</div>
 			</div>
@@ -132,16 +123,16 @@
 						value="0"
 						:checked="getShippingAddressId === 0 || getAddresses.length === 0"
 						class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-						@change="setShippingAddressId(0)"
+						@change="setShippingAddress(0)"
 					/>
 				</div>
 			</div>
 
 		</div>
 
-		<div v-show="getShippingAddressId === 0 || getShippingAddressOptions.length === 0">
+		<div v-show="getShippingAddressId === 0 || getAddresses.length === 0">
 
-			<CheckoutAddressFields context="shipping" :address-obj="newShippingAddress" @changedAddress="updateNewShippingAddress" />
+			<CheckoutAddressFields context="shipping" />
 
 			<div v-if="!getIsLoggedIn" class="mt-6 sm:col-span-6">
 				<div class="relative flex items-start">
@@ -181,12 +172,34 @@
 			</div>
 		</div>
 
-		<CheckoutModal context="addressEdit" title="Edit your address" width="xl">
-			<AddressFormEdit />
-		</CheckoutModal>
+		<div class="flex flex-col justify-start items-stretch gap-y-4 pt-8 sm:flex-row-reverse sm:justify-between sm:items-center lg:pt-16">
+			<button
+				class="flex justify-center items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
+				@click.prevent="nextStep"
+			>
+				<span>Continue to Shipping</span>
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 -mr-1 ml-3 hidden sm:inline-block" viewBox="0 0 20 20" fill="currentColor">
+					<path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+				</svg>
+			</button>
 
-		<CheckoutModal context="addressDelete" title="Delete this address?">
-			<AddressFormDelete />
-		</CheckoutModal>
+			<button
+				class="flex justify-center items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
+				@click.prevent="previousStep"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 -ml-1 mr-3 hidden sm:inline-block" viewBox="0 0 20 20" fill="currentColor">
+					<path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+				</svg>
+				<span>Return to Email</span>
+			</button>
+		</div>
+
+		<BaseModal v-if="editModalOpen" title="Edit your address" width="xl" @close="toggleEditAddressModal">
+			<AddressFormEdit @close="toggleEditAddressModal" />
+		</BaseModal>
+
+		<BaseModal v-if="deleteModalOpen" title="Delete this address?" @close="toggleDeleteAddressModal">
+			<AddressFormDelete @close="toggleDeleteAddressModal" />
+		</BaseModal>
 	</section>
 </template>
