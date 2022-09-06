@@ -25,12 +25,13 @@ return [
 
     // Custom aliases for Nuxt Build, local assets, and the Live Preview with Nuxt
     'aliases' => [
+		'@webroot' => dirname(__DIR__) . '/web',
         '@distBasePath' => dirname(__DIR__) . '/web/dist',
         '@assetBasePath' => dirname(__DIR__) . '/web/assets',
         '@assetBaseUrl' => getenv('ASSET_BASE_URL'),
         '@nuxtBaseUrl' => getenv('NUXT_BASE_URL')
     ],
-    
+
     // The domain for the Craft control panel
     'baseCpUrl' => getenv('CRAFT_BASE_URL'),
 
