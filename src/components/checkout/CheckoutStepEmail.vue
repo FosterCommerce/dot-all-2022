@@ -1,24 +1,46 @@
 <script>
-	import { mapActions } from 'vuex';
+	import { mapGetters, mapActions } from 'vuex';
 
 	export default {
 		name: "CheckoutStepEmail",
 		data() {
 			return {
+				email: '',
 				loginModalOpen: false
+			}
+		},
+		computed: {
+			...mapGetters({
+				userIsGuest: 'user/getIsGuest',
+				userEmail: 'user/getEmail'
+			}),
+			...mapGetters({
+				checkoutEmail: 'checkout/getEmail',
+				checkoutErrors: 'checkout/getCheckoutErrors'
+			}),
+		},
+		mounted() {
+			if (this.checkoutEmail === '' && !this.userIsGuest) {
+				this.email = this.userEmail;
+			} else {
+				this.email = this.checkoutEmail;
 			}
 		},
 		methods: {
 			...mapActions('checkout', [
-				'incrementStep'
+				'incrementStep',
+				'saveEmail'
 			]),
 			toggleLoginModal() {
 				this.loginModalOpen = !this.loginModalOpen;
 			},
-			nextStep() {
+			async nextStep() {
 				// ... Code to save the data back to Commerce here
 				// and if there are no errors we can then increment the step
-				this.incrementStep();
+				await this.saveEmail(this.email);
+				if (this.checkoutErrors.length === 0) {
+					this.incrementStep();
+				}
 			}
 		}
 	}
@@ -28,7 +50,7 @@
 	<section aria-labelledby="contact-info-heading">
 
 		<h2 id="contact-info-heading" class="text-xl font-medium text-gray-900 lg:text-2xl">Where should we send your receipt?</h2>
-		<p class="text-sm text-gray-500">
+		<p v-if="userIsGuest" class="text-sm text-gray-500">
 			Already have an account?
 			<a href="#" class="text-indigo-600" @click.prevent="toggleLoginModal">Log in.</a>
 		</p>
@@ -38,6 +60,7 @@
 			<div class="mt-1">
 				<input
 					id="email"
+					v-model="email"
 					type="email"
 					name="email"
 					autocomplete="email"

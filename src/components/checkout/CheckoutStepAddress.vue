@@ -11,7 +11,7 @@
 		},
 		computed: {
 			...mapGetters('user', [
-				'getIsLoggedIn',
+				'getIsGuest',
 				'getAddresses'
 			]),
 			...mapGetters('checkout', [
@@ -134,7 +134,7 @@
 
 			<CheckoutAddressFields context="shipping" />
 
-			<div v-if="!getIsLoggedIn" class="mt-6 sm:col-span-6">
+			<div v-if="getIsGuest" class="mt-6 sm:col-span-6">
 				<div class="relative flex items-start">
 					<div class="flex items-center h-5">
 						<input

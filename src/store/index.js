@@ -95,10 +95,15 @@ export const actions = {
 	 *
 	 * @param {function} commit - Vuex commit method.
 	 */
-	async fetchSessionData({ commit }) {
+	async fetchSessionData({ commit, dispatch }) {
 		// Get the session data from Craft and set it into state
 		const sessionInfo = await this.$api.get('/actions/users/session-info');
-
 		commit('setCsrfToken', sessionInfo.csrfTokenValue);
+		if (!sessionInfo.isGuest) {
+			commit('user/setUserId', sessionInfo.id);
+			commit('user/setEmail', sessionInfo.email);
+			dispatch('user/populateAddresses', sessionInfo.id);
+		}
+		commit('user/setIsGuest', sessionInfo.isGuest);
 	},
 };

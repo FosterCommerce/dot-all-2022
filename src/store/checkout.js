@@ -42,6 +42,10 @@ export const state = () => ({
 	 */
 	currentStepNumber: 0,
 	/**
+	 * The email address
+	 */
+	email: '',
+	/**
 	 * The shipping address ID to use.
 	 */
 	shippingAddressId: 1,
@@ -74,6 +78,10 @@ export const state = () => ({
 			price: '$5.00'
 		}
 	],
+	/**
+	 * Errors, if any.
+	 */
+	checkoutErrors: [],
 });
 
 /**
@@ -145,6 +153,14 @@ export const getters = {
 		return state.currentStepNumber === (state.steps.length - 1);
 	},
 	/**
+	 * Get the email to use.
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 */
+	getEmail(state) {
+		return state.email;
+	},
+	/**
 	 * Get the shipping address ID to use.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
@@ -184,6 +200,14 @@ export const getters = {
 	getShippingMethodOptions(state) {
 		return state.shippingMethodOptions;
 	},
+	/**
+	 * Get Cart errors.
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 */
+	getCheckoutErrors(state) {
+		return state.checkoutErrors;
+	},
 };
 
 /**
@@ -199,6 +223,16 @@ export const mutations = {
 	 */
 	setCurrentStepNumber(state, payload) {
 		state.currentStepNumber = payload;
+	},
+	/**
+	 * Set the shipping method ID.
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @property {string} payload - The email address to use.
+	 */
+	setEmail(state, payload) {
+		state.email = payload;
 	},
 	/**
 	 * Set the shipping method ID.
@@ -240,6 +274,17 @@ export const mutations = {
 	setShippingMethodId(state, payload) {
 		state.shippingMethodId = payload;
 	},
+
+	/**
+	 * Set the cart error.
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @property {object} payload - Array of errors to set in the cart.
+	 */
+	setCheckoutErrors(state, payload) {
+		state.checkoutErrors = payload;
+	},
 };
 
 /**
@@ -269,4 +314,84 @@ export const actions = {
 			commit('setCurrentStepNumber', (getters.getCurrentStepNumber + 1));
 		}
 	},
+
+	async saveEmail({ commit, dispatch }, email) {
+		try {
+			const { cart } = await this.$api.postAction('/fc/cart/update-cart', { email });
+			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
+
+			if (errorNotices.length < 1) {
+				console.log(cart);
+				commit('cart/setCurrentCart', cart, { root:true });
+				commit('setEmail', cart.email);
+			}
+		} catch (error) {
+			handleError(commit, error);
+		}
+	}
+};
+
+/**
+ * Sets cart notices and errors.
+ *
+ * @property {function} dispatch - Vuex dispatch method.
+ * @property {function} commit   - Vuex commit method.
+ * @property {object}   notices  - Array of notices for the cart.
+ */
+const handleNotices = ({ commit, dispatch }, notices) => {
+	let errors = [];
+
+	notices.forEach(notice => {
+		errors = [...errors, notice.message];
+	});
+
+	commit('setCheckoutErrors', errors);
+
+	// Remove the errors after 6 seconds.
+	setTimeout(() => {
+		commit('setCheckoutErrors', []);
+	}, 6000);
+
+	return errors;
+};
+
+/**
+ * Handles errors that come back from the API.
+ *
+ * @property {function} commit - Vuex commit method.
+ * @property {object}   error  - The error object from the server.
+ */
+const handleError = (commit, error) => {
+	let errors = [];
+
+	if (error.response.status === 400) {
+		const cartErrors = Object.values(error.response.data.errors);
+
+		cartErrors.forEach(parentErrors => {
+			parentErrors.forEach(error => {
+				errors = [...errors, error];
+			});
+		});
+
+		commit('setCheckoutErrors', errors);
+
+		// Remove the errors after 6 seconds.
+		setTimeout(() => {
+			commit('setCheckoutErrors', []);
+		}, 6000);
+	} else {
+		commit('setCheckoutErrors', [
+			"Your request could not be completed at the moment. Please try again.",
+		]);
+
+		// Remove the errors after 6 seconds.
+		setTimeout(() => {
+			commit('setCheckoutErrors', []);
+		}, 6000);
+	}
+
+	return {
+		success: false,
+		error,
+	};
 };
