@@ -7,40 +7,42 @@
 			return {
 				email: '',
 				loginModalOpen: false,
-				saving: false,
+				isSaving: false,
 			}
 		},
 		computed: {
-			...mapGetters({
-				userIsGuest: 'user/getIsGuest',
-				userEmail: 'user/getEmail'
-			}),
-			...mapGetters({
-				checkoutEmail: 'checkout/getEmail',
-				checkoutErrors: 'checkout/getCheckoutErrors'
-			}),
+			...mapGetters('user', [
+				'getIsGuest'
+			]),
+			...mapGetters('checkout', [
+				'getEmail',
+				'getCheckoutErrors'
+			])
 		},
 		mounted() {
-			if (this.checkoutEmail === '' && !this.userIsGuest) {
-				this.email = this.userEmail;
-			} else {
-				this.email = this.checkoutEmail;
-			}
+			this.email = this.getEmail
 		},
 		methods: {
 			...mapActions('checkout', [
 				'incrementStep',
-				'saveEmail'
+				'saveEmail',
+				'displayNotice'
 			]),
 			toggleLoginModal() {
 				this.loginModalOpen = !this.loginModalOpen;
 			},
 			async nextStep() {
-				this.saving = true;
-				await this.saveEmail(this.email);
-				this.saving = false;
-				if (this.checkoutErrors.length === 0) {
-					this.incrementStep();
+				if (this.email === '') {
+					// Display an error message if there is no email address
+					this.displayNotice('Your email address is required');
+				} else {
+					// If we have an email address, try and save it to the cart
+					this.isSaving = true;
+					await this.saveEmail(this.email);
+					this.isSaving = false;
+					if (this.getCheckoutErrors.length === 0) {
+						this.incrementStep();
+					}
 				}
 			}
 		}
@@ -51,7 +53,7 @@
 	<section aria-labelledby="contact-info-heading">
 
 		<h2 id="contact-info-heading" class="text-xl font-medium text-gray-900 lg:text-2xl">Where should we send your receipt?</h2>
-		<p v-if="userIsGuest" class="text-sm text-gray-500">
+		<p v-if="getIsGuest" class="text-sm text-gray-500">
 			Already have an account?
 			<a href="#" class="text-indigo-600" @click.prevent="toggleLoginModal">Log in.</a>
 		</p>
@@ -91,12 +93,13 @@
 
 		<div class="flex flex-col justify-start items-stretch gap-y-4 pt-8 sm:flex-row-reverse sm:justify-between sm:items-center lg:pt-16">
 			<button
-				:class="{ 'opacity-25 cursor-not-allowed': saving }"
+				:class="{ 'opacity-25 cursor-not-allowed': isSaving }"
 				class="flex justify-center items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
-				:disabled="saving"
+				:disabled="isSaving"
 				@click.prevent="nextStep"
 			>
-				<span>Continue to Address</span>
+				<span v-if="isSaving">Saving Email ...</span>
+				<span v-else>Continue to Address</span>
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 -mr-1 ml-3 hidden sm:inline-block" viewBox="0 0 20 20" fill="currentColor">
 					<path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
 				</svg>

@@ -8,10 +8,10 @@
 			};
 		},
 		computed: {
-			...mapGetters( {
-				getCurrentStep:'checkout/getCurrentStep',
-				getIsLastStep:'checkout/getIsLastStep',
-
+			...mapGetters({
+				isGuest: 'user/getIsGuest',
+				currentStep:'checkout/getCurrentStep',
+				isLastStep:'checkout/getIsLastStep',
 				isLoading: 'cart/getLoading',
 				cart: 'cart/getCurrentCart',
 			}),
@@ -31,10 +31,10 @@
 	<div>
 		<ErrorNotices />
 
-		<main :class="layoutStyle" :style="`${!getIsLastStep ? 'min-height: calc(100% - 85px);' : ''}`">
+		<main :class="layoutStyle" :style="`${!isLastStep ? 'min-height: calc(100% - 85px);' : ''}`">
 			<h1 class="sr-only">Checkout</h1>
 
-			<section v-if="!getIsLastStep" aria-labelledby="order-heading" class="px-4 py-6 bg-gray-50 border-b border-gray-200 transition-opacity duration-300 sm:px-6 lg:hidden">
+			<section v-if="!isLastStep" aria-labelledby="order-heading" class="px-4 py-6 bg-gray-50 border-b border-gray-200 transition-opacity duration-300 sm:px-6 lg:hidden">
 				<div class="max-w-2xl mx-auto">
 					<div class="flex items-center justify-between">
 						<h2 id="order-heading" class="text-lg font-medium text-gray-900">Your Order</h2>
@@ -63,7 +63,7 @@
 			</section>
 
 			<section
-				v-if="!getIsLastStep"
+				v-if="!isLastStep"
 				aria-labelledby="summary-heading"
 				class="hidden bg-gray-50 w-full max-w-md flex-col transition-opacity duration-300 lg:flex"
 			>
@@ -78,19 +78,18 @@
 				</div>
 			</section>
 
-
-			<section v-if="!getIsLastStep" class="flex-auto overflow-y-auto pt-2 px-4 pb-16 transition-opacity duration-300 sm:px-6 sm:pt-8 lg:px-8 lg:pt-0 lg:pb-24">
+			<section v-if="!isLastStep" class="flex-auto overflow-y-auto pt-2 px-4 pb-16 transition-opacity duration-300 sm:px-6 sm:pt-8 lg:px-8 lg:pt-0 lg:pb-24">
 				<div class="max-w-2xl mx-auto">
 					<form class="mt-6 lg:mt-16">
-						<CheckoutStepEmail v-if="getCurrentStep.handle === 'email'" />
-						<CheckoutStepAddress v-if="getCurrentStep.handle === 'address'" />
-						<CheckoutStepShipping v-if="getCurrentStep.handle === 'shipping'" />
-						<CheckoutStepPayment v-if="getCurrentStep.handle === 'payment'" />
+						<CheckoutStepEmail v-if="currentStep.handle === 'email'" />
+						<CheckoutStepAddress v-if="currentStep.handle === 'address'" />
+						<CheckoutStepShipping v-if="currentStep.handle === 'shipping'" />
+						<CheckoutStepPayment v-if="currentStep.handle === 'payment'" />
 					</form>
 				</div>
 			</section>
 
-			<CheckoutStepConfirm v-if="getIsLastStep" />
+			<CheckoutStepConfirm v-if="isLastStep" />
 		</main>
 	</div>
 </template>

@@ -215,6 +215,16 @@ export const getters = {
  */
 export const mutations = {
 	/**
+	 * Set the steps.
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @property {array} payload - An array fo step objects.
+	 */
+	setSteps(state, payload) {
+		state.steps = payload;
+	},
+	/**
 	 * Set the current step number.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
@@ -292,6 +302,20 @@ export const mutations = {
  */
 export const actions = {
 	/**
+	 * Initializes the steps and modifies them if a user is already logged in
+	 */
+	populateSteps({ commit, getters }, isGuest) {
+		if (!isGuest) {
+			const steps = [];
+			getters.getSteps.forEach((step, index) => {
+				if (index !== 0) {
+					steps.push(step);
+				}
+			});
+			commit('setSteps', steps);
+		}
+	},
+	/**
 	 * Decrement the current step number.
 	 *
 	 * @property {function} commit  - Vuex commit method.
@@ -315,14 +339,31 @@ export const actions = {
 		}
 	},
 
+	/**
+	 * Used to display an error notice message manually
+	 *
+	 * @property {function} dispatch - Vuex dispatch method.
+	 * @property {function} commit   - Vuex commit method.
+	 * @property {string} notice  - An error notice
+	 */
+	displayNotice({commit, dispatch}, notice) {
+		handleNotices({ commit, dispatch }, [{message: notice}]);
+	},
+
+	/**
+	 * Saves the email address
+	 *
+	 * @property {function} dispatch - Vuex dispatch method.
+	 * @property {function} commit   - Vuex commit method.
+	 * @property {string}  email  - An email address string
+	 */
 	async saveEmail({ commit, dispatch }, email) {
 		try {
 			const { cart } = await this.$api.postAction('/fc/cart/update-cart', { email });
 			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
 			if (errorNotices.length < 1) {
-				console.log(cart);
-				commit('cart/setCurrentCart', cart, { root:true });
+				commit('cart/setCurrentCart', cart, { root: true });
 				commit('setEmail', cart.email);
 			}
 		} catch (error) {

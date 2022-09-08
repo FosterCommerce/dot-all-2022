@@ -91,7 +91,8 @@ export const actions = {
 		commit('setPrimaryNav', queryData.entry.primaryNavigation);
 	},
 	/**
-	 * Gets the session data an saves it into state.
+	 * Gets the session data, user data and saves it into state.
+	 * Initializes the steps in the checkout process based on if the user is logged in or not
 	 *
 	 * @param {function} commit - Vuex commit method.
 	 */
@@ -105,5 +106,6 @@ export const actions = {
 			dispatch('user/populateAddresses', sessionInfo.id);
 		}
 		commit('user/setIsGuest', sessionInfo.isGuest);
+		dispatch('checkout/populateSteps', sessionInfo.isGuest);
 	},
 };
