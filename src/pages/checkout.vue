@@ -8,8 +8,10 @@
 			};
 		},
 		computed: {
-			...mapGetters( {getCurrentStep:'checkout/getCurrentStep',
+			...mapGetters( {
+				getCurrentStep:'checkout/getCurrentStep',
 				getIsLastStep:'checkout/getIsLastStep',
+
 				isLoading: 'cart/getLoading',
 				cart: 'cart/getCurrentCart',
 			}),
@@ -27,7 +29,7 @@
 
 <template>
 	<div>
-		<CartErrors />
+		<ErrorNotices />
 
 		<main :class="layoutStyle" :style="`${!getIsLastStep ? 'min-height: calc(100% - 85px);' : ''}`">
 			<h1 class="sr-only">Checkout</h1>
