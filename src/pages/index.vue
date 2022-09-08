@@ -5,7 +5,9 @@
 		async asyncData({ $api, route }) {
 			// Check for Craft Live Preview params
 			let previewParams = null;
+			let allowDraft = false;
 			if (route.query['x-craft-live-preview']) {
+				allowDraft = true;
 				previewParams = {
 					token: route.query.token,
 					'x-craft-live-preview': route.query['x-craft-live-preview'],
@@ -13,12 +15,7 @@
 			}
 
 			// Call the query API method to get the data from Craft
-			const {data: queryData} = await $api.graphqlQuery(
-				EntryHome,
-				{limit: 1},
-				previewParams,
-			);
-
+			const { data: queryData } = await $api.graphqlQuery(EntryHome, { limit: 1, allowDraft }, previewParams);
 			return {
 				entry: queryData?.entry,
 			};
@@ -28,17 +25,17 @@
 				entry: null,
 			};
 		},
-	}
+	};
 </script>
 
 <template>
   <div>
-		<!-- Hero Header -->
-		<BaseHomeHero :entry="entry" />
+    <!-- Hero Header -->
+    <BaseHomeHero :entry="entry" />
 
-		<!-- Page Content -->
-		<div class="mt-12 mx-auto prose prose-indigo prose-lg text-gray-500 lg:mt-24">
-			<ContentBlocks :blocks="entry.contentBlocks" />
-		</div>
+    <!-- Page Content -->
+    <div class="mt-12 mx-auto prose prose-indigo prose-lg text-gray-500 lg:mt-24">
+      <ContentBlocks :blocks="entry.contentBlocks" />
+    </div>
   </div>
 </template>
