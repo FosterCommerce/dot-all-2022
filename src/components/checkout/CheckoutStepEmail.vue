@@ -6,7 +6,8 @@
 		data() {
 			return {
 				email: '',
-				loginModalOpen: false
+				loginModalOpen: false,
+				saving: false,
 			}
 		},
 		computed: {
@@ -35,9 +36,9 @@
 				this.loginModalOpen = !this.loginModalOpen;
 			},
 			async nextStep() {
-				// ... Code to save the data back to Commerce here
-				// and if there are no errors we can then increment the step
+				this.saving = true;
 				await this.saveEmail(this.email);
+				this.saving = false;
 				if (this.checkoutErrors.length === 0) {
 					this.incrementStep();
 				}
@@ -90,7 +91,9 @@
 
 		<div class="flex flex-col justify-start items-stretch gap-y-4 pt-8 sm:flex-row-reverse sm:justify-between sm:items-center lg:pt-16">
 			<button
+				:class="{ 'opacity-25 cursor-not-allowed': saving }"
 				class="flex justify-center items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
+				:disabled="saving"
 				@click.prevent="nextStep"
 			>
 				<span>Continue to Address</span>
