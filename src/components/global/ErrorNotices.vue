@@ -5,11 +5,10 @@
 		name: 'ErrorNotices',
 		computed: {
 			...mapGetters({
-				cartErrors: 'cart/getCartErrors',
-				checkoutErrors: 'checkout/getCheckoutErrors'
+				cartErrors: 'cart/getCartErrors'
 			}),
 			errors() {
-				return [...new Set([...this.cartErrors,...this.checkoutErrors])]
+				return this.cartErrors;
 			}
 		}
 	};

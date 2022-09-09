@@ -10,6 +10,11 @@ export const state = () => ({
    * The cart properties.
    */
   currentCart: {
+
+  	email: '',
+
+		shippingAddressId: null,
+
     /**
      * Applied coupon code (if any).
      */
@@ -69,6 +74,14 @@ export const getters = {
 	 */
 	getItems(state) {
 		return state.currentCart.lineItems;
+	},
+
+	getEmail(state) {
+		return state.currentCart.email;
+	},
+
+	getShippingAddressId(state) {
+		return state.currentCart.shippingAddressId;
 	},
 
   /**
@@ -214,6 +227,26 @@ export const actions = {
     }
   },
 
+	/**
+	 * Saves the email address
+	 *
+	 * @property {function} dispatch - Vuex dispatch method.
+	 * @property {function} commit   - Vuex commit method.
+	 * @property {string}  email  - An email address string
+	 */
+	async saveEmail({ commit, dispatch }, email) {
+		try {
+			const { cart } = await this.$api.postAction('/fc/cart/update-cart', { email });
+			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
+
+			if (errorNotices.length < 1) {
+				commit('setCurrentCart', cart);
+			}
+		} catch (error) {
+			handleError(commit, error);
+		}
+	},
+
   /**
    * Apply coupon.
    *
@@ -235,6 +268,15 @@ export const actions = {
       return false;
     }
   },
+	/**
+	 * Used to display notices manually
+	 * @param commit
+	 * @param dispatch
+	 * @param notice
+	 */
+	displayNotice({ commit, dispatch }, notice) {
+  	handleNotices({ commit, dispatch }, [{ message: notice }]);
+	},
 
   /**
    * Clear Cart notices.

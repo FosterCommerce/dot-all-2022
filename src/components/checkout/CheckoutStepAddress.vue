@@ -17,17 +17,11 @@
 				'getIsGuest',
 				'getAddresses'
 			]),
-			...mapGetters('checkout', [
-				'getShippingAddressId',
-			]),
 			...mapGetters('cart', [
-				'getCurrentCart'
+				'getShippingAddressId'
 			])
 		},
 		methods: {
-			...mapMutations('checkout', [
-				'setShippingAddressId',
-			]),
 			...mapActions('checkout', [
 				'decrementStep',
 				'incrementStep'
@@ -51,9 +45,6 @@
 			deleteAddress(id) {
 				this.loadUserAddress(id);
 				this.toggleDeleteAddressModal();
-			},
-			setShippingAddress(id) {
-				this.setShippingAddressId(id);
 			},
 			nextStep() {
 				// ... Code to save the data back to Commerce here
@@ -114,9 +105,8 @@
 						name="address"
 						type="radio"
 						:value="address.id"
-						:checked="parseInt(getCurrentCart.shippingAddressId) === parseInt(address.id)"
+						:checked="parseInt(getShippingAddressId) === parseInt(address.id)"
 						class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-						@change="setShippingAddress(address.id)"
 					/>
 				</div>
 			</div>
@@ -133,16 +123,15 @@
 						name="address"
 						type="radio"
 						value="0"
-						:checked="getShippingAddressId === 0 || getAddresses.length === 0"
+						:checked="getShippingAddressId === null || getAddresses.length === 0"
 						class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-						@change="setShippingAddress(0)"
 					/>
 				</div>
 			</div>
 
 		</div>
 
-		<div v-show="getIsGuest || getAddresses.length === 0 || getShippingAddressId === 0">
+		<div v-show="getIsGuest || getShippingAddressId === null || getAddresses.length === 0">
 
 			<CheckoutAddressFields context="shipping" />
 

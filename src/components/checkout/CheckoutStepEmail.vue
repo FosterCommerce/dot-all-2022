@@ -14,17 +14,19 @@
 			...mapGetters('user', [
 				'getIsGuest'
 			]),
-			...mapGetters('checkout', [
+			...mapGetters('cart', [
 				'getEmail',
-				'getCheckoutErrors'
+				'getCartErrors'
 			])
 		},
 		mounted() {
-			this.email = this.getEmail
+			this.email = this.getEmail;
 		},
 		methods: {
 			...mapActions('checkout', [
 				'incrementStep',
+			]),
+			...mapActions('cart', [
 				'saveEmail',
 				'displayNotice'
 			]),
@@ -40,7 +42,7 @@
 					this.isSaving = true;
 					await this.saveEmail(this.email);
 					this.isSaving = false;
-					if (this.getCheckoutErrors.length === 0) {
+					if (this.getCartErrors.length === 0) {
 						this.incrementStep();
 					}
 				}
@@ -98,7 +100,7 @@
 				:disabled="isSaving"
 				@click.prevent="nextStep"
 			>
-				<span v-if="isSaving">Saving Email ...</span>
+				<span v-if="isSaving">Saving Email Address ...</span>
 				<span v-else>Continue to Address</span>
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 -mr-1 ml-3 hidden sm:inline-block" viewBox="0 0 20 20" fill="currentColor">
 					<path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
