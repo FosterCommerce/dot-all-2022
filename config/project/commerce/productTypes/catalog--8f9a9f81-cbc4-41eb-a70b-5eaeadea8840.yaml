@@ -126,7 +126,7 @@ productTitleFormat: ''
 siteSettings:
   f8a2a825-4c38-46e8-853b-b3ee5d46969b: # Foster Commerce Dot All 2022
     hasUrls: true
-    template: index
+    template: product.twig
     uriFormat: 'catalog/{slug}'
 skuFormat: 'CAT-{product.slug|upper}-{color|upper}-{size|upper}'
 variantFieldLayouts:
