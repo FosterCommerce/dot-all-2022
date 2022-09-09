@@ -7,6 +7,9 @@
 			return {
 				editModalOpen: false,
 				deleteModalOpen: false,
+				newOpen: false,
+				userAddress: null,
+				cartAddress: null
 			}
 		},
 		computed: {
@@ -16,6 +19,9 @@
 			]),
 			...mapGetters('checkout', [
 				'getShippingAddressId',
+			]),
+			...mapGetters('cart', [
+				'getCurrentCart'
 			])
 		},
 		methods: {
@@ -26,18 +32,24 @@
 				'decrementStep',
 				'incrementStep'
 			]),
+			loadUserAddress(id) {
+				const address = this.getAddresses.filter((address) => {
+					return address.id === id;
+				});
+				this.userAddress = address.length ? address[0] : null;
+			},
 			toggleEditAddressModal() {
 				this.editModalOpen = !this.editModalOpen;
-			},
-			editAddress() {
-				// Code here to load in the address the user will edit, then open the modal
-				this.toggleEditAddressModal();
 			},
 			toggleDeleteAddressModal() {
 				this.deleteModalOpen = !this.deleteModalOpen;
 			},
-			deleteAddress() {
-				// Code here to load in the address the user will delete, then open the modal
+			editAddress(id) {
+				this.loadUserAddress(id);
+				this.toggleEditAddressModal();
+			},
+			deleteAddress(id) {
+				this.loadUserAddress(id);
 				this.toggleDeleteAddressModal();
 			},
 			setShippingAddress(id) {
@@ -82,14 +94,14 @@
 						<button
 							type="button"
 							class="inline-flex items-center mt-2 px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-							@click="editAddress"
+							@click="editAddress(address.id)"
 						>
 							Edit
 						</button>
 						<button
 							type="button"
 							class="inline-flex items-center mt-2 px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-							@click="deleteAddress"
+							@click="deleteAddress(address.id)"
 						>
 							Delete
 						</button>
@@ -102,7 +114,7 @@
 						name="address"
 						type="radio"
 						:value="address.id"
-						:checked="parseInt(getShippingAddressId) === parseInt(address.id)"
+						:checked="parseInt(getCurrentCart.shippingAddressId) === parseInt(address.id)"
 						class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
 						@change="setShippingAddress(address.id)"
 					/>
@@ -130,7 +142,7 @@
 
 		</div>
 
-		<div v-show="getShippingAddressId === 0 || getAddresses.length === 0">
+		<div v-show="getIsGuest || getAddresses.length === 0 || getShippingAddressId === 0">
 
 			<CheckoutAddressFields context="shipping" />
 
@@ -207,11 +219,11 @@
 		</div>
 
 		<BaseModal v-if="editModalOpen" title="Edit your address" width="xl" @close="toggleEditAddressModal">
-			<AddressFormEdit @close="toggleEditAddressModal" />
+			<AddressFormEdit :address="userAddress" @close="toggleEditAddressModal" />
 		</BaseModal>
 
 		<BaseModal v-if="deleteModalOpen" title="Delete this address?" @close="toggleDeleteAddressModal">
-			<AddressFormDelete @close="toggleDeleteAddressModal" />
+			<AddressFormDelete :address="userAddress" @close="toggleDeleteAddressModal" />
 		</BaseModal>
 	</section>
 </template>

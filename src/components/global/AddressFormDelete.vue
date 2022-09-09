@@ -1,22 +1,42 @@
 <script>
-	import { mapGetters } from "vuex";
+	import { mapActions } from "vuex";
 
 	export default {
 		name: 'AddressFormDelete',
-		computed: {
-			...mapGetters('user', [
-				'getAddresses'
-			]),
-			address() {
-				return this.getAddresses[0];
+		props: {
+			address: {
+				type: Object,
+				required: false,
+				default: () => ({
+					id: 0,
+					firstName: '',
+					lastName: '',
+					organization: '',
+					addressLine1: '',
+					addressLine2: '',
+					locality: '',
+					administrativeArea: '',
+					countryCode: '',
+					postalCode: '',
+					phone: ''
+				})
 			}
 		},
+		data() {
+			return {
+				error: ''
+			};
+		},
 		methods: {
+			...mapActions('user', [
+				'fetchAddresses'
+			]),
 			close() {
 				this.$emit('close');
 			},
-			deleteAddress() {
-				console.log('Delete address code here');
+			async deleteAddress() {
+				await this.$api.deleteAddress(this.address);
+				this.fetchAddresses();
 				this.close();
 			}
 		}

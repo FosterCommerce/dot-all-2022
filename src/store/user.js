@@ -93,7 +93,7 @@ export const actions = {
 			commit('setEmail', sessionInfo.email);
 			await dispatch('fetchAddresses', sessionInfo.id);
 		}
-		dispatch('checkout/populateSteps', sessionInfo.isGuest, { root: true });
+		dispatch('checkout/fetchSteps', sessionInfo.isGuest, { root: true });
 	},
 	/**
 	 * Uses GraphQL to fetch the logged in users addresses from Craft and places them in state
@@ -101,14 +101,24 @@ export const actions = {
 	 * @param {function} commit - Vuex commit method.
 	 * @param {function} getters - Vuex getter method
 	 */
-	async fetchAddresses({ commit, getters }) {
+	async fetchAddresses({ commit, getters }, userId) {
+		console.log('The user ID in fetch addresses', userId);
 		const { data } = await this.$api.graphqlQuery(
 			Addresses,
 			{
-				ownerId: getters.userId,
-				limit: 1
+				ownerId: userId
 			}
 		);
-		commit('setAddresses', data.addresses);
+		// Filter out the main store address
+		const addresses = data.addresses.filter((address) => {
+			return address.title !== 'Store';
+		});
+
+		commit('setAddresses', addresses);
+	},
+
+	async updateAddress({ dispatch }, address) {
+		const { data } = await this.$api.updateAddress(address);
+		console.log(data);
 	}
 }

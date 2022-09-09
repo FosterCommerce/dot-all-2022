@@ -48,7 +48,7 @@ export const state = () => ({
 	/**
 	 * The shipping address ID to use.
 	 */
-	shippingAddressId: 1,
+	shippingAddressId: 0,
 	/**
 	 * Whether billing and shipping addresses are the same.
 	 */
@@ -56,7 +56,7 @@ export const state = () => ({
 	/**
 	 * The billing address ID to use.
 	 */
-	billingAddressId: 1,
+	billingAddressId: 0,
 	/**
 	 * The shipping method ID to use.
 	 */
@@ -304,11 +304,11 @@ export const actions = {
 	/**
 	 * Initializes the steps and modifies them if a user is already logged in
 	 */
-	populateSteps({ commit, getters }, isGuest) {
+	fetchSteps({ commit, getters }, isGuest) {
 		if (!isGuest) {
 			const steps = [];
-			getters.getSteps.forEach((step, index) => {
-				if (index !== 0) {
+			getters.getSteps.forEach((step) => {
+				if (step.handle !== 'email') {
 					steps.push(step);
 				}
 			});

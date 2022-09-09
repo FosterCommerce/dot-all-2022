@@ -146,6 +146,21 @@ const api = ({$axios}, $config, store) => {
 			};
 			return await postAction('/fc/cart/update-cart', data);
 		},
+
+		saveAddress: async (address) => {
+			const data = {
+				addressId: address.id,
+				...address
+			}
+			return await postAction('users/save-address', data);
+		},
+
+		deleteAddress: async (address) => {
+			const data = {
+				addressId: address.id,
+			}
+			return await postAction('users/delete-address', data);
+		}
 	};
 };
 
