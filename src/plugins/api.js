@@ -87,6 +87,12 @@ const api = ({$axios}, $config, store) => {
 			return response.data;
 		},
 		/**
+		 * Get the user's cart from the Craft back end.
+		 */
+		getCart: async () => {
+			return await get('/actions/fc/cart/get-cart');
+		},
+		/**
 		 * For adding an item to the cart.
 		 *
 		 * @property {object} item - The item to add to the cart.
@@ -119,13 +125,6 @@ const api = ({$axios}, $config, store) => {
 				lineItems: {[item.itemId]: {'remove': true}},
 			};
 			return await postAction('/fc/cart/update-cart', data);
-		},
-
-		/**
-		 * Get the user's cart from the Craft back end.
-		 */
-		getCart: async () => {
-			return await get('/actions/fc/cart/get-cart');
 		},
 		/**
 		 * Apply a coupon to the cart.

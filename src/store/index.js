@@ -89,23 +89,5 @@ export const actions = {
 		const { data: queryData } = await this.$api.graphqlQuery(query);
 
 		commit('setPrimaryNav', queryData.entry.primaryNavigation);
-	},
-	/**
-	 * Gets the session data, user data and saves it into state.
-	 * Initializes the steps in the checkout process based on if the user is logged in or not
-	 *
-	 * @param {function} commit - Vuex commit method.
-	 */
-	async fetchSessionData({ commit, dispatch }) {
-		// Get the session data from Craft and set it into state
-		const sessionInfo = await this.$api.get('/actions/users/session-info');
-		commit('setCsrfToken', sessionInfo.csrfTokenValue);
-		if (!sessionInfo.isGuest) {
-			commit('user/setUserId', sessionInfo.id);
-			commit('user/setEmail', sessionInfo.email);
-			dispatch('user/populateAddresses', sessionInfo.id);
-		}
-		commit('user/setIsGuest', sessionInfo.isGuest);
-		dispatch('checkout/populateSteps', sessionInfo.isGuest);
-	},
+	}
 };

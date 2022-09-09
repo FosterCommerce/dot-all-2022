@@ -132,11 +132,11 @@ export const mutations = {
  */
 export const actions = {
 	/**
-	 * Fetches the session info and cart data from Craft/Commerce and places it into state.
+	 * Fetches the cart data from Craft/Commerce and places it into state.
 	 *
 	 * @property {function} commit   - Vuex commit method.
 	 */
-	async populateCart({ commit }) {
+	async fetchCart({ commit }) {
 		// Get the cart from commerce and set it into state
 		const { cart } = await this.$api.getCart();
 		commit('setCurrentCart', cart);

@@ -1,3 +1,5 @@
+import Addresses from '@/queries/Addresses.gql';
+
 /**
  * The main Vuex state for users.
  */
@@ -17,22 +19,7 @@ export const state = () => ({
 	/**
 	 * The user's addresses and other info.
 	 */
-	addresses: [
-		{
-			// The ID of an address (addresses are referenced by this ID in store/checkout.js)
-			id: 1,
-			firstName: 'Frodo',
-			lastName: 'Baggins',
-			organization: 'Fellowship of the Ring',
-			addressLine1: '3 Bagshot Row',
-			addressLine2: '',
-			locality: 'Hobbiton Hill',
-			administrativeArea: 'The Shire',
-			countryCode: 'UK',
-			postalCode: 'SL6',
-			phone: '(555) 555-5555',
-		},
-	],
+	addresses: [],
 });
 
 /**
@@ -82,11 +69,46 @@ export const mutations = {
 	},
 	setEmail(state, payload) {
 		state.email = payload;
+	},
+	setAddresses(state, payload) {
+		state.addresses = payload;
 	}
 }
 
 export const actions = {
-	populateAddresses({ dispatch }, userId) {
-		console.log('The User ID is', userId);
+	/**
+	 * Gets the session data, user data and saves it into state.
+	 * Initializes the steps in the checkout process based on if the user is logged in or not
+	 *
+	 * @param {function} commit - Vuex commit method.
+	 * @param {function} dispatch - Vuex dispatch method
+	 */
+	async fetchSessionData({ commit, dispatch }) {
+		// Get the session data from Craft and set it into state
+		const sessionInfo = await this.$api.get('/actions/users/session-info');
+		commit('setCsrfToken', sessionInfo.csrfTokenValue, { root: true });
+		commit('setIsGuest', sessionInfo.isGuest);
+		if (!sessionInfo.isGuest) {
+			commit('setUserId', sessionInfo.id);
+			commit('setEmail', sessionInfo.email);
+			await dispatch('fetchAddresses', sessionInfo.id);
+		}
+		dispatch('checkout/populateSteps', sessionInfo.isGuest, { root: true });
+	},
+	/**
+	 * Uses GraphQL to fetch the logged in users addresses from Craft and places them in state
+	 *
+	 * @param {function} commit - Vuex commit method.
+	 * @param {function} getters - Vuex getter method
+	 */
+	async fetchAddresses({ commit, getters }) {
+		const { data } = await this.$api.graphqlQuery(
+			Addresses,
+			{
+				ownerId: getters.userId,
+				limit: 1
+			}
+		);
+		commit('setAddresses', data.addresses);
 	}
 }
