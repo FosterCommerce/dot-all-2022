@@ -7,9 +7,8 @@
 			return {
 				editModalOpen: false,
 				deleteModalOpen: false,
-				newOpen: false,
 				userAddress: null,
-				cartAddress: null
+				shippingAddressId: null,
 			}
 		},
 		computed: {
@@ -20,6 +19,19 @@
 			...mapGetters('cart', [
 				'getShippingAddressId'
 			])
+		},
+		mounted() {
+			this.$nextTick(() => {
+				if (!this.getShippingAddressId) {
+					if (this.getAddresses.length !== 0) {
+						this.shippingAddressId = this.getAddresses[0].id;
+					} else {
+						this.shippingAddressId = 0;
+					}
+				} else {
+					this.shippingAddressId = this.getShippingAddressId;
+				}
+			});
 		},
 		methods: {
 			...mapActions('checkout', [
@@ -63,9 +75,9 @@
 <template>
 	<section aria-labelledby="address-heading">
 		<h2 id="address-heading" class="text-xl font-medium text-gray-900 lg:text-2xl">Where should we mail your order?</h2>
-		<p v-if="getAddresses.length" class="text-sm text-gray-500">Select one of your saved addresses or add a new one.</p>
+		<p v-if="!getIsGuest && getAddresses.length" class="text-sm text-gray-500">Select one of your saved addresses or add a new one.</p>
 
-		<div v-if="getAddresses.length" class="mt-6 divide-y divide-gray-200">
+		<div v-if="!getIsGuest && getAddresses.length" class="mt-6 divide-y divide-gray-200">
 
 			<div v-for="address in getAddresses" :key="address.id" class="relative flex items-start py-4">
 				<div class="min-w-0 flex-1 text-sm">
@@ -101,11 +113,11 @@
 				<div class="ml-3 flex items-center h-5">
 					<input
 						:id="`address_${address.id}`"
+						v-model="shippingAddressId"
 						:aria-describedby="`address_${address.id}_description`"
 						name="address"
 						type="radio"
 						:value="address.id"
-						:checked="parseInt(getShippingAddressId) === parseInt(address.id)"
 						class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
 					/>
 				</div>
@@ -119,11 +131,11 @@
 				<div class="ml-3 flex items-center h-5">
 					<input
 						id="address_0"
+						v-model="shippingAddressId"
 						aria-describedby="address_0_description"
 						name="address"
 						type="radio"
 						value="0"
-						:checked="getShippingAddressId === null || getAddresses.length === 0"
 						class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
 					/>
 				</div>
@@ -131,7 +143,7 @@
 
 		</div>
 
-		<div v-show="getIsGuest || getShippingAddressId === null || getAddresses.length === 0">
+		<div v-show="getIsGuest || parseInt(shippingAddressId) === 0">
 
 			<CheckoutAddressFields context="shipping" />
 
