@@ -1,4 +1,4 @@
-dateModified: 1662481042
+dateModified: 1662662701
 elementSources:
   craft\elements\Entry:
     -
@@ -158,9 +158,3 @@ system:
   name: 'Foster Commerce Dot All 2022'
   schemaVersion: 4.0.0.9
   timeZone: America/Los_Angeles
-users:
-  allowPublicRegistration: false
-  defaultGroup: null
-  photoSubpath: null
-  photoVolumeUid: null
-  requireEmailVerification: true

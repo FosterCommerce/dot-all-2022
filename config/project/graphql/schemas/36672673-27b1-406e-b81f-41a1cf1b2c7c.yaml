@@ -13,6 +13,7 @@ scope:
   - 'sections.f96300ba-530d-42dd-94d6-b086b49639ec:read' # Settings
   - 'entrytypes.05440641-857c-492e-bbb9-37ff03c88963:read' # Settings
   - 'volumes.6208c751-b47b-4315-ac54-cd1f33debd7a:read' # Images
+  - 'usergroups.everyone:read'
   - 'categorygroups.1b753347-9223-47d6-8349-fc1c7c290ea1:read' # Product Categories
   - 'productTypes.8f9a9f81-cbc4-41eb-a70b-5eaeadea8840:read' # Catalog
   - 'seomatic.all:read'
