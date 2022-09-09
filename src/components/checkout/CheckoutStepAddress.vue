@@ -1,5 +1,5 @@
 <script>
-	import { mapGetters, mapMutations, mapActions } from "vuex";
+	import { mapGetters, mapActions } from "vuex";
 
 	export default {
 		name: "CheckoutStepAddress",
@@ -15,6 +15,11 @@
 			...mapGetters('user', [
 				'getIsGuest',
 				'getAddresses'
+			]),
+			...mapGetters('checkout', [
+				'getPreviousStep',
+				'getNextStep',
+				'getIsFirstStep'
 			]),
 			...mapGetters('cart', [
 				'getShippingAddressId'
@@ -190,25 +195,14 @@
 				class="flex justify-center items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
 				@click.prevent="nextStep"
 			>
-				<span>Continue to Shipping</span>
+				<span>Continue to {{ getNextStep.label }}</span>
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 -mr-1 ml-3 hidden sm:inline-block" viewBox="0 0 20 20" fill="currentColor">
 					<path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
 				</svg>
 			</button>
 
-			<button
-				v-if="getIsGuest"
-				class="flex justify-center items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
-				@click.prevent="previousStep"
-			>
-				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 -ml-1 mr-3 hidden sm:inline-block" viewBox="0 0 20 20" fill="currentColor">
-					<path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-				</svg>
-				<span>Return to Email</span>
-			</button>
-
 			<nuxt-link
-				v-else
+				v-if="getIsFirstStep"
 				to="/"
 				class="flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
 			>
@@ -217,6 +211,18 @@
 				</svg>
 				<span>Continue Shopping</span>
 			</nuxt-link>
+
+			<button
+				v-else
+				class="flex justify-center items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
+				@click.prevent="previousStep"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 -ml-1 mr-3 hidden sm:inline-block" viewBox="0 0 20 20" fill="currentColor">
+					<path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+				</svg>
+				<span>Return to {{ getPreviousStep.label }}</span>
+			</button>
+			
 		</div>
 
 		<BaseModal v-if="editModalOpen" title="Edit your address" width="xl" @close="toggleEditAddressModal">
