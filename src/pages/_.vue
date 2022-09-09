@@ -55,6 +55,6 @@
 
 <template>
 	<div>
-		<component :is="pageViewComponent" :entry="entry" />
+		<component v-if="entry" :is="pageViewComponent" :entry="entry" />
 	</div>
 </template>
