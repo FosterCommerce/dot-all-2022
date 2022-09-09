@@ -67,16 +67,16 @@
 			<div v-for="address in getAddresses" :key="address.id" class="relative flex items-start py-4">
 				<div class="min-w-0 flex-1 text-sm">
 					<label :for="`address_${address.id}`" class="font-medium text-gray-700">
-						<span v-if="address.company">{{ address.company }} - {{ address.firstName }} {{ address.lastName }}</span>
-						<span v-if="!address.company">{{ address.firstName }} {{ address.lastName }}</span>
+						<span v-if="address.organization">{{ address.organization }} - {{ address.firstName }} {{ address.lastName }}</span>
+						<span v-if="!address.organization">{{ address.firstName }} {{ address.lastName }}</span>
 					</label>
 					<p :id="`address_${address.id}_description`" class="text-gray-500">
-						<span>{{ address.address1 }},</span>
-						<span v-if="address.address2">{{ address.address2 }},</span>
-						<br/><span>{{ address.city }},</span>
-						<span>{{ address.region }},</span>
-						<span>{{ address.zipCode }},</span>
-						<span>{{ address.country }}</span>
+						<span>{{ address.addressLine1 }},</span>
+						<span v-if="address.addressLine2">{{ address.addressLine2 }},</span>
+						<br/><span>{{ address.locality }},</span>
+						<span>{{ address.administrativeArea }},</span>
+						<span>{{ address.postalCode }},</span>
+						<span>{{ address.countryCode }}</span>
 					</p>
 					<div class="flex justify-start space-x-2">
 						<button

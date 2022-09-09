@@ -20,8 +20,10 @@ query Addresses (
             addressLine1
             addressLine2
             locality
+            administrativeArea
             countryCode
             postalCode
+            phone
         }
     }
 }

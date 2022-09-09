@@ -34,8 +34,8 @@
 			</div>
 			<p class="text-gray-500">
 				<strong class="font-medium text-gray-700">
-				<span v-if="address.company">
-					{{ address.company }}<br/>
+				<span v-if="address.organization">
+					{{ address.organization }}<br/>
 					{{ address.firstName }} {{ address.lastName }}
 				</span>
 					<span v-else>
@@ -43,12 +43,12 @@
 				</span>
 				</strong>
 				<br/>
-				<span>{{ address.address1 }},</span>
-				<span v-if="address.address2">{{ address.address2 }},</span>
-				<br/><span>{{ address.city }},</span>
-				<span>{{ address.region }}</span>
-				<br/><span>{{ address.zipCode }},</span>
-				<span>{{ address.country }}</span>
+				<span>{{ address.addressLine1 }},</span>
+				<span v-if="address.addressLine2">{{ address.addressLine2 }},</span>
+				<br/><span>{{ address.locality }},</span>
+				<span>{{ address.administrativeArea }}</span>
+				<br/><span>{{ address.postalCode }},</span>
+				<span>{{ address.countryCode }}</span>
 			</p>
 		</div>
 

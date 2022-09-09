@@ -1,4 +1,4 @@
-dateModified: 1662662701
+dateModified: 1662732628
 elementSources:
   craft\elements\Entry:
     -
@@ -47,6 +47,7 @@ meta:
     8c7805a4-e8b6-4f6b-b433-d777d7d2a6c1: Color # Color
     8f9a9f81-cbc4-41eb-a70b-5eaeadea8840: Catalog # Catalog
     9c475876-3670-4452-82c1-8274c5cbccb2: Image # Image
+    47da4e3a-321f-4791-b5a4-55045833cfa7: Phone # Phone
     47f75540-4c56-4e84-9946-3fba7ad7d9f1: Size # Size
     56fd568a-e1bd-46d2-af2f-8a5b610e47bf: PayPal # PayPal
     76a9bb5d-1499-4e0d-afff-29da6dde9d01: Heading # Heading
