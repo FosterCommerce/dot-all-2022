@@ -1,25 +1,48 @@
 <script>
-	import { mapGetters, mapMutations, mapActions } from "vuex";
+	import { mapGetters, mapActions } from "vuex";
 
 	export default {
 		name: "CheckoutStepShipping",
+		data() {
+			return {
+				shippingMethodHandle: null
+			};
+		},
 		computed: {
-			...mapGetters('checkout', [
-				'getShippingMethodId',
-				'getShippingMethodOptions'
-			])
+			...mapGetters('cart', [
+				'getShippingMethodHandle',
+				'getAvailableShippingMethodOptions'
+			]),
+			shippingMethods() {
+				const options = [];
+				Object.entries(this.getAvailableShippingMethodOptions).forEach(([key, option]) => {
+					options.push(option);
+				});
+				return options;
+			}
+		},
+		watch: {
+			shippingMethodHandle() {
+				this.saveShippingMethod(this.shippingMethodHandle);
+			}
+		},
+		mounted() {
+			this.$nextTick(() => {
+				if (!this.getShippingMethodHandle) {
+					this.shippingMethodHandle = this.shippingMethods[0].handle;
+				} else {
+					this.shippingMethodHandle = this.getShippingMethodHandle;
+				}
+			});
 		},
 		methods: {
-			...mapMutations('checkout', [
-				'setShippingMethodId'
+			...mapActions('cart', [
+				'saveShippingMethod'
 			]),
 			...mapActions('checkout', [
 				'decrementStep',
 				'incrementStep'
 			]),
-			setShippingMethod(id) {
-				this.setShippingMethodId(id);
-			},
 			nextStep() {
 				// ... Code to save the data back to Commerce here
 				// and if there are no errors we can then increment the step
@@ -42,37 +65,37 @@
 		<div class="mt-6">
 			<div class="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
 				<label
-					v-for="method in getShippingMethodOptions"
-					:key="method.id"
-					:for="`shippingMethod_${method.id}`"
+					v-for="method in shippingMethods"
+					:key="method.handle"
+					:for="`shippingMethod_${method.handle}`"
 					class="relative bg-white border rounded-lg shadow-sm p-4 flex cursor-pointer focus:outline-none"
-					:class="`${ method.id === getShippingMethodId ? 'border-transparent' : 'border-gray-300' }`"
+					:class="`${ method.handle === shippingMethodHandle ? 'border-transparent' : 'border-gray-300' }`"
 				>
 					<input
-						:id="`shippingMethod_${method.id}`"
+						:id="`shippingMethod_${method.handle}`"
+						v-model="shippingMethodHandle"
 						type="radio"
-						name="shippingMethodId"
+						name="shippingMethodHandle"
 						class="sr-only"
-						:aria-labelledby="`shippingMethod_${method.id}_label`"
-						:aria-describedby="`shippingMethod_${method.id}_description_0 shippingMethod_${method.id}_description_1`"
-						:value="method.id"
-						:checked="method.id === getShippingMethodId"
-						@click="setShippingMethod(method.id)"
+						:aria-labelledby="`shippingMethod_${method.handle}_label`"
+						:aria-describedby="`shippingMethod_${method.handle}_description_0 shippingMethod_${method.handle}_description_1`"
+						:value="method.handle"
+						:checked="method.handle === shippingMethodHandle"
 					>
 
 					<div class="flex-1 flex">
 						<div class="flex flex-col">
-							<span :id="`shippingMethod_${method.id}_label`" class="block text-sm font-medium text-gray-900">{{ method.name }}</span>
-							<span :id="`shippingMethod_${method.id}_description_0`" class="mt-1 flex items-center text-sm text-gray-500">{{ method.description }}</span>
-							<span :id="`shippingMethod_${method.id}_description_1`" class="mt-6 text-sm font-medium text-gray-900">{{ method.price }}</span>
+							<span :id="`shippingMethod_${method.handle}_label`" class="block text-sm font-medium text-gray-900">{{ method.name }}</span>
+							<span :id="`shippingMethod_${method.handle}_description_0`" class="mt-1 flex items-center text-sm text-gray-500">{{ method.description }}</span>
+							<span :id="`shippingMethod_${method.handle}_description_1`" class="mt-6 text-sm font-medium text-gray-900">{{ method.priceAsCurrency }}</span>
 						</div>
 					</div>
 
-					<svg v-show="method.id === getShippingMethodId" class="h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+					<svg v-show="method.handle === shippingMethodHandle" class="h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 						<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
 					</svg>
 
-					<div class="absolute -inset-px rounded-lg border-2 pointer-events-none" :class="`${method.id === getShippingMethodId ? 'border-indigo-500' : 'border-transparent'}`" aria-hidden="true"></div>
+					<div class="absolute -inset-px rounded-lg border-2 pointer-events-none" :class="`${method.handle === shippingMethodHandle ? 'border-indigo-500' : 'border-transparent'}`" aria-hidden="true"></div>
 				</label>
 			</div>
 		</div>

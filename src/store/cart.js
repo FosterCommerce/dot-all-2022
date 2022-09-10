@@ -15,6 +15,10 @@ export const state = () => ({
 
 		shippingAddressId: null,
 
+	  shippingMethodHandle: null,
+
+	  availableShippingMethodOptions: {},
+
     /**
      * Applied coupon code (if any).
      */
@@ -82,6 +86,14 @@ export const getters = {
 
 	getShippingAddressId(state) {
 		return state.currentCart.shippingAddressId;
+	},
+
+	getShippingMethodHandle(state) {
+		return state.currentCart.shippingMethodHandle;
+	},
+
+	getAvailableShippingMethodOptions(state) {
+		return state.currentCart.availableShippingMethodOptions;
 	},
 
   /**
@@ -237,6 +249,19 @@ export const actions = {
 	async saveEmail({ commit, dispatch }, email) {
 		try {
 			const { cart } = await this.$api.postAction('/fc/cart/update-cart', { email });
+			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
+
+			if (errorNotices.length < 1) {
+				commit('setCurrentCart', cart);
+			}
+		} catch (error) {
+			handleError(commit, error);
+		}
+	},
+
+	async saveShippingMethod({ commit, dispatch }, shippingMethodHandle) {
+		try {
+			const { cart } = await this.$api.postAction('/fc/cart/update-cart', { shippingMethodHandle });
 			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
 			if (errorNotices.length < 1) {
