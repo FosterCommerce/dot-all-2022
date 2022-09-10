@@ -1,5 +1,6 @@
 <script>
 	import { mapGetters, mapActions } from "vuex";
+	import Addresses from '@/queries/Addresses.gql';
 
 	export default {
 		name: "CheckoutStepAddress",
@@ -8,8 +9,7 @@
 				editModalOpen: false,
 				deleteModalOpen: false,
 				userAddress: null,
-				shippingAddressId: null,
-				sourceShippingAddressId: null,
+				shippingAddressId: '', // This is our local state (for the selectors)
 				newAddress: {
 					id: '',
 					firstName: '',
@@ -24,6 +24,41 @@
 					phone: ''
 				},
 				isSaving: false,
+				cartShippingAddress: null,
+			}
+		},
+		async fetch() {
+			// Run the users/fetchAddresses here ?
+			await this.$store.dispatch('cart/fetchCart');
+
+			// Run the cart/fetchCart here ?
+			await this.$store.dispatch('user/fetchAddresses', 1);
+
+			// Run the logic to set the local shipping address ID variable here ?
+			if (!this.getShippingAddressId && !this.getSourceShippingAddressId) {
+				console.log('No shipping address and no source address');
+
+				// There is no shipping address set and no source shipping address set ...
+				// Lets set it to the first of their address (if they have any)
+				if (this.getAddresses.length) {
+					this.shippingAddressId = this.getAddresses[0].id;
+				}
+			} else if (this.getShippingAddressId && !this.getSourceShippingAddressId) {
+				console.log('There is a shipping address but no source address');
+
+				// There is a shipping address, but there is no source ID so its a new address ...
+				// Not based on any of the users addresses
+				this.newAddress = this.fetchAddress(this.getShippingAddressId);
+			} else {
+				// There is both a shipping address ID and a source address ID ...
+				// So it's related to one of the users addresses
+				console.log('There is a shipping address and a source address');
+
+				this.getAddresses.forEach((address) => {
+					if (parseInt(address.id) === parseInt(this.getSourceShippingAddressId)) {
+						this.shippingAddressId = address.id;
+					}
+				});
 			}
 		},
 		computed: {
@@ -39,33 +74,9 @@
 			...mapGetters('cart', [
 				'getShippingAddressId',
 				'getSourceShippingAddressId',
+				'getShippingAddress',
 				'getCartErrors'
 			]),
-			selectedShippingAddress() {
-				let shippingAddress = null;
-				if (parseInt(this.shippingAddressId) !== 0) {
-					shippingAddress = this.getAddresses.filter((address) => {
-						return parseInt(address.id) === parseInt(this.shippingAddressId);
-					})[0];
-				} else {
-					shippingAddress = this.newAddress;
-				}
-				return shippingAddress;
-			}
-		},
-		mounted() {
-			this.$nextTick(() => {
-				if (!this.getShippingAddressId) {
-					if (this.getAddresses.length !== 0) {
-						this.shippingAddressId = this.getAddresses[0].id;
-					} else {
-						this.shippingAddressId = 0;
-					}
-				} else {
-					this.shippingAddressId = this.getShippingAddressId;
-					this.sourceShippingAddressId = this.getSourceShippingAddressId;
-				}
-			});
 		},
 		methods: {
 			...mapActions('checkout', [
@@ -73,8 +84,10 @@
 				'incrementStep'
 			]),
 			...mapActions('cart', [
+				'fetchShippingAddress',
 				'saveShippingAddress'
 			]),
+
 			loadUserAddress(id) {
 				const address = this.getAddresses.filter((address) => {
 					return address.id === id;
@@ -95,15 +108,22 @@
 				this.loadUserAddress(id);
 				this.toggleDeleteAddressModal();
 			},
-			async nextStep() {
+
+			async fetchAddress(id) {
+				const { data } = await this.$api.graphqlQuery(
+					Addresses,
+					{
+						id,
+						limit: 1
+					}
+				);
+				return data.addresses.length ? data.addresses[0] : null;
+			},
+
+			nextStep() {
 				// ... Code to save the data back to Commerce here
 				// and if there are no errors we can then increment the step
-				this.isSaving = true;
-				await this.saveShippingAddress(this.selectedShippingAddress);
-				this.isSaving = false;
-				if (this.getCartErrors.length === 0) {
-					this.incrementStep();
-				}
+				this.incrementStep();
 			},
 			previousStep() {
 				// ... Any code that needs to happen here before
@@ -177,7 +197,7 @@
 						aria-describedby="address_0_description"
 						name="address"
 						type="radio"
-						value="0"
+						value=""
 						class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
 					/>
 				</div>
@@ -185,7 +205,7 @@
 
 		</div>
 
-		<div v-show="getIsGuest || parseInt(shippingAddressId) === 0">
+		<div v-show="getIsGuest || shippingAddressId === ''">
 
 			<div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
 				<div class="sm:col-span-3">

@@ -91,7 +91,7 @@ export const actions = {
 		if (!sessionInfo.isGuest) {
 			commit('setUserId', sessionInfo.id);
 			commit('setEmail', sessionInfo.email);
-			await dispatch('fetchAddresses', sessionInfo.id);
+			// await dispatch('fetchAddresses', sessionInfo.id);
 		}
 		dispatch('checkout/fetchSteps', sessionInfo.isGuest, { root: true });
 	},

@@ -1,3 +1,5 @@
+import Addresses from '@/queries/Addresses.gql';
+
 /**
  * The main Vuex state for the cart.
  */
@@ -54,6 +56,9 @@ export const state = () => ({
 		 */
 		lineItems: [],
   },
+
+	addresses: [],
+
   /**
    * Errors, if any.
    */
@@ -72,6 +77,13 @@ export const getters = {
   getCurrentCart(state) {
     return state.currentCart;
   },
+
+	getShippingAddress(state) {
+  	const shippingAddresses = state.addresses.filter((address) => {
+  		return address.title === 'Shipping Address';
+		});
+  	return shippingAddresses.length ? shippingAddresses[0] : null;
+	},
 
 	/**
 	 * Get all items in the cart.
@@ -135,6 +147,11 @@ export const mutations = {
   setCurrentCart(state, payload) {
     state.currentCart = payload;
   },
+
+	setAddresses(state, payload) {
+  	state.addresses = payload;
+	},
+
   /**
    * Set the loading state.
    *
@@ -167,11 +184,22 @@ export const actions = {
 	 *
 	 * @property {function} commit   - Vuex commit method.
 	 */
-	async fetchCart({ commit }) {
+	async fetchCart({ commit, dispatch }) {
 		// Get the cart from commerce and set it into state
 		const { cart } = await this.$api.getCart();
 		commit('setCurrentCart', cart);
+		await dispatch('fetchAddresses', cart.id);
 		commit('setLoading', false);
+	},
+
+	async fetchAddresses({ commit }, cartId) {
+		const { data } = await this.$api.graphqlQuery(
+			Addresses,
+			{
+				ownerId: cartId
+			}
+		);
+		commit('setAddresses', data.addresses);
 	},
 
   /**
@@ -279,6 +307,7 @@ export const actions = {
 
 			if (errorNotices.length < 1) {
 				commit('setCurrentCart', cart);
+				await dispatch('fetchAddresses', cart.id);
 			}
 		} catch (error) {
 			handleError(commit, error);
