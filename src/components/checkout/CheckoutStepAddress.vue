@@ -9,6 +9,21 @@
 				deleteModalOpen: false,
 				userAddress: null,
 				shippingAddressId: null,
+				sourceShippingAddressId: null,
+				newAddress: {
+					id: '',
+					firstName: '',
+					lastName: '',
+					organization: '',
+					addressLine1: '',
+					addressLine2: '',
+					locality: '',
+					administrativeArea: '',
+					countryCode: '',
+					postalCode: '',
+					phone: ''
+				},
+				isSaving: false,
 			}
 		},
 		computed: {
@@ -22,8 +37,21 @@
 				'getIsFirstStep'
 			]),
 			...mapGetters('cart', [
-				'getShippingAddressId'
-			])
+				'getShippingAddressId',
+				'getSourceShippingAddressId',
+				'getCartErrors'
+			]),
+			selectedShippingAddress() {
+				let shippingAddress = null;
+				if (parseInt(this.shippingAddressId) !== 0) {
+					shippingAddress = this.getAddresses.filter((address) => {
+						return parseInt(address.id) === parseInt(this.shippingAddressId);
+					})[0];
+				} else {
+					shippingAddress = this.newAddress;
+				}
+				return shippingAddress;
+			}
 		},
 		mounted() {
 			this.$nextTick(() => {
@@ -35,6 +63,7 @@
 					}
 				} else {
 					this.shippingAddressId = this.getShippingAddressId;
+					this.sourceShippingAddressId = this.getSourceShippingAddressId;
 				}
 			});
 		},
@@ -42,6 +71,9 @@
 			...mapActions('checkout', [
 				'decrementStep',
 				'incrementStep'
+			]),
+			...mapActions('cart', [
+				'saveShippingAddress'
 			]),
 			loadUserAddress(id) {
 				const address = this.getAddresses.filter((address) => {
@@ -63,10 +95,15 @@
 				this.loadUserAddress(id);
 				this.toggleDeleteAddressModal();
 			},
-			nextStep() {
+			async nextStep() {
 				// ... Code to save the data back to Commerce here
 				// and if there are no errors we can then increment the step
-				this.incrementStep();
+				this.isSaving = true;
+				await this.saveShippingAddress(this.selectedShippingAddress);
+				this.isSaving = false;
+				if (this.getCartErrors.length === 0) {
+					this.incrementStep();
+				}
 			},
 			previousStep() {
 				// ... Any code that needs to happen here before
@@ -150,7 +187,170 @@
 
 		<div v-show="getIsGuest || parseInt(shippingAddressId) === 0">
 
-			<CheckoutAddressFields context="shipping" />
+			<div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+				<div class="sm:col-span-3">
+					<label :for="`FirstName-${newAddress.id}`" class="block text-sm font-medium text-gray-700">First Name</label>
+					<div class="mt-1">
+						<input
+							:id="`FirstName-${newAddress.id}`"
+							v-model="newAddress.firstName"
+							:name="`FirstName`"
+							type="text"
+							autocomplete="given-name"
+							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							required
+						/>
+					</div>
+				</div>
+
+				<div class="sm:col-span-3">
+					<label :for="`LastName-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Last Name</label>
+					<div class="mt-1">
+						<input
+							:id="`LastName-${newAddress.id}`"
+							v-model="newAddress.lastName"
+							:name="`LastName`"
+							type="text"
+							autocomplete="family-name"
+							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							required
+						/>
+					</div>
+				</div>
+
+				<div class="sm:col-span-6">
+					<div class="flex justify-between">
+						<label :for="`Company-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Company</label>
+						<span :id="`Company-optional-${newAddress.id}`" class="text-sm text-gray-400">Optional</span>
+					</div>
+					<div class="mt-1">
+						<input
+							:id="`Company-${newAddress.id}`"
+							v-model="newAddress.organization"
+							:name="`Company`"
+							:aria-describedby="`Company-optional-${newAddress.id}`"
+							type="text"
+							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+						/>
+					</div>
+				</div>
+
+				<div class="sm:col-span-4">
+					<label :for="`Address1-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Street Address</label>
+					<div class="mt-1">
+						<input
+							:id="`Address1-${newAddress.id}`"
+							v-model="newAddress.addressLine1"
+							:name="`Address1`"
+							type="text"
+							autocomplete="street-address"
+							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							required
+						/>
+					</div>
+				</div>
+
+				<div class="sm:col-span-2">
+					<div class="flex justify-between">
+						<label :for="`Address2-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Apt.</label>
+						<span :id="`Address2-optional-${newAddress.id}`" class="text-sm text-gray-400">Optional</span>
+					</div>
+					<div class="mt-1">
+						<input
+							:id="`Address2-${newAddress.id}`"
+							v-model="newAddress.addressLine2"
+							type="text"
+							:name="`Address2`"
+							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							:aria-describedby="`Address2-optional${newAddress.id}`"
+						/>
+					</div>
+				</div>
+
+				<div class="sm:col-span-2">
+					<label :for="`City-${newAddress.id}`" class="block text-sm font-medium text-gray-700">City</label>
+					<div class="mt-1">
+						<input
+							:id="`City-${newAddress.id}`"
+							v-model="newAddress.locality"
+							type="text"
+							:name="`City`"
+							autocomplete="address-level2"
+							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							required
+						/>
+					</div>
+				</div>
+
+				<div class="sm:col-span-2">
+					<label :for="`Region-${newAddress.id}`" class="block text-sm font-medium text-gray-700">State / Province</label>
+					<div class="mt-1">
+						<input
+							:id="`Region-${newAddress.id}`"
+							v-model="newAddress.administrativeArea"
+							type="text"
+							:name="`Region`"
+							autocomplete="address-level1"
+							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							required
+						/>
+					</div>
+				</div>
+
+				<div class="sm:col-span-2">
+					<label :for="`Country-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Country</label>
+					<div class="mt-1">
+						<select
+							:id="`Country-${newAddress.id}`"
+							v-model="newAddress.countryCode"
+							:name="`Country`"
+							autocomplete="country-name"
+							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							required
+						>
+							<option value="US">United States</option>
+							<option value="UK">United Kingdom</option>
+							<option value="CL">Chile</option>
+							<option value="ES">Spain</option>
+							<option value="NG">Nigeria</option>
+							<option value="ZA">South Africa</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="sm:col-span-3">
+					<label :for="`ZipCode-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Postal code</label>
+					<div class="mt-1">
+						<input
+							:id="`ZipCode-${newAddress.id}`"
+							v-model="newAddress.postalCode"
+							type="text"
+							:name="`ZipCode`"
+							autocomplete="postal-code"
+							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							required
+						/>
+					</div>
+				</div>
+
+				<div class="sm:col-span-3">
+					<div class="flex justify-between">
+						<label :for="`Phone-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Phone</label>
+						<span :id="`Phone-optional-${newAddress.id}`" class="text-sm text-gray-400">Optional</span>
+					</div>
+					<div class="mt-1">
+						<input
+							:id="`Phone-${newAddress.id}`"
+							v-model="newAddress.phone"
+							type="tel"
+							:name="`Phone`"
+							autocomplete="tel"
+							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							:aria-describedby="`Phone-optional${newAddress.id}`"
+						/>
+					</div>
+				</div>
+			</div>
 
 			<div v-if="getIsGuest" class="mt-6 sm:col-span-6">
 				<div class="relative flex items-start">
@@ -222,7 +422,7 @@
 				</svg>
 				<span>Return to {{ getPreviousStep.label }}</span>
 			</button>
-			
+
 		</div>
 
 		<BaseModal v-if="editModalOpen" title="Edit your address" width="xl" @close="toggleEditAddressModal">

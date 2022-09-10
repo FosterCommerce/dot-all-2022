@@ -37,7 +37,7 @@
 			},
 			async saveAddress() {
 				await this.$api.saveAddress(this.addressData);
-				this.fetchAddresses();
+				await this.fetchAddresses();
 				this.close();
 			}
 		}

@@ -15,6 +15,8 @@ export const state = () => ({
 
 		shippingAddressId: null,
 
+		sourceShippingAddressId: null,
+
 	  shippingMethodHandle: null,
 
 	  availableShippingMethodOptions: {},
@@ -86,6 +88,10 @@ export const getters = {
 
 	getShippingAddressId(state) {
 		return state.currentCart.shippingAddressId;
+	},
+
+	getSourceShippingAddressId(state) {
+		return state.currentCart.sourceShippingAddressId;
 	},
 
 	getShippingMethodHandle(state) {
@@ -249,6 +255,26 @@ export const actions = {
 	async saveEmail({ commit, dispatch }, email) {
 		try {
 			const { cart } = await this.$api.postAction('/fc/cart/update-cart', { email });
+			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
+
+			if (errorNotices.length < 1) {
+				commit('setCurrentCart', cart);
+			}
+		} catch (error) {
+			handleError(commit, error);
+		}
+	},
+
+	async saveShippingAddress({ commit, dispatch }, shippingAddress) {
+		console.log('Sent shipping address', shippingAddress);
+		const params = {};
+		if (shippingAddress.id !== '') {
+			params.shippingAddressId = shippingAddress.id;
+		} else {
+			params.shippingAddress = shippingAddress;
+		}
+		try {
+			const { cart } = await this.$api.postAction('/fc/cart/update-cart', params);
 			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
 			if (errorNotices.length < 1) {
