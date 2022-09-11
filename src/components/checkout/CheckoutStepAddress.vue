@@ -6,10 +6,10 @@
 		name: "CheckoutStepAddress",
 		data() {
 			return {
-				editModalOpen: false,
-				deleteModalOpen: false,
-				userAddress: null,
-				shippingAddressId: '', // This is our local state (for the selectors)
+				editModalOpen: false, // Toggle for the edit address modal
+				deleteModalOpen: false, // Toggle for the delete address modal
+				loadedAddress: null, // The loaded address (user address that is being edited or deleted)
+				shippingAddress: 'new', // The address that will be submitted to the cart
 				newAddress: {
 					id: '',
 					title: 'Shipping Address',
@@ -23,44 +23,57 @@
 					postalCode: '',
 					phone: ''
 				},
-				isSaving: false,
-				cartShippingAddress: null,
+				loading: false, // Loading state of the component
+				isSaving: false, // Saving state of the component
 			}
 		},
 		async fetch() {
+
+			// Fetch the cart when this step component loads
 			await this.$store.dispatch('cart/fetchCart');
+
+			// If the cart has an email, then lets use it to fetch the users data again
 			if (this.getEmail) {
 				this.email = this.getEmail;
 				await this.$store.dispatch('user/fetchUser');
+				await this.$store.dispatch('user/fetchAddresses');
 			}
 
-			// Run the logic to set the local shipping address ID variable here ?
+			// Run the logic to set the local shippingAddress variable that we use for the address toggle
+
 			if (!this.getShippingAddressId && !this.getSourceShippingAddressId) {
-				console.log('No shipping address and no source address');
 
-				// There is no shipping address set and no source shipping address set ...
-				// Lets set it to the first of their address (if they have any)
+				// There is no shipping address set, and no source shipping address set ...
+				// This means there is no shipping address in the cart, so for our UI we will
+				// want to set it to the first of our users addresses (if they have any saved)
+
 				if (this.getAddresses.length) {
-					this.shippingAddressId = this.getAddresses[0].id;
+					this.shippingAddress = this.getAddresses[0].id;
+				} else {
+					this.shippingAddress = '';
 				}
-			} else if (this.getShippingAddressId && !this.getSourceShippingAddressId) {
-				console.log('There is a shipping address but no source address, it is new');
 
-				// There is a shipping address, but there is no source ID so its a new address ...
-				// Not based on any of the users addresses
-				this.shippingAddressId = '';
+			} else if (this.getShippingAddressId && !this.getSourceShippingAddressId) {
+
+				// There is a shipping address, but there is no source ID so its not related to a users saved address ...
+				// This is probably because the user is a guest, but they have already input a shipping address so
+				// we want to get the data from that address and save it to the newAddress var so it will be editable
+
 				this.newAddress = await this.fetchAddress(this.getShippingAddressId);
 				this.newAddress.id = '';
+				this.shippingAddress = '';
+
 			} else {
-				// There is both a shipping address ID and a source address ID ...
-				// So it's related to one of the users addresses
-				console.log('There is a shipping address and a source address');
+
+				// There is both a shipping address ID and a source address ID so it is related to a users saved address ...
+				// As such we will loop through the users addresses and find the match
 
 				this.getAddresses.forEach((address) => {
 					if (parseInt(address.id) === parseInt(this.getSourceShippingAddressId)) {
-						this.shippingAddressId = address.id;
+						this.shippingAddress = address.id;
 					}
 				});
+
 			}
 		},
 		computed: {
@@ -90,27 +103,32 @@
 				'incrementStep'
 			]),
 			...mapActions('cart', [
-				'saveShippingAddress'
+				'saveShippingAddress',
+				'displayNotice'
 			]),
 
-			loadUserAddress(id) {
+			loadAddress(id) {
 				const address = this.getAddresses.filter((address) => {
 					return address.id === id;
 				});
-				this.userAddress = address.length ? address[0] : null;
+				this.loadedAddress = address.length ? address[0] : null;
 			},
+
 			toggleEditAddressModal() {
 				this.editModalOpen = !this.editModalOpen;
 			},
+
 			toggleDeleteAddressModal() {
 				this.deleteModalOpen = !this.deleteModalOpen;
 			},
+
 			editAddress(id) {
-				this.loadUserAddress(id);
+				this.loadAddress(id);
 				this.toggleEditAddressModal();
 			},
+
 			deleteAddress(id) {
-				this.loadUserAddress(id);
+				this.loadAddress(id);
 				this.toggleDeleteAddressModal();
 			},
 
@@ -126,48 +144,58 @@
 			},
 
 			async nextStep() {
-				// ... Code to save the data back to Commerce here
-				// and if there are no errors we can then increment the step
 
+				// Set the 'saving' state and initialise the 'selectedAddress' variable we will use
 				this.isSaving = true;
-
 				let selectedAddress = null;
 
-				if (this.shippingAddressId === '') {
+				if (this.shippingAddress === 'new') {
+
+					// This is a new address to add
 
 					if (!this.isGuest) {
+
+						// The user is logged in, so let's save the address to their addresses first, and then
+						// set it as the 'selectedAddress' we will use.
+
 						const userAddress = await this.$api.saveAddress(this.newAddress);
-						await this.fetchAddresses();
-						console.log('User Saved Address', userAddress);
 						selectedAddress = userAddress.model
+
 					} else {
+
+						// The user is a guest, so lets just set the 'selectedAddress' we will use to what is
+						// in the 'newAddress' local data
+
 						selectedAddress = this.newAddress;
+
 					}
 
 				} else {
 
-					const selectedAddresses = this.getAddresses.filter((address) => {
-						return parseInt(address.id) === parseInt(this.shippingAddressId);
+					// This is an existing address, so let's find it in the users saved addresses
+
+					const userAddresses = this.getAddresses.filter((address) => {
+						return parseInt(address.id) === parseInt(this.shippingAddress);
 					});
+					selectedAddress = userAddresses.length ? userAddresses[0] : this.newAddress;
 
-					if (selectedAddresses.length) {
-						selectedAddress = selectedAddresses[0];
-					}
-
-					if (selectedAddress) {
-						await this.saveShippingAddress(selectedAddress);
-					}
 				}
+
+				// Now that we have the address to save as the shipping address in the cart, lets save it,
+				// and if not, let's show the user an error instead.
 
 				if (selectedAddress) {
 					await this.saveShippingAddress(selectedAddress);
+					if (this.getCartErrors.length === 0) {
+						this.incrementStep();
+					}
+				} else {
+					this.displayNotice('You must include a valid shipping address');
 				}
 
+				// Set the 'saving' state to false
 				this.isSaving = false;
 
-				if (this.getCartErrors.length === 0) {
-					this.incrementStep();
-				}
 			},
 			previousStep() {
 				// ... Any code that needs to happen here before
@@ -219,7 +247,7 @@
 				<div class="ml-3 flex items-center h-5">
 					<input
 						:id="`address_${address.id}`"
-						v-model="shippingAddressId"
+						v-model="shippingAddress"
 						:aria-describedby="`address_${address.id}_description`"
 						name="address"
 						type="radio"
@@ -237,11 +265,11 @@
 				<div class="ml-3 flex items-center h-5">
 					<input
 						id="address_0"
-						v-model="shippingAddressId"
+						v-model="shippingAddress"
 						aria-describedby="address_0_description"
 						name="address"
 						type="radio"
-						value=""
+						value="new"
 						class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
 					/>
 				</div>
@@ -249,7 +277,7 @@
 
 		</div>
 
-		<div v-show="getIsGuest || shippingAddressId === ''">
+		<div v-show="shippingAddress === 'new'">
 
 			<div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
 				<div class="sm:col-span-6">
