@@ -10,6 +10,13 @@
 				isSaving: false,
 			}
 		},
+		async fetch() {
+			await this.$store.dispatch('cart/fetchCart');
+			if (this.getEmail) {
+				this.email = this.getEmail;
+				await this.$store.dispatch('user/fetchUser');
+			}
+		},
 		computed: {
 			...mapGetters('user', [
 				'getIsGuest'

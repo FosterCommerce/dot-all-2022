@@ -12,8 +12,8 @@
 				shippingAddressId: '', // This is our local state (for the selectors)
 				newAddress: {
 					id: '',
-					firstName: '',
-					lastName: '',
+					title: 'Shipping Address',
+					fullName: '',
 					organization: '',
 					addressLine1: '',
 					addressLine2: '',
@@ -28,11 +28,11 @@
 			}
 		},
 		async fetch() {
-			// Run the users/fetchAddresses here ?
 			await this.$store.dispatch('cart/fetchCart');
-
-			// Run the cart/fetchCart here ?
-			await this.$store.dispatch('user/fetchAddresses', 1);
+			if (this.getEmail) {
+				this.email = this.getEmail;
+				await this.$store.dispatch('user/fetchUser');
+			}
 
 			// Run the logic to set the local shipping address ID variable here ?
 			if (!this.getShippingAddressId && !this.getSourceShippingAddressId) {
@@ -44,11 +44,13 @@
 					this.shippingAddressId = this.getAddresses[0].id;
 				}
 			} else if (this.getShippingAddressId && !this.getSourceShippingAddressId) {
-				console.log('There is a shipping address but no source address');
+				console.log('There is a shipping address but no source address, it is new');
 
 				// There is a shipping address, but there is no source ID so its a new address ...
 				// Not based on any of the users addresses
-				this.newAddress = this.fetchAddress(this.getShippingAddressId);
+				this.shippingAddressId = '';
+				this.newAddress = await this.fetchAddress(this.getShippingAddressId);
+				this.newAddress.id = '';
 			} else {
 				// There is both a shipping address ID and a source address ID ...
 				// So it's related to one of the users addresses
@@ -72,6 +74,7 @@
 				'getIsFirstStep'
 			]),
 			...mapGetters('cart', [
+				'getEmail',
 				'getShippingAddressId',
 				'getSourceShippingAddressId',
 				'getShippingAddress',
@@ -79,12 +82,14 @@
 			]),
 		},
 		methods: {
+			...mapActions('user', [
+				'fetchAddresses'
+			]),
 			...mapActions('checkout', [
 				'decrementStep',
 				'incrementStep'
 			]),
 			...mapActions('cart', [
-				'fetchShippingAddress',
 				'saveShippingAddress'
 			]),
 
@@ -120,10 +125,49 @@
 				return data.addresses.length ? data.addresses[0] : null;
 			},
 
-			nextStep() {
+			async nextStep() {
 				// ... Code to save the data back to Commerce here
 				// and if there are no errors we can then increment the step
-				this.incrementStep();
+
+				this.isSaving = true;
+
+				let selectedAddress = null;
+
+				if (this.shippingAddressId === '') {
+
+					if (!this.isGuest) {
+						const userAddress = await this.$api.saveAddress(this.newAddress);
+						await this.fetchAddresses();
+						console.log('User Saved Address', userAddress);
+						selectedAddress = userAddress.model
+					} else {
+						selectedAddress = this.newAddress;
+					}
+
+				} else {
+
+					const selectedAddresses = this.getAddresses.filter((address) => {
+						return parseInt(address.id) === parseInt(this.shippingAddressId);
+					});
+
+					if (selectedAddresses.length) {
+						selectedAddress = selectedAddresses[0];
+					}
+
+					if (selectedAddress) {
+						await this.saveShippingAddress(selectedAddress);
+					}
+				}
+
+				if (selectedAddress) {
+					await this.saveShippingAddress(selectedAddress);
+				}
+
+				this.isSaving = false;
+
+				if (this.getCartErrors.length === 0) {
+					this.incrementStep();
+				}
 			},
 			previousStep() {
 				// ... Any code that needs to happen here before
@@ -208,30 +252,14 @@
 		<div v-show="getIsGuest || shippingAddressId === ''">
 
 			<div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-				<div class="sm:col-span-3">
-					<label :for="`FirstName-${newAddress.id}`" class="block text-sm font-medium text-gray-700">First Name</label>
+				<div class="sm:col-span-6">
+					<label :for="`FullName-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Your Full Name</label>
 					<div class="mt-1">
 						<input
-							:id="`FirstName-${newAddress.id}`"
-							v-model="newAddress.firstName"
-							:name="`FirstName`"
+							:id="`FullName-${newAddress.id}`"
+							v-model="newAddress.fullName"
+							:name="`FullName`"
 							type="text"
-							autocomplete="given-name"
-							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-							required
-						/>
-					</div>
-				</div>
-
-				<div class="sm:col-span-3">
-					<label :for="`LastName-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Last Name</label>
-					<div class="mt-1">
-						<input
-							:id="`LastName-${newAddress.id}`"
-							v-model="newAddress.lastName"
-							:name="`LastName`"
-							type="text"
-							autocomplete="family-name"
 							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 							required
 						/>

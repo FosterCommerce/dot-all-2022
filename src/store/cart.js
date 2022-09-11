@@ -295,12 +295,10 @@ export const actions = {
 
 	async saveShippingAddress({ commit, dispatch }, shippingAddress) {
 		console.log('Sent shipping address', shippingAddress);
-		const params = {};
-		if (shippingAddress.id !== '') {
-			params.shippingAddressId = shippingAddress.id;
-		} else {
-			params.shippingAddress = shippingAddress;
-		}
+		const params = {
+			shippingAddressId: shippingAddress.id,
+			shippingAddress
+		};
 		try {
 			const { cart } = await this.$api.postAction('/fc/cart/update-cart', params);
 			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);

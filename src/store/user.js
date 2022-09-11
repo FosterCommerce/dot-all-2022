@@ -1,3 +1,4 @@
+import User from '@/queries/User.gql';
 import Addresses from '@/queries/Addresses.gql';
 
 /**
@@ -89,36 +90,36 @@ export const actions = {
 		commit('setCsrfToken', sessionInfo.csrfTokenValue, { root: true });
 		commit('setIsGuest', sessionInfo.isGuest);
 		if (!sessionInfo.isGuest) {
-			commit('setUserId', sessionInfo.id);
-			commit('setEmail', sessionInfo.email);
-			// await dispatch('fetchAddresses', sessionInfo.id);
+			await dispatch('fetchUser', sessionInfo.email);
 		}
 		dispatch('checkout/fetchSteps', sessionInfo.isGuest, { root: true });
 	},
+
+	async fetchUser({ commit }, email) {
+		const { data } = await this.$api.graphqlQuery(
+			User,
+			{
+				email
+			}
+		);
+		commit('setUserId', data.user.id);
+		commit('setEmail', data.user.email);
+		commit('setAddresses', data.user.addresses);
+	},
+
 	/**
 	 * Uses GraphQL to fetch the logged in users addresses from Craft and places them in state
 	 *
 	 * @param {function} commit - Vuex commit method.
 	 * @param {function} getters - Vuex getter method
 	 */
-	async fetchAddresses({ commit, getters }, userId) {
-		console.log('The user ID in fetch addresses', userId);
+	async fetchAddresses({ commit, getters }) {
 		const { data } = await this.$api.graphqlQuery(
 			Addresses,
 			{
-				ownerId: userId
+				ownerId: getters.getUserId
 			}
 		);
-		// Filter out the main store address
-		const addresses = data.addresses.filter((address) => {
-			return address.title !== 'Store';
-		});
-
-		commit('setAddresses', addresses);
+		commit('setAddresses', data.addresses);
 	},
-
-	async updateAddress({ dispatch }, address) {
-		const { data } = await this.$api.updateAddress(address);
-		console.log(data);
-	}
 }
