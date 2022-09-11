@@ -14,7 +14,9 @@
 		async asyncData({ $api, route }) {
 			// Check for Craft Live Preview params
 			let previewParams = null;
+			let allowDraft = false;
 			if (route.query['x-craft-live-preview']) {
+				allowDraft = true;
 				previewParams = {
 					token: route.query.token,
 					'x-craft-live-preview': route.query['x-craft-live-preview'],
@@ -27,6 +29,7 @@
 				{
 					limit: 1,
 					uri: route.params.pathMatch,
+					allowDraft
 				},
 				previewParams
 			);
@@ -55,6 +58,6 @@
 
 <template>
 	<div>
-		<component :is="pageViewComponent" :entry="entry" />
+		<component v-if="entry" :is="pageViewComponent" :entry="entry" />
 	</div>
 </template>

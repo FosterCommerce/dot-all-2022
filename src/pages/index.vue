@@ -31,10 +31,10 @@
 <template>
   <div>
     <!-- Hero Header -->
-    <BaseHomeHero :entry="entry" />
+    <BaseHomeHero v-if="entry" :entry="entry" />
 
     <!-- Page Content -->
-    <div class="mt-12 mx-auto prose prose-indigo prose-lg text-gray-500 lg:mt-24">
+    <div v-if="entry" class="mt-12 mx-auto prose prose-indigo prose-lg text-gray-500 lg:mt-24">
       <ContentBlocks :blocks="entry.contentBlocks" />
     </div>
   </div>

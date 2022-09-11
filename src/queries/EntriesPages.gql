@@ -7,6 +7,7 @@ query EntriesPages (
     $uri: [String] = ["*", null]
     $limit: Int = 100
     $offset: Int = 0
+    $allowDraft: Boolean = false
 ) {
     entries (
         section: ["pages"]
@@ -15,6 +16,7 @@ query EntriesPages (
         uri: $uri
         limit: $limit
         offset: $offset
+        provisionalDrafts: $allowDraft
     ) {
         id
         title
