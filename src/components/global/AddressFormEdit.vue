@@ -8,7 +8,7 @@
 				type: Object,
 				required: false,
 				default: () => ({
-					id: 0,
+					id: '',
 					firstName: '',
 					lastName: '',
 					organization: '',

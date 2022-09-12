@@ -3,22 +3,35 @@
 
 	export default {
 		name: 'CheckoutStepPayment',
+		data()  {
+			return {
+				billingSameAsShipping: true, // The address that will be submitted to the cart
+				newAddress: {
+					id: '',
+					title: 'Billing Address',
+					fullName: '',
+					organization: '',
+					addressLine1: '',
+					addressLine2: '',
+					locality: '',
+					administrativeArea: '',
+					countryCode: '',
+					postalCode: '',
+					phone: ''
+				},
+				isLoading: false, // Loading state of the component
+				isSaving: false, // Saving state of the component
+			}
+		},
 		computed: {
-			...mapGetters('checkout', [
+			...mapGetters('cart', [
 				'getBillingAddressId',
+				'getSourceBillingAddressId',
 				'getBillingSameAsShipping'
 			]),
 			...mapGetters('cart', [
 				'getCurrentCart'
 			]),
-			billingSameAsShipping: {
-				set(value) {
-					this.setBillingSameAsShipping(value);
-				},
-				get() {
-					return this.getBillingSameAsShipping;
-				}
-			}
 		},
 		methods: {
 			...mapMutations('checkout', [
@@ -129,7 +142,7 @@
 				</div>
 			</div>
 
-			<div v-if="!getBillingSameAsShipping">
+			<div v-if="!billingSameAsShipping">
 				<CheckoutAddressFields context="billing" />
 			</div>
 		</section>

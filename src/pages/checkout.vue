@@ -7,6 +7,7 @@
 				mobileSummaryOpen: false
 			};
 		},
+
 		computed: {
 			...mapGetters({
 				isGuest: 'user/getIsGuest',

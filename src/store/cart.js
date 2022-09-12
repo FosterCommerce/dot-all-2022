@@ -23,6 +23,8 @@ export const state = () => ({
 
 	  availableShippingMethodOptions: {},
 
+		billingSameAsShipping: true,
+
     /**
      * Applied coupon code (if any).
      */
@@ -85,6 +87,13 @@ export const getters = {
   	return shippingAddresses.length ? shippingAddresses[0] : null;
 	},
 
+	getBillingAddress(state) {
+		const billingAddresses = state.addresses.filter((address) => {
+			return address.title === 'Billing Address';
+		});
+		return billingAddresses.length ? billingAddresses[0] : null;
+	},
+
 	/**
 	 * Get all items in the cart.
 	 *
@@ -112,6 +121,18 @@ export const getters = {
 
 	getAvailableShippingMethodOptions(state) {
 		return state.currentCart.availableShippingMethodOptions;
+	},
+
+	getBillingAddressId(state) {
+		return state.currentCart.billingAddressId;
+	},
+
+	getSourceBillingAddressId(state) {
+		return state.currentCart.sourceBillingAddressId;
+	},
+
+	getBillingSameAsShipping(state) {
+		return state.currentCart.billingSameAsShipping
 	},
 
   /**
@@ -294,7 +315,6 @@ export const actions = {
 	},
 
 	async saveShippingAddress({ commit, dispatch }, shippingAddress) {
-		console.log('Sent shipping address', shippingAddress);
 		const params = {
 			shippingAddressId: shippingAddress.id,
 			shippingAddress
