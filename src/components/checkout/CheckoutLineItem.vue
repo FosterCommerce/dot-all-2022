@@ -29,7 +29,13 @@
 
 <template>
 	<div class="flex py-6 space-x-6">
-		<img :src="item.image.url" :alt="item.title" class="flex-none w-40 h-40 object-center object-cover bg-gray-200 rounded-md">
+		<nuxt-img
+			v-if="item.image.url"
+			:src="item.image.url"
+			:alt="item.image.alt"
+			class="flex-none w-40 h-40 object-center object-cover bg-gray-200 rounded-md"
+			loading="lazy"
+		/>
 		<div class="flex flex-col justify-between space-y-4">
 			<div class="text-sm font-medium space-y-1">
 				<h3 class="text-gray-900 sm:text-base">{{ item.title }}</h3>

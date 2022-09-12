@@ -23,7 +23,7 @@
 		},
 		data() {
 			return {
-				adding: false
+				isSaving: false
 			};
 		},
 		computed: {
@@ -45,9 +45,9 @@
 			]),
 			/** Adds the item to the cart via the cart Vuex action */
 			async addToCart() {
-				this.adding = true;
+				this.isSaving = true;
 				await this.addNewItem({ ...this.purchasable, qty: Number(this.qty) });
-				this.adding = false;
+				this.isSaving = false;
 				if (this.redirectPath && this.getCartErrors.length === 0) {
 					await this.$router.push(this.redirectPath);
 				}
@@ -59,12 +59,12 @@
 <template>
 	<button
 		type="button"
-		:class="{ 'opacity-25 cursor-not-allowed': adding }"
+		:class="{ 'opacity-25 cursor-not-allowed': isSaving }"
 		class="mt-8 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-		:disabled="adding"
+		:disabled="isSaving"
 		@click='addToCart'
 	>
-		<span v-if="adding">Adding to cart ...</span>
+		<span v-if="isSaving">Adding to cart ...</span>
 		<span v-else>Add to cart</span>
 	</button>
 </template>

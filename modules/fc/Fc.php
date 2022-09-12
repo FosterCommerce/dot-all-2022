@@ -41,7 +41,6 @@ class Fc extends Module
 
 		$this->setComponents([
             'critical' => \modules\fc\services\CriticalDataService::class,
-            'addresses' => \modules\fc\services\AddressesService::class
 		]);
 
         // Register our site routes
@@ -50,7 +49,6 @@ class Fc extends Module
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['api/get-critical'] = 'fc/critical-data/get-csrf-token';
-                $event->rules['api/get-address'] = 'fc/addresses/get-address';
             }
         );
 

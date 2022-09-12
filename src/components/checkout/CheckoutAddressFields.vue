@@ -7,27 +7,27 @@
 				required: false,
 				default: 'shipping'
 			},
-			addressObj: {
+			address: {
 				type: Object,
 				required: false,
 				default: () => ({
 					id: 0,
 					firstName: '',
 					lastName: '',
-					company: '',
-					address1: '',
-					address2: '',
-					city: '',
-					region: '',
-					country: '',
-					zipCode: '',
+					organization: '',
+					addressLine1: '',
+					addressLine2: '',
+					locality: '',
+					administrativeArea: '',
+					countryCode: '',
+					postalCode: '',
 					phone: ''
 				})
 			}
 		},
 		data() {
 			return {
-				address: this.addressObj
+				addressData: this.address
 			};
 		},
 		computed: {
@@ -49,11 +49,11 @@
 <template>
 	<div :class="style">
 		<div class="sm:col-span-3">
-			<label :for="`${contextName}FirstName-${address.id}`" class="block text-sm font-medium text-gray-700">First Name</label>
+			<label :for="`${contextName}FirstName-${addressData.id}`" class="block text-sm font-medium text-gray-700">First Name</label>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}FirstName-${address.id}`"
-					v-model="address.firstName" 
+					:id="`${contextName}FirstName-${addressData.id}`"
+					v-model="addressData.firstName"
 					:name="`${contextName}FirstName`"
 					type="text"
 					autocomplete="given-name"
@@ -65,11 +65,11 @@
 		</div>
 
 		<div class="sm:col-span-3">
-			<label :for="`${contextName}LastName-${address.id}`" class="block text-sm font-medium text-gray-700">Last Name</label>
+			<label :for="`${contextName}LastName-${addressData.id}`" class="block text-sm font-medium text-gray-700">Last Name</label>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}LastName-${address.id}`"
-					v-model="address.lastName" 
+					:id="`${contextName}LastName-${addressData.id}`"
+					v-model="addressData.lastName"
 					:name="`${contextName}LastName`"
 					type="text"
 					autocomplete="family-name"
@@ -82,15 +82,15 @@
 
 		<div class="sm:col-span-6">
 			<div class="flex justify-between">
-				<label :for="`${contextName}Company-${address.id}`" class="block text-sm font-medium text-gray-700">Company</label>
-				<span :id="`${contextName}Company-optional-${address.id}`" class="text-sm text-gray-400">Optional</span>
+				<label :for="`${contextName}Company-${addressData.id}`" class="block text-sm font-medium text-gray-700">Company</label>
+				<span :id="`${contextName}Company-optional-${addressData.id}`" class="text-sm text-gray-400">Optional</span>
 			</div>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}Company-${address.id}`"
-					v-model="address.company"
+					:id="`${contextName}Company-${addressData.id}`"
+					v-model="addressData.organization"
 					:name="`${contextName}Company`"
-					:aria-describedby="`${contextName}Company-optional-${address.id}`"
+					:aria-describedby="`${contextName}Company-optional-${addressData.id}`"
 					type="text"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					@change="changedAddress"
@@ -99,11 +99,11 @@
 		</div>
 
 		<div class="sm:col-span-4">
-			<label :for="`${contextName}Address1-${address.id}`" class="block text-sm font-medium text-gray-700">Street Address</label>
+			<label :for="`${contextName}Address1-${addressData.id}`" class="block text-sm font-medium text-gray-700">Street Address</label>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}Address1-${address.id}`"
-					v-model="address.address1"
+					:id="`${contextName}Address1-${addressData.id}`"
+					v-model="addressData.addressLine1"
 					:name="`${contextName}Address1`"
 					type="text"
 					autocomplete="street-address"
@@ -116,28 +116,28 @@
 
 		<div class="sm:col-span-2">
 			<div class="flex justify-between">
-				<label :for="`${contextName}Address2-${address.id}`" class="block text-sm font-medium text-gray-700">Apt.</label>
-				<span :id="`${contextName}Address2-optional-${address.id}`" class="text-sm text-gray-400">Optional</span>
+				<label :for="`${contextName}Address2-${addressData.id}`" class="block text-sm font-medium text-gray-700">Apt.</label>
+				<span :id="`${contextName}Address2-optional-${addressData.id}`" class="text-sm text-gray-400">Optional</span>
 			</div>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}Address2-${address.id}`"
-					v-model="address.address2"
+					:id="`${contextName}Address2-${addressData.id}`"
+					v-model="addressData.addressLine2"
 					type="text"
 					:name="`${contextName}Address2`"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-					:aria-describedby="`${contextName}Address2-optional${address.id}`"
+					:aria-describedby="`${contextName}Address2-optional${addressData.id}`"
 					@change="changedAddress"
 				/>
 			</div>
 		</div>
 
 		<div class="sm:col-span-2">
-			<label :for="`${contextName}City-${address.id}`" class="block text-sm font-medium text-gray-700">City</label>
+			<label :for="`${contextName}City-${addressData.id}`" class="block text-sm font-medium text-gray-700">City</label>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}City-${address.id}`"
-					v-model="address.city"
+					:id="`${contextName}City-${addressData.id}`"
+					v-model="addressData.locality"
 					type="text"
 					:name="`${contextName}City`"
 					autocomplete="address-level2"
@@ -149,11 +149,11 @@
 		</div>
 
 		<div class="sm:col-span-2">
-			<label :for="`${contextName}Region-${address.id}`" class="block text-sm font-medium text-gray-700">State / Province</label>
+			<label :for="`${contextName}Region-${addressData.id}`" class="block text-sm font-medium text-gray-700">State / Province</label>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}Region-${address.id}`"
-					v-model="address.region"
+					:id="`${contextName}Region-${addressData.id}`"
+					v-model="addressData.administrativeArea"
 					type="text"
 					:name="`${contextName}Region`"
 					autocomplete="address-level1"
@@ -165,11 +165,11 @@
 		</div>
 
 		<div class="sm:col-span-2">
-			<label :for="`${contextName}Country-${address.id}`" class="block text-sm font-medium text-gray-700">Country</label>
+			<label :for="`${contextName}Country-${addressData.id}`" class="block text-sm font-medium text-gray-700">Country</label>
 			<div class="mt-1">
 				<select
-					:id="`${contextName}Country-${address.id}`"
-					v-model="address.country"
+					:id="`${contextName}Country-${addressData.id}`"
+					v-model="addressData.countryCode"
 					:name="`${contextName}Country`"
 					autocomplete="country-name"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -186,11 +186,11 @@
 		</div>
 
 		<div class="sm:col-span-3">
-			<label :for="`${contextName}ZipCode-${address.id}`" class="block text-sm font-medium text-gray-700">Postal code</label>
+			<label :for="`${contextName}ZipCode-${addressData.id}`" class="block text-sm font-medium text-gray-700">Postal code</label>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}ZipCode-${address.id}`"
-					v-model="address.zipCode"
+					:id="`${contextName}ZipCode-${addressData.id}`"
+					v-model="addressData.postalCode"
 					type="text"
 					:name="`${contextName}ZipCode`"
 					autocomplete="postal-code"
@@ -203,17 +203,18 @@
 
 		<div class="sm:col-span-3">
 			<div class="flex justify-between">
-				<label :for="`${contextName}Phone-${address.id}`" class="block text-sm font-medium text-gray-700">Phone</label>
-				<span :id="`${contextName}Phone-optional-${address.id}`" class="text-sm text-gray-400">Optional</span>
+				<label :for="`${contextName}Phone-${addressData.id}`" class="block text-sm font-medium text-gray-700">Phone</label>
+				<span :id="`${contextName}Phone-optional-${addressData.id}`" class="text-sm text-gray-400">Optional</span>
 			</div>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}Phone-${address.id}`"
+					:id="`${contextName}Phone-${addressData.id}`"
+					v-model="addressData.phone"
 					type="tel"
 					:name="`${contextName}Phone`"
 					autocomplete="tel"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-					:aria-describedby="`${contextName}Phone-optional${address.id}`"
+					:aria-describedby="`${contextName}Phone-optional${addressData.id}`"
 				/>
 			</div>
 		</div>

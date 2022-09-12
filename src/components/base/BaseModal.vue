@@ -1,18 +1,11 @@
 <script>
-	import { mapGetters, mapMutations } from "vuex";
-
 	export default {
-		name: 'CheckoutModal',
+		name: 'BaseModal',
 		props: {
 			title: {
 				type: String,
 				required: false,
-				default: 'Sign in to your account'
-			},
-			context: {
-				type: String,
-				required: false,
-				default: 'login'
+				default: null
 			},
 			width: {
 				type: String,
@@ -20,17 +13,9 @@
 				default: 'md'
 			}
 		},
-		computed: {
-			...mapGetters('checkout', [
-				'getModals'
-			])
-		},
 		methods: {
-			...mapMutations('checkout', [
-				'setModal'
-			]),
-			closeModal() {
-				this.setModal({ context: this.context, payload: false});
+			close() {
+				this.$emit('close');
 			}
 		}
 	};
@@ -38,16 +23,14 @@
 
 <template>
 	<div
-		v-if="getModals[context]"
 		class="fixed z-10 inset-0 overflow-y-auto"
 		aria-labelledby="modal-title"
 		role="dialog"
 		aria-modal="true"
 	>
-
 		<div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
 
-			<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" @click="closeModal"></div>
+			<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" @click="close"></div>
 
 			<!-- This element is to trick the browser into centering the modal contents. -->
 			<span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
@@ -60,7 +43,7 @@
 				<button
 					type="button"
 					class="absolute top-4 right-4 rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-					@click="closeModal"
+					@click="close"
 				>
 					<span class="sr-only">Close modal</span>
 					<svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

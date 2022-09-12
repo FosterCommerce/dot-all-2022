@@ -10,10 +10,10 @@
 			};
 		},
 		async fetch() {
-			// Set the session data
-			await this.$store.dispatch('fetchSessionData');
+			// Set the user data
+			await this.$store.dispatch('user/fetchSessionData');
 			// Populate and sync the cart
-			await this.$store.dispatch('cart/populateCart');
+			await this.$store.dispatch('cart/fetchCart');
 		},
 		/** Sets the meta-data in the head */
 		head() {

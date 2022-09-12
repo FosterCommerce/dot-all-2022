@@ -1,26 +1,43 @@
 <script>
-	import { mapGetters, mapMutations } from "vuex";
+	import { mapActions } from "vuex";
 
 	export default {
 		name: 'AddressFormDelete',
-		computed: {
-			...mapGetters('user', [
-				'getAddresses'
-			]),
-			address() {
-				return this.getAddresses[0];
+		props: {
+			address: {
+				type: Object,
+				required: false,
+				default: () => ({
+					id: 0,
+					firstName: '',
+					lastName: '',
+					organization: '',
+					addressLine1: '',
+					addressLine2: '',
+					locality: '',
+					administrativeArea: '',
+					countryCode: '',
+					postalCode: '',
+					phone: ''
+				})
 			}
 		},
+		data() {
+			return {
+				error: ''
+			};
+		},
 		methods: {
-			...mapMutations('checkout', [
-				'setModal'
+			...mapActions('user', [
+				'fetchAddresses'
 			]),
-			closeModal() {
-				this.setModal({ context: 'addressDelete', payload: false });
+			close() {
+				this.$emit('close');
 			},
-			deleteAddress() {
-				console.log('Delete address code here');
-				this.closeModal();
+			async deleteAddress() {
+				await this.$api.deleteAddress(this.address);
+				this.fetchAddresses();
+				this.close();
 			}
 		}
 	};
@@ -37,8 +54,8 @@
 			</div>
 			<p class="text-gray-500">
 				<strong class="font-medium text-gray-700">
-				<span v-if="address.company">
-					{{ address.company }}<br/>
+				<span v-if="address.organization">
+					{{ address.organization }}<br/>
 					{{ address.firstName }} {{ address.lastName }}
 				</span>
 					<span v-else>
@@ -46,12 +63,12 @@
 				</span>
 				</strong>
 				<br/>
-				<span>{{ address.address1 }},</span>
-				<span v-if="address.address2">{{ address.address2 }},</span>
-				<br/><span>{{ address.city }},</span>
-				<span>{{ address.region }}</span>
-				<br/><span>{{ address.zipCode }},</span>
-				<span>{{ address.country }}</span>
+				<span>{{ address.addressLine1 }},</span>
+				<span v-if="address.addressLine2">{{ address.addressLine2 }},</span>
+				<br/><span>{{ address.locality }},</span>
+				<span>{{ address.administrativeArea }}</span>
+				<br/><span>{{ address.postalCode }},</span>
+				<span>{{ address.countryCode }}</span>
 			</p>
 		</div>
 
@@ -66,7 +83,7 @@
 			<button
 				type="button"
 				class="flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
-				@click="closeModal"
+				@click="close"
 			>
 				Cancel
 			</button>
@@ -74,4 +91,3 @@
 
 	</form>
 </template>
-

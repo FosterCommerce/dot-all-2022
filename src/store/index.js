@@ -89,16 +89,5 @@ export const actions = {
 		const { data: queryData } = await this.$api.graphqlQuery(query);
 
 		commit('setPrimaryNav', queryData.entry.primaryNavigation);
-	},
-	/**
-	 * Gets the session data an saves it into state.
-	 *
-	 * @param {function} commit - Vuex commit method.
-	 */
-	async fetchSessionData({ commit }) {
-		// Get the session data from Craft and set it into state
-		const sessionInfo = await this.$api.get('/actions/users/session-info');
-
-		commit('setCsrfToken', sessionInfo.csrfTokenValue);
-	},
+	}
 };

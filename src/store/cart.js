@@ -1,3 +1,5 @@
+import Addresses from '@/queries/Addresses.gql';
+
 /**
  * The main Vuex state for the cart.
  */
@@ -10,6 +12,19 @@ export const state = () => ({
    * The cart properties.
    */
   currentCart: {
+
+  	email: '',
+
+		shippingAddressId: null,
+
+		sourceShippingAddressId: null,
+
+	  shippingMethodHandle: null,
+
+	  availableShippingMethodOptions: {},
+
+		billingSameAsShipping: true,
+
     /**
      * Applied coupon code (if any).
      */
@@ -43,6 +58,9 @@ export const state = () => ({
 		 */
 		lineItems: [],
   },
+
+	addresses: [],
+
   /**
    * Errors, if any.
    */
@@ -62,6 +80,20 @@ export const getters = {
     return state.currentCart;
   },
 
+	getShippingAddress(state) {
+  	const shippingAddresses = state.addresses.filter((address) => {
+  		return address.title === 'Shipping Address';
+		});
+  	return shippingAddresses.length ? shippingAddresses[0] : null;
+	},
+
+	getBillingAddress(state) {
+		const billingAddresses = state.addresses.filter((address) => {
+			return address.title === 'Billing Address';
+		});
+		return billingAddresses.length ? billingAddresses[0] : null;
+	},
+
 	/**
 	 * Get all items in the cart.
 	 *
@@ -69,6 +101,38 @@ export const getters = {
 	 */
 	getItems(state) {
 		return state.currentCart.lineItems;
+	},
+
+	getEmail(state) {
+		return state.currentCart.email;
+	},
+
+	getShippingAddressId(state) {
+		return state.currentCart.shippingAddressId;
+	},
+
+	getSourceShippingAddressId(state) {
+		return state.currentCart.sourceShippingAddressId;
+	},
+
+	getShippingMethodHandle(state) {
+		return state.currentCart.shippingMethodHandle;
+	},
+
+	getAvailableShippingMethodOptions(state) {
+		return state.currentCart.availableShippingMethodOptions;
+	},
+
+	getBillingAddressId(state) {
+		return state.currentCart.billingAddressId;
+	},
+
+	getSourceBillingAddressId(state) {
+		return state.currentCart.sourceBillingAddressId;
+	},
+
+	getBillingSameAsShipping(state) {
+		return state.currentCart.billingSameAsShipping
 	},
 
   /**
@@ -104,6 +168,11 @@ export const mutations = {
   setCurrentCart(state, payload) {
     state.currentCart = payload;
   },
+
+	setAddresses(state, payload) {
+  	state.addresses = payload;
+	},
+
   /**
    * Set the loading state.
    *
@@ -132,15 +201,26 @@ export const mutations = {
  */
 export const actions = {
 	/**
-	 * Fetches the session info and cart data from Craft/Commerce and places it into state.
+	 * Fetches the cart data from Craft/Commerce and places it into state.
 	 *
 	 * @property {function} commit   - Vuex commit method.
 	 */
-	async populateCart({ commit }) {
+	async fetchCart({ commit, dispatch }) {
 		// Get the cart from commerce and set it into state
 		const { cart } = await this.$api.getCart();
 		commit('setCurrentCart', cart);
+		await dispatch('fetchAddresses', cart.id);
 		commit('setLoading', false);
+	},
+
+	async fetchAddresses({ commit }, cartId) {
+		const { data } = await this.$api.graphqlQuery(
+			Addresses,
+			{
+				ownerId: cartId
+			}
+		);
+		commit('setAddresses', data.addresses);
 	},
 
   /**
@@ -214,6 +294,57 @@ export const actions = {
     }
   },
 
+	/**
+	 * Saves the email address
+	 *
+	 * @property {function} dispatch - Vuex dispatch method.
+	 * @property {function} commit   - Vuex commit method.
+	 * @property {string}  email  - An email address string
+	 */
+	async saveEmail({ commit, dispatch }, email) {
+		try {
+			const { cart } = await this.$api.postAction('/fc/cart/update-cart', { email });
+			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
+
+			if (errorNotices.length < 1) {
+				commit('setCurrentCart', cart);
+			}
+		} catch (error) {
+			handleError(commit, error);
+		}
+	},
+
+	async saveShippingAddress({ commit, dispatch }, shippingAddress) {
+		const params = {
+			shippingAddressId: shippingAddress.id,
+			shippingAddress
+		};
+		try {
+			const { cart } = await this.$api.postAction('/fc/cart/update-cart', params);
+			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
+
+			if (errorNotices.length < 1) {
+				commit('setCurrentCart', cart);
+				await dispatch('fetchAddresses', cart.id);
+			}
+		} catch (error) {
+			handleError(commit, error);
+		}
+	},
+
+	async saveShippingMethod({ commit, dispatch }, shippingMethodHandle) {
+		try {
+			const { cart } = await this.$api.postAction('/fc/cart/update-cart', { shippingMethodHandle });
+			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
+
+			if (errorNotices.length < 1) {
+				commit('setCurrentCart', cart);
+			}
+		} catch (error) {
+			handleError(commit, error);
+		}
+	},
+
   /**
    * Apply coupon.
    *
@@ -235,6 +366,15 @@ export const actions = {
       return false;
     }
   },
+	/**
+	 * Used to display notices manually
+	 * @param commit
+	 * @param dispatch
+	 * @param notice
+	 */
+	displayNotice({ commit, dispatch }, notice) {
+  	handleNotices({ commit, dispatch }, [{ message: notice }]);
+	},
 
   /**
    * Clear Cart notices.
