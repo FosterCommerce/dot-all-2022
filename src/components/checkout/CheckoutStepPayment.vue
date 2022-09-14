@@ -108,6 +108,7 @@
 					const response = this.$api.submitStripePayment({
 						cartId: cart.id,
 						card: {
+							name,
 							number: numericNumber,
 							exp_month: expiryValue[0],
 							exp_year: expiryValue[1],
