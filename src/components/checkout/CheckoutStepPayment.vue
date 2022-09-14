@@ -1,9 +1,9 @@
 <script>
-	import { mapGetters, mapMutations, mapActions } from "vuex";
+	import { mapGetters, mapMutations, mapActions } from 'vuex';
 
 	export default {
 		name: 'CheckoutStepPayment',
-		data()  {
+		data() {
 			return {
 				billingSameAsShipping: true, // The address that will be submitted to the cart
 				newAddress: {
@@ -17,42 +17,118 @@
 					administrativeArea: '',
 					countryCode: '',
 					postalCode: '',
-					phone: ''
+					phone: '',
 				},
 				isLoading: false, // Loading state of the component
 				isSaving: false, // Saving state of the component
-			}
+			};
 		},
 		computed: {
 			...mapGetters('cart', [
 				'getBillingAddressId',
 				'getSourceBillingAddressId',
-				'getBillingSameAsShipping'
+				'getBillingSameAsShipping',
 			]),
 			...mapGetters('cart', [
-				'getCurrentCart'
+				'getCurrentCart',
 			]),
+		},
+		mounted() {
+			// These are for testing purposes so I don't have to keep filling them in.
+			this.$refs.nameOnCard.value = 'Chris Clower';
+			this.$refs.cardNumber.value = '4242 4242 4242 4242';
+			this.$refs.expirationDate.value = '09/25';
+			this.$refs.cvv.value = '123';
 		},
 		methods: {
 			...mapMutations('checkout', [
 				'setBillingAddressId',
-				'setBillingSameAsShipping'
+				'setBillingSameAsShipping',
 			]),
 			...mapActions('checkout', [
 				'decrementStep',
-				'incrementStep'
+				'incrementStep',
 			]),
 			nextStep() {
-				// ... Code to save the data back to Commerce here
-				// and if there are no errors we can then increment the step
-				this.incrementStep();
+				const errors = [];
+				const name = this.$refs.nameOnCard.value;
+				const number = this.$refs.cardNumber.value;
+				const cvv = this.$refs.cvv.value;
+				const expiry = this.$refs.expirationDate.value;
+				// Remove non-digits and convert the card number to an integer.
+				const numericNumber = parseInt(number.replace(/\D+/gi, ''));
+				// Remove non-digits and convert the CVC to an integer.
+				const numericCvv = parseInt(cvv.replace(/\D+/gi, ''));
+				// Remove non-digits and convert the expiration date to an integer.
+				const numericExpiry = parseInt(expiry.replace(/\D+/gi, ''));
+				// We need a string version of this as well so we can add back the leading "0" on months
+				// less than October, and we're going to add back the "/" as well for the payment processor.
+				let expiryValue = numericExpiry.toString();
+
+				if (!name) {
+					errors.push('Name is required.');
+				}
+
+				if (!numericNumber) {
+					errors.push('Card number is required.');
+				}
+
+				if (numericNumber.toString().length !== 16 || isNaN(numericNumber)) {
+					errors.push('Card number is invalid.');
+				}
+
+				if (!numericExpiry) {
+					errors.push('Card expiration date is required.');
+				} else if (isNaN(numericExpiry)) {
+					errors.push('Card expiration date is invalid.');
+				} else if (expiryValue.length === 3) {
+					// Months that start with 0, which gets trimmed when converted to an integer.
+					expiryValue = `0${numericExpiry}`;
+				}
+
+				if (numericExpiry && expiryValue.length !== 4) {
+					errors.push('Card expiration date is invalid.');
+				} else if (expiryValue.length === 4) {
+					// Convert to MM/DD format
+					expiryValue = expiryValue.match(/.{1,2}/g);
+					// expiryValue = `${expiryValue[0]}/${expiryValue[1]}`;
+				}
+
+				if (!numericCvv) {
+					errors.push('Card CVV is required.');
+				}
+
+				if (numericCvv.toString().length !== 3 || isNaN(numericCvv)) {
+					errors.push('Card CVV is invalid.');
+				}
+
+				if (!errors.length) {
+					const cart = this.getCurrentCart;
+
+					const response = this.$api.submitStripePayment({
+						cartId: cart.id,
+						card: {
+							number: numericNumber,
+							exp_month: expiryValue[0],
+							exp_year: expiryValue[1],
+							cvc: numericCvv,
+						},
+					});
+
+					/*if (response.success === 'true') {
+						this.incrementStep();
+					}*/
+				} else {
+					// handle errors
+					console.log(errors);
+				}
 			},
 			previousStep() {
 				// ... Any code that needs to happen here before
 				// stepping back in the process
 				this.decrementStep();
-			}
-		}
+			},
+		},
 	};
 </script>
 
@@ -60,7 +136,9 @@
 	<div>
 		<section aria-labelledby="payment-heading">
 			<div class="space-y-2 sm:flex sm:justify-between sm:items-center sm:space-y-0">
-				<h2 id="payment-heading" class="text-xl font-medium text-gray-900 lg:text-2xl">Payment details</h2>
+				<h2 id="payment-heading" class="text-xl font-medium text-gray-900 lg:text-2xl">
+					Payment details
+				</h2>
 
 				<p class="flex justify-start text-sm text-gray-500">
 					<svg class="w-4 h-4 text-gray-400 mr-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -72,10 +150,13 @@
 
 			<div class="mt-6 grid grid-cols-3 sm:grid-cols-4 gap-y-6 gap-x-4">
 				<div class="col-span-3 sm:col-span-4">
-					<label for="name-on-card" class="block text-sm font-medium text-gray-700">Name on card</label>
+					<label for="name-on-card" class="block text-sm font-medium text-gray-700">
+						Name on card
+					</label>
 					<div class="mt-1">
 						<input
 							id="name-on-card"
+							ref="nameOnCard"
 							type="text"
 							name="name-on-card"
 							autocomplete="cc-name"
@@ -85,10 +166,13 @@
 				</div>
 
 				<div class="col-span-3 sm:col-span-4">
-					<label for="card-number" class="block text-sm font-medium text-gray-700">Card number</label>
+					<label for="card-number" class="block text-sm font-medium text-gray-700">
+						Card number
+					</label>
 					<div class="mt-1">
 						<input
 							id="card-number"
+							ref="cardNumber"
 							type="text"
 							name="card-number"
 							autocomplete="cc-number"
@@ -98,10 +182,13 @@
 				</div>
 
 				<div class="col-span-2 sm:col-span-3">
-					<label for="expiration-date" class="block text-sm font-medium text-gray-700">Expiration date (MM/YY)</label>
+					<label for="expiration-date" class="block text-sm font-medium text-gray-700">
+						Expiration date (MM/YY)
+					</label>
 					<div class="mt-1">
 						<input
 							id="expiration-date"
+							ref="expirationDate"
 							type="text"
 							name="expiration-date"
 							autocomplete="cc-exp"
@@ -111,12 +198,13 @@
 				</div>
 
 				<div>
-					<label for="cvc" class="block text-sm font-medium text-gray-700">CVC</label>
+					<label for="cvv" class="block text-sm font-medium text-gray-700">CVV</label>
 					<div class="mt-1">
 						<input
-							id="cvc"
+							id="cvv"
+							ref="cvv"
 							type="text"
-							name="cvc"
+							name="cvv"
 							autocomplete="csc"
 							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 						>
@@ -126,8 +214,12 @@
 		</section>
 
 		<section aria-labelledby="billing-heading" class="mt-10">
-			<h2 id="billing-heading" class="text-xl font-medium text-gray-900 lg:text-2xl">Billing address</h2>
-			<p class="text-sm text-gray-500">Same as your shipping address or include a separate billing address.</p>
+			<h2 id="billing-heading" class="text-xl font-medium text-gray-900 lg:text-2xl">
+				Billing address
+			</h2>
+			<p class="text-sm text-gray-500">
+				Same as your shipping address or include a separate billing address.
+			</p>
 
 			<div class="mt-6 flex items-center">
 				<input
@@ -138,7 +230,9 @@
 					class="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
 				>
 				<div class="ml-2">
-					<label for="same-as-shipping" class="text-sm font-medium text-gray-900">Same as shipping address</label>
+					<label for="same-as-shipping" class="text-sm font-medium text-gray-900">
+						Same as shipping address
+					</label>
 				</div>
 			</div>
 
@@ -147,7 +241,9 @@
 			</div>
 		</section>
 
-		<div class="flex flex-col justify-start items-stretch gap-y-4 pt-8 sm:flex-row-reverse sm:justify-between sm:items-center lg:pt-16">
+		<div
+			class="flex flex-col justify-start items-stretch gap-y-4 pt-8 sm:flex-row-reverse sm:justify-between sm:items-center lg:pt-16"
+		>
 			<button
 				class="flex justify-center items-center px-8 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
 				@click.prevent="nextStep"

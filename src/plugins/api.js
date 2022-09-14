@@ -160,7 +160,11 @@ const api = ({$axios}, $config, store) => {
 				addressId: address.id,
 			};
 			return await postAction('users/delete-address', data);
-		}
+		},
+
+		submitStripePayment: async (paymentInfo) => {
+			await console.log(paymentInfo);
+		},
 	};
 };
 
