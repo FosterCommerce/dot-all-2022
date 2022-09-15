@@ -1,10 +1,13 @@
 <script>
 	import { mapGetters, mapMutations, mapActions } from 'vuex';
+	import { loadStripe } from '@stripe/stripe-js';
 
 	export default {
 		name: 'CheckoutStepPayment',
 		data() {
 			return {
+				stripe: {},
+				card: {},
 				billingSameAsShipping: true, // The address that will be submitted to the cart
 				newAddress: {
 					id: '',
@@ -33,12 +36,29 @@
 				'getCurrentCart',
 			]),
 		},
-		mounted() {
+		async mounted() {
 			// These are for testing purposes so I don't have to keep filling them in.
-			this.$refs.nameOnCard.value = 'Chris Clower';
-			this.$refs.cardNumber.value = '4242 4242 4242 4242';
-			this.$refs.expirationDate.value = '09/25';
-			this.$refs.cvv.value = '123';
+			this.stripe = await loadStripe('pk_test_51IRhFCAvkPHIPB19Zv5OPWHz6a7iiiMHwRzMLni9yZSdnIegXpkuPhptWfVrkbne3QAdlNV0O0Mp9VVBpKy1YlQ400xhc1s7D4');
+			const elements = this.stripe.elements();
+			/*const style = {
+				base: {
+					color: '#32325d',
+					fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+					fontSmoothing: 'antialiased',
+					fontSize: '16px',
+					'::placeholder': {
+						color: '#aab7c4'
+					}
+				},
+				invalid: {
+					color: '#fa755a',
+					iconColor: '#fa755a'
+				}
+			};*/
+
+			this.card = elements.create('card', /*{ style }*/);
+
+			this.card.mount('#card-element');
 		},
 		methods: {
 			...mapMutations('checkout', [
@@ -50,79 +70,32 @@
 				'incrementStep',
 			]),
 			nextStep() {
-				const errors = [];
-				const name = this.$refs.nameOnCard.value;
-				const number = this.$refs.cardNumber.value;
-				const cvv = this.$refs.cvv.value;
-				const expiry = this.$refs.expirationDate.value;
-				// Remove non-digits and convert the card number to an integer.
-				const numericNumber = parseInt(number.replace(/\D+/gi, ''));
-				// Remove non-digits and convert the CVC to an integer.
-				const numericCvv = parseInt(cvv.replace(/\D+/gi, ''));
-				// Remove non-digits and convert the expiration date to an integer.
-				const numericExpiry = parseInt(expiry.replace(/\D+/gi, ''));
-				// We need a string version of this as well so we can add back the leading "0" on months
-				// less than October, and we're going to add back the "/" as well for the payment processor.
-				let expiryValue = numericExpiry.toString();
+				const paymentData = {
+					billing_details: {
+						email: this.getCurrentCart.customer.email,
+					}
+				};
 
-				if (!name) {
-					errors.push('Name is required.');
-				}
+				this.stripe.createPaymentMethod('card', this.card, paymentData)
+					.then((result) => {
+						console.log(result);
 
-				if (!numericNumber) {
-					errors.push('Card number is required.');
-				}
+						if (result.error) {
+							// Show the user any errors
+							const errorElement = document.getElementById('card-errors');
+							errorElement.textContent = result.error.message;
+						} else {
+							const data = `paymentForm[2][${result.paymentMethod.id}]`;
 
-				if (numericNumber.toString().length !== 16 || isNaN(numericNumber)) {
-					errors.push('Card number is invalid.');
-				}
-
-				if (!numericExpiry) {
-					errors.push('Card expiration date is required.');
-				} else if (isNaN(numericExpiry)) {
-					errors.push('Card expiration date is invalid.');
-				} else if (expiryValue.length === 3) {
-					// Months that start with 0, which gets trimmed when converted to an integer.
-					expiryValue = `0${numericExpiry}`;
-				}
-
-				if (numericExpiry && expiryValue.length !== 4) {
-					errors.push('Card expiration date is invalid.');
-				} else if (expiryValue.length === 4) {
-					// Convert to MM/DD format
-					expiryValue = expiryValue.match(/.{1,2}/g);
-					// expiryValue = `${expiryValue[0]}/${expiryValue[1]}`;
-				}
-
-				if (!numericCvv) {
-					errors.push('Card CVV is required.');
-				}
-
-				if (numericCvv.toString().length !== 3 || isNaN(numericCvv)) {
-					errors.push('Card CVV is invalid.');
-				}
-
-				if (!errors.length) {
-					const cart = this.getCurrentCart;
-
-					const response = this.$api.submitStripePayment({
-						cartId: cart.id,
-						card: {
-							name,
-							number: numericNumber,
-							exp_month: expiryValue[0],
-							exp_year: expiryValue[1],
-							cvc: numericCvv,
-						},
+							this.$api.submitStripePayment({
+								'paymentForm': {
+									paymentMethodId: result.paymentMethod.id
+								}
+							});
+						}
 					});
 
-					/*if (response.success === 'true') {
-						this.incrementStep();
-					}*/
-				} else {
-					// handle errors
-					console.log(errors);
-				}
+				// this.incrementStep();
 			},
 			previousStep() {
 				// ... Any code that needs to happen here before
@@ -149,69 +122,11 @@
 				</p>
 			</div>
 
-			<div class="mt-6 grid grid-cols-3 sm:grid-cols-4 gap-y-6 gap-x-4">
-				<div class="col-span-3 sm:col-span-4">
-					<label for="name-on-card" class="block text-sm font-medium text-gray-700">
-						Name on card
-					</label>
-					<div class="mt-1">
-						<input
-							id="name-on-card"
-							ref="nameOnCard"
-							type="text"
-							name="name-on-card"
-							autocomplete="cc-name"
-							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-						>
-					</div>
-				</div>
-
-				<div class="col-span-3 sm:col-span-4">
-					<label for="card-number" class="block text-sm font-medium text-gray-700">
-						Card number
-					</label>
-					<div class="mt-1">
-						<input
-							id="card-number"
-							ref="cardNumber"
-							type="text"
-							name="card-number"
-							autocomplete="cc-number"
-							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-						>
-					</div>
-				</div>
-
-				<div class="col-span-2 sm:col-span-3">
-					<label for="expiration-date" class="block text-sm font-medium text-gray-700">
-						Expiration date (MM/YY)
-					</label>
-					<div class="mt-1">
-						<input
-							id="expiration-date"
-							ref="expirationDate"
-							type="text"
-							name="expiration-date"
-							autocomplete="cc-exp"
-							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-						>
-					</div>
-				</div>
-
-				<div>
-					<label for="cvv" class="block text-sm font-medium text-gray-700">CVV</label>
-					<div class="mt-1">
-						<input
-							id="cvv"
-							ref="cvv"
-							type="text"
-							name="cvv"
-							autocomplete="csc"
-							class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-						>
-					</div>
-				</div>
-			</div>
+			<div
+				id="card-element"
+				class="mt-6 grid grid-cols-3 sm:grid-cols-4 gap-y-6 gap-x-4"
+			></div>
+			<div id="card-errors"></div>
 		</section>
 
 		<section aria-labelledby="billing-heading" class="mt-10">
