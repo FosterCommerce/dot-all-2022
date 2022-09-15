@@ -85,12 +85,8 @@
 							const errorElement = document.getElementById('card-errors');
 							errorElement.textContent = result.error.message;
 						} else {
-							const data = `paymentForm[2][${result.paymentMethod.id}]`;
-
 							this.$api.submitStripePayment({
-								'paymentForm': {
-									paymentMethodId: result.paymentMethod.id
-								}
+								'paymentForm[stripe][paymentMethodId]': result.paymentMethod.id
 							});
 						}
 					});
