@@ -163,7 +163,9 @@ const api = ({$axios}, $config, store) => {
 		},
 
 		submitStripePayment: async (paymentInfo) => {
-			await console.log(paymentInfo);
+			const response = await postAction('/commerce/payments/pay', paymentInfo);
+
+			console.log(response);
 		},
 	};
 };
