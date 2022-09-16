@@ -30,4 +30,32 @@ class CriticalDataController extends Controller
 
         return $this->asJson($response);
     }
+
+    public function actionGetCountries() : Response {
+        $this->requireAcceptsJson();
+
+        $response = [
+            'success' => true,
+            'countries' => []
+        ];
+
+        $response['countries'] = Fc::getInstance()->critical->getCountries();
+
+        return $this->asJson($response);
+    }
+
+    public function actionGetRegions() : Response {
+        $response = [
+            'success' => true,
+            'regions' => []
+        ];
+
+        $countryId = $this->request->getQueryParam('countryId');
+
+        if ($countryId) {
+            $response['regions'] = Fc::getInstance()->critical->getRegions($countryId);
+        }
+
+        return $this->asJson($response);
+    }
 }

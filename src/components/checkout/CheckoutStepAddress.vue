@@ -23,6 +23,8 @@
 					postalCode: '',
 					phone: ''
 				},
+				countries: [],
+				regions: [],
 				isLoading: false, // Loading state of the component
 				isSaving: false, // Saving state of the component
 			}
@@ -41,6 +43,9 @@
 				await this.$store.dispatch('user/fetchUser', this.getEmail);
 				await this.$store.dispatch('user/fetchAddresses');
 			}
+
+			this.countries = await this.$api.get('/actions/fc/critical-data/get-countries');
+			this.regions = await this.$api.get('/actions/fc/critical-data/get-regions?countryId=US');
 
 			// Run the logic to set the local shippingAddress variable that we use for the address toggle
 
