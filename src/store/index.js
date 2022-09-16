@@ -14,6 +14,8 @@ export const getters = {
 	 * Returns the primary navigation link elements from the EntrySettings results.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @returns {Array} - The nav links.
 	 */
 	getPrimaryNav(state) {
 		const linkArr = [];
@@ -38,9 +40,11 @@ export const getters = {
 		return linkArr;
 	},
 	/**
-	 *Get the Craft CSRF token from the state.
+	 * Get the Craft CSRF token from the state.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @returns {string} - The Craft CSRF token.
 	 */
 	getCsrfToken(state) {
 		return state.csrfToken;
@@ -57,6 +61,8 @@ export const mutations = {
 	 * NOTE: The `state` property is pulled in automatically.
 	 *
 	 * @property {object} payload - The primary nav array.
+	 *
+	 * @returns {void}
 	 */
 	setPrimaryNav(state, payload) {
 		state.primaryNav = payload;
@@ -67,6 +73,8 @@ export const mutations = {
 	 * NOTE: The `state` property is pulled in automatically.
 	 *
 	 * @property {string} payload - The CSRF token from Craft.
+	 *
+	 * @returns {void}
 	 */
 	setCsrfToken(state, payload) {
 		state.csrfToken = payload;
@@ -82,6 +90,8 @@ export const actions = {
 	 * On static generated sites, it runs for every page during generate.
 	 *
 	 * @param {function} commit - Vuex commit method.
+	 *
+	 * @returns {void}
 	 */
 	async nuxtServerInit({ commit }) {
 		// Fetch the settings entry to get the sites global navigation
@@ -89,5 +99,26 @@ export const actions = {
 		const { data: queryData } = await this.$api.graphqlQuery(query);
 
 		commit('setPrimaryNav', queryData.entry.primaryNavigation);
-	}
+	},
+
+	/**
+	 * Gets the session data, user data and saves it into state.
+	 * Initializes the steps in the checkout process based on if the user is logged in or not
+	 *
+	 * @param {function} commit - Vuex commit method.
+	 * @param {function} dispatch - Vuex dispatch method
+	 *
+	 * @returns {void}
+	 */
+	async fetchSessionData({ commit, dispatch }) {
+		// Get the session data from Craft and set it into state
+		const sessionInfo = await this.$api.get('/actions/users/session-info');
+		commit('setCsrfToken', sessionInfo.csrfTokenValue);
+		commit('user/setIsGuest', sessionInfo.isGuest);
+		if (!sessionInfo.isGuest) {
+			commit('user/setUserId', sessionInfo.userId);
+			commit('user/setEmail', sessionInfo.email);
+		}
+		dispatch('checkout/initializeSteps', sessionInfo.isGuest);
+	},
 };

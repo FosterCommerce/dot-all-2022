@@ -146,7 +146,9 @@ const api = ({$axios}, $config, store) => {
 			};
 			return await postAction('/fc/cart/update-cart', data);
 		},
-
+		/**
+		 * Save a user's address.
+		 */
 		saveAddress: async (address) => {
 			const data = {
 				addressId: address.id,
@@ -154,18 +156,20 @@ const api = ({$axios}, $config, store) => {
 			};
 			return await postAction('users/save-address', data);
 		},
-
+		/**
+		 * Remove a user's address.
+		 */
 		deleteAddress: async (address) => {
 			const data = {
 				addressId: address.id,
 			};
 			return await postAction('users/delete-address', data);
 		},
-
+		/**
+		 * Submit a Stripe payment back to Craft.
+		 */
 		submitStripePayment: async (paymentInfo) => {
-			const response = await postAction('/commerce/payments/pay', paymentInfo);
-
-			console.log(response);
+			return await postAction('/commerce/payments/pay', paymentInfo);
 		},
 	};
 };

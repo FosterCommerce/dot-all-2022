@@ -41,6 +41,8 @@ export const getters = {
 	 * Get all the steps.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @returns {Array} - The steps.
 	 */
 	getSteps(state) {
 		return state.steps;
@@ -49,6 +51,8 @@ export const getters = {
 	 * Get the current step number that the user is on.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @returns {number} - The current step.
 	 */
 	getCurrentStepNumber(state) {
 		return state.currentStepNumber;
@@ -57,6 +61,8 @@ export const getters = {
 	 * Get the step object itself based ont he step number the user is on.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @returns {object} - The current step.
 	 */
 	getCurrentStep(state) {
 		return state.steps[state.currentStepNumber];
@@ -65,6 +71,8 @@ export const getters = {
 	 * Get the previous step, if there is one.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @returns {object} - The previous step.
 	 */
 	getPreviousStep(state) {
 		return state.steps[state.currentStepNumber - 1] ?? state.steps[state.currentStepNumber];
@@ -73,6 +81,8 @@ export const getters = {
 	 * Get the next step, if there is one.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @returns {object} - The next step.
 	 */
 	getNextStep(state) {
 		return state.steps[state.currentStepNumber + 1] ?? state.steps[state.currentStepNumber];
@@ -81,6 +91,8 @@ export const getters = {
 	 * Get the total number of steps.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @returns {number} - The total number of steps.
 	 */
 	getTotalSteps(state) {
 		return state.steps.length;
@@ -89,6 +101,8 @@ export const getters = {
 	 * Whether or not the current step is the first one.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @returns {boolean} - Whether the current step is the first one.
 	 */
 	getIsFirstStep(state) {
 		return state.currentStepNumber === 0;
@@ -97,6 +111,8 @@ export const getters = {
 	 * Whether or not the current step is the last one.
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 *@returns {boolean} - Whether the current step is the last one.
 	 */
 	getIsLastStep(state) {
 		return state.currentStepNumber === (state.steps.length - 1);
@@ -113,6 +129,8 @@ export const mutations = {
 	 * NOTE: The `state` property is pulled in automatically.
 	 *
 	 * @property {array} payload - An array fo step objects.
+	 *
+	 * @returns {void}
 	 */
 	setSteps(state, payload) {
 		state.steps = payload;
@@ -123,6 +141,8 @@ export const mutations = {
 	 * NOTE: The `state` property is pulled in automatically.
 	 *
 	 * @property {number} payload - The step number to set.
+	 *
+	 * @returns {void}
 	 */
 	setCurrentStepNumber(state, payload) {
 		state.currentStepNumber = payload;
@@ -134,9 +154,15 @@ export const mutations = {
  */
 export const actions = {
 	/**
-	 * Initializes the steps and modifies them if a user is already logged in
+	 * Initializes the steps and modifies them if a user is already logged in.
+	 *
+	 * @property {function} commit  - Vuex commit method.
+	 * @property {function} getters - Vuex getters method.
+	 * @property {boolean}  isGuest - Whether the user is logged in or not.
+	 *
+	 * @returns {void}
 	 */
-	fetchSteps({ commit, getters }, isGuest) {
+	initializeSteps({ commit, getters }, isGuest) {
 		if (!isGuest) {
 			const steps = [];
 			getters.getSteps.forEach((step) => {
@@ -152,6 +178,8 @@ export const actions = {
 	 *
 	 * @property {function} commit  - Vuex commit method.
 	 * @property {object}   getters - Vuex getters method.
+	 *
+	 * @returns {void}
 	 */
 	decrementStep({ commit, getters }) {
 		if (!getters.getIsFirstStep) {
@@ -162,8 +190,9 @@ export const actions = {
 	 * Increment the current step number.
 	 *
 	 * @property {function} commit  - Vuex commit method.
-	 * @property {function} dispatch - Vuex dispatch method.
-	 * @property {object} getters - Vuex getters object.
+	 * @property {object}   getters - Vuex getters object.
+	 *
+	 * @returns {void}
 	 */
 	incrementStep({ commit, getters }) {
 		if (!getters.getIsLastStep) {
