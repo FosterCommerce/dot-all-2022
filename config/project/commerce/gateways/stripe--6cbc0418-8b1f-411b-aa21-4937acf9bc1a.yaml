@@ -1,6 +1,6 @@
 handle: stripe
 isFrontendEnabled: $STRIPE_ENABLED
-name: Stripe
+name: 'Credit Card'
 paymentType: purchase
 settings:
   apiKey: $STRIPE_SECRET_KEY
