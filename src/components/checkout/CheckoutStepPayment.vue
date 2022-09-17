@@ -125,7 +125,7 @@
 				id="card-element"
 				class="mt-6 grid grid-cols-3 sm:grid-cols-4 gap-y-6 gap-x-4"
 			></div>
-			<div v-if="cardError">{{ cardError }}</div>
+			<div v-if="cardError" class="text-red-500 text-sm mt-2">{{ cardError }}</div>
 		</section>
 
 		<section aria-labelledby="billing-heading" class="mt-10">
