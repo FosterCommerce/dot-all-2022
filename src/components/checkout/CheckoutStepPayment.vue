@@ -22,7 +22,7 @@
 					postalCode: '',
 					phone: '',
 				},
-				gateways: [],
+				paymentGateway: 'stripe',
 				isLoading: false, // Loading state of the component
 				isSaving: false, // Saving state of the component
 			};
@@ -32,33 +32,17 @@
 				'getBillingAddressId',
 				'getSourceBillingAddressId',
 				'getBillingSameAsShipping',
-			]),
-			...mapGetters('cart', [
 				'getCurrentCart',
+			]),
+			...mapGetters('checkout', [
+				'getGateways'
 			]),
 		},
 		async mounted() {
 			// These are for testing purposes so I don't have to keep filling them in.
 			this.stripe = await loadStripe('pk_test_51IRhFCAvkPHIPB19Zv5OPWHz6a7iiiMHwRzMLni9yZSdnIegXpkuPhptWfVrkbne3QAdlNV0O0Mp9VVBpKy1YlQ400xhc1s7D4');
 			const elements = this.stripe.elements();
-			/*const style = {
-				base: {
-					color: '#32325d',
-					fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-					fontSmoothing: 'antialiased',
-					fontSize: '16px',
-					'::placeholder': {
-						color: '#aab7c4'
-					}
-				},
-				invalid: {
-					color: '#fa755a',
-					iconColor: '#fa755a'
-				}
-			};*/
-
-			this.card = elements.create('card', /*{ style }*/);
-
+			this.card = elements.create('card');
 			this.card.mount('#card-element');
 		},
 		methods: {
@@ -70,7 +54,7 @@
 				'decrementStep',
 				'incrementStep',
 			]),
-			nextStep() {
+			processStripePayment() {
 				const paymentData = {
 					billing_details: {
 						email: this.getCurrentCart.customer.email,
@@ -91,6 +75,15 @@
 							});
 						}
 					});
+			},
+			nextStep() {
+				if (this.paymentGateway === 'stripe') {
+					this.processStripePayment();
+				} else if (this.paymentGateway === 'paypal') {
+					// PayPal payment code here?
+				} else {
+					// Manual payment code here?
+				}
 
 				// this.incrementStep();
 			},
@@ -119,11 +112,48 @@
 				</p>
 			</div>
 
-			<div
-				id="card-element"
-				class="mt-6 grid grid-cols-3 sm:grid-cols-4 gap-y-6 gap-x-4"
-			></div>
-			<div id="card-errors"></div>
+			<div class="text-sm text-gray-500">Select a payment method</div>
+
+			<div class="mt-6">
+				<div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
+					<div v-for="gateway in getGateways" :key="gateway.handle" class="flex items-center">
+						<input
+							:id="`gateway_${gateway.handle}`"
+							v-model="paymentGateway"
+							name="gateway"
+							type="radio"
+							:value="gateway.handle"
+							class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+						/>
+						<label :for="`gateway_${gateway.handle}`" class="ml-3 block text-sm font-medium text-gray-700">{{ gateway.name }}</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="mt-6">
+
+				<div v-show="paymentGateway === 'stripe'">
+					<div class="flex flex-col justify-center items-stretch w-full h-10 px-4 border border-gray-300 rounded-md">
+						<div id="card-element" />
+					</div>
+					<div id="card-errors" class="mt-2 text-sm text-red-500" />
+				</div>
+
+				<div v-show="paymentGateway === 'paypal'">
+					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
+						<div>PayPal UI Here</div>
+					</div>
+				</div>
+
+				<div v-show="paymentGateway === 'manual'">
+					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
+						<div>Manual Payment Info Here</div>
+					</div>
+				</div>
+
+			</div>
+
+
 		</section>
 
 		<section aria-labelledby="billing-heading" class="mt-10">
