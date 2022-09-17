@@ -25,6 +25,7 @@
 				paymentGateway: 'stripe',
 				isLoading: false, // Loading state of the component
 				isSaving: false, // Saving state of the component
+				cardError: null,
 			};
 		},
 		computed: {
@@ -62,17 +63,20 @@
 				};
 
 				this.stripe.createPaymentMethod('card', this.card, paymentData)
-					.then((result) => {
-						console.log(result);
-
+					.then(async (result) => {
 						if (result.error) {
 							// Show the user any errors
-							const errorElement = document.getElementById('card-errors');
-							errorElement.textContent = result.error.message;
+							this.cardError = result.error.message;
 						} else {
-							this.$api.submitStripePayment({
+							const response = await this.$api.submitStripePayment({
 								'paymentForm[stripe][paymentMethodId]': result.paymentMethod.id
 							});
+
+							if (response.message) {
+								this.cardError = response.message;
+							} else {
+								// TODO Handle success
+							}
 						}
 					});
 			},
@@ -136,7 +140,7 @@
 					<div class="flex flex-col justify-center items-stretch w-full h-10 px-4 border border-gray-300 rounded-md">
 						<div id="card-element" />
 					</div>
-					<div id="card-errors" class="mt-2 text-sm text-red-500" />
+          <div v-if="cardError" class="text-red-500 text-sm mt-2">{{ cardError }}</div>
 				</div>
 
 				<div v-show="paymentGateway === 'paypal'">
@@ -152,7 +156,6 @@
 				</div>
 
 			</div>
-
 
 		</section>
 
