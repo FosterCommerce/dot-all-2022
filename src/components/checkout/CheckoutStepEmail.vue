@@ -13,20 +13,21 @@
 		},
 		async fetch() {
 
-			// Set the loading state
-			this.isLoading = true;
+			if (process.client) {
+				// Set the loading state
+				this.isLoading = true;
 
-			// Fetch the cart when this step component loads
-			await this.$store.dispatch('cart/fetchCart');
+				// Fetch the cart when this step component loads
+				await this.$store.dispatch('cart/fetchCart');
 
-			// If the cart already has an email, then lets use it
-			if (this.getEmail) {
-				this.email = this.getEmail;
+				// If the cart already has an email, then lets use it
+				if (this.getEmail) {
+					this.email = this.getEmail;
+				}
+
+				// Set the loading state
+				this.isLoading = false;
 			}
-
-			// Set the loading state
-			this.isLoading = false;
-
 		},
 		computed: {
 			...mapGetters('user', [
