@@ -30,7 +30,20 @@ export const state = () => ({
 	/**
 	 * The current step in the checkout process.
 	 */
-	currentStepNumber: 0
+	currentStepNumber: 0,
+
+	/**
+	 * The countries available to select during checkout
+	 */
+	countries: {},
+	/**
+	 * The regions/states available to select during checkout
+	 */
+	regions: {},
+	/**
+	 * The payment gateways available to select during checkout
+	 */
+	gateways: {},
 });
 
 /**
@@ -100,6 +113,30 @@ export const getters = {
 	 */
 	getIsLastStep(state) {
 		return state.currentStepNumber === (state.steps.length - 1);
+	},
+	/**
+	 * Gets the countries available during checkout
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 */
+	getCountries(state) {
+		return state.countries;
+	},
+	/**
+	 * Gets the regions/states available during checkout
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 */
+	getRegions(state) {
+		return state.regions;
+	},
+	/**
+	 * Gets the payment gateways available during checkout
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 */
+	getGateways(state) {
+		return state.gateways;
 	}
 };
 
@@ -126,6 +163,36 @@ export const mutations = {
 	 */
 	setCurrentStepNumber(state, payload) {
 		state.currentStepNumber = payload;
+	},
+	/**
+	 * Set the stores configured countries.
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @property {object} payload - An object with key value pairs of the country code and name
+	 */
+	setCountries(state, payload) {
+		state.countries = payload;
+	},
+	/**
+	 * Set the stores configured regions.
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @property {object} payload - An object with key value pairs of the country code, and regions
+	 */
+	setRegions(state, payload) {
+		state.regions = payload;
+	},
+	/**
+	 * Set the stores configured gateways.
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @property {object} payload - An object with key value pairs of the payment gateways
+	 */
+	setGateways(state, payload) {
+		state.gateways = payload;
 	}
 };
 
@@ -169,5 +236,32 @@ export const actions = {
 		if (!getters.getIsLastStep) {
 			commit('setCurrentStepNumber', (getters.getCurrentStepNumber + 1));
 		}
+	},
+	/**
+	 * Fetches the countries configured in the Commerce store and sets them into state
+	 *
+	 * @property {function} commit  - Vuex commit method.
+	 */
+	async fetchCountries({ commit }) {
+		const { countries } =  await this.$api.get('/actions/fc/critical-data/get-store-countries');
+		commit('setCountries', countries);
+	},
+	/**
+	 * Fetches the regions/states configured in the Commerce store and sets them into state
+	 *
+	 * @property {function} commit  - Vuex commit method.
+	 */
+	async fetchRegions({ commit }) {
+		const { regions } =  await this.$api.get('/actions/fc/critical-data/get-store-regions');
+		commit('setRegions', regions);
+	},
+	/**
+	 * Fetches the enabled gateways configured in the Commerce store and sets them into state
+	 *
+	 * @property {function} commit  - Vuex commit method.
+	 */
+	async fetchGateways({ commit }) {
+		const { gateways } = await this.$api.get('/actions/fc/critical-data/get-store-payment-gateways');
+		commit('setGateways', gateways);
 	}
 };
