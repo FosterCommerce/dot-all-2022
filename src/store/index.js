@@ -91,5 +91,6 @@ export const actions = {
 
 		await dispatch('checkout/fetchCountries');
 		await dispatch('checkout/fetchRegions');
+		await dispatch('checkout/fetchGateways');
 	}
 };
