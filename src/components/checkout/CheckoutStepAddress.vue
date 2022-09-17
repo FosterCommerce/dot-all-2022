@@ -23,8 +23,6 @@
 					postalCode: '',
 					phone: ''
 				},
-				countries: [],
-				regions: [],
 				isLoading: false, // Loading state of the component
 				isSaving: false, // Saving state of the component
 			}
@@ -43,9 +41,6 @@
 				await this.$store.dispatch('user/fetchUser', this.getEmail);
 				await this.$store.dispatch('user/fetchAddresses');
 			}
-
-			this.countries = await this.$api.get('/actions/fc/critical-data/get-countries');
-			this.regions = await this.$api.get('/actions/fc/critical-data/get-regions?countryId=US');
 
 			// Run the logic to set the local shippingAddress variable that we use for the address toggle
 
@@ -106,7 +101,9 @@
 			...mapGetters('checkout', [
 				'getPreviousStep',
 				'getNextStep',
-				'getIsFirstStep'
+				'getIsFirstStep',
+				'getCountries',
+				'getRegions'
 			]),
 			...mapGetters('cart', [
 				'getEmail',
@@ -115,6 +112,14 @@
 				'getShippingAddress',
 				'getCartErrors'
 			]),
+			/** Gets the countries regions based on the country code */
+			countryRegions() {
+				let regions = null;
+				if (this.newAddress.countryCode && this.newAddress.countryCode in this.getRegions) {
+					regions = this.getRegions[this.newAddress.countryCode];
+				}
+				return !Array.isArray(regions) ? regions : null;
+			}
 		},
 		methods: {
 			...mapActions('user', [
@@ -386,7 +391,19 @@
 					<div class="sm:col-span-2">
 						<label :for="`Region-${newAddress.id}`" class="block text-sm font-medium text-gray-700">State / Province</label>
 						<div class="mt-1">
+							<select
+								v-if="countryRegions"
+								:id="`Region-${newAddress.id}`"
+								v-model="newAddress.administrativeArea"
+								:name="`Region`"
+								autocomplete="address-level1"
+								class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+								required
+							>
+								<option v-for="(name, value) in countryRegions" :key="value" :value="value">{{ name }}</option>
+							</select>
 							<input
+								v-else
 								:id="`Region-${newAddress.id}`"
 								v-model="newAddress.administrativeArea"
 								type="text"
@@ -409,12 +426,7 @@
 								class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 								required
 							>
-								<option value="US">United States</option>
-								<option value="UK">United Kingdom</option>
-								<option value="CL">Chile</option>
-								<option value="ES">Spain</option>
-								<option value="NG">Nigeria</option>
-								<option value="ZA">South Africa</option>
+								<option v-for="(name, value) in getCountries" :key="value" :value="value">{{ name }}</option>
 							</select>
 						</div>
 					</div>
