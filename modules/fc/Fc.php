@@ -49,6 +49,9 @@ class Fc extends Module
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['api/get-critical'] = 'fc/critical-data/get-csrf-token';
+                $event->rules['api/get-store-countries'] = 'fc/critical-data/get-store-countries';
+				$event->rules['api/get-store-regions'] = 'fc/critical-data/get-store-regions';
+				$event->rules['api/get-store-payment-gateways'] = 'fc/critical-data/get-store-payment-gateways';
             }
         );
 

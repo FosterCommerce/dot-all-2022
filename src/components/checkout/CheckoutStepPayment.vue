@@ -22,6 +22,7 @@
 					postalCode: '',
 					phone: '',
 				},
+				gateways: [],
 				isLoading: false, // Loading state of the component
 				isSaving: false, // Saving state of the component
 			};
