@@ -11,7 +11,7 @@ use modules\fc\Fc;
 
 class CriticalDataController extends Controller
 {
-    protected array|bool|int $allowAnonymous = [ 'get-csrf-token' ];
+    protected array|bool|int $allowAnonymous = [ 'get-csrf-token', 'get-store-countries', 'get-store-regions', 'get-store-payment-gateways' ];
 
     /**
      * Get the CSRF token from the Critical Data service
@@ -31,31 +31,40 @@ class CriticalDataController extends Controller
         return $this->asJson($response);
     }
 
-    public function actionGetCountries() : Response {
-        $this->requireAcceptsJson();
+    public function actionGetStoreCountries() : Response {
+		$this->requireAcceptsJson();
 
         $response = [
             'success' => true,
             'countries' => []
         ];
 
-        $response['countries'] = Fc::getInstance()->critical->getCountries();
+        $response['countries'] = Fc::getInstance()->critical->getStoreCountries();
 
         return $this->asJson($response);
     }
 
-    public function actionGetRegions() : Response {
+    public function actionGetStoreRegions() : Response {
+		$this->requireAcceptsJson();
+
         $response = [
             'success' => true,
             'regions' => []
         ];
 
-        $countryId = $this->request->getQueryParam('countryId');
-
-        if ($countryId) {
-            $response['regions'] = Fc::getInstance()->critical->getRegions($countryId);
-        }
+        $response['regions'] = Fc::getInstance()->critical->getStoreRegions();
 
         return $this->asJson($response);
     }
+
+    public function actionGetStorePaymentGateways() : Response {
+		$this->requireAcceptsJson();
+
+		$response = [
+			'success' => true,
+			'regions' => []
+		];
+
+		$response['regions'] = Fc::getInstance()->critical->getStorePaymentGateways();
+	}
 }

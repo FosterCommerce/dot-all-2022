@@ -19,12 +19,15 @@ class CriticalDataService extends Component {
         ];
     }
 
-    public function getCountries(): array {
+    public function getStoreCountries(): array {
         return Plugin::getInstance()->getStore()->getStore()->getCountriesList();
     }
 
-    public function getRegions($countryId): array {
-        return Craft::$app->getAddresses()->getSubdivisionRepository()->getList([$countryId]);
-        // return Plugin::getInstance()->getStore()->getStore()->getAdministrativeAreasListByCountryCode();
+    public function getStoreRegions(): array {
+        return Plugin::getInstance()->getStore()->getStore()->getAdministrativeAreasListByCountryCode();
     }
+
+    public function getStorePaymentGateways(): array {
+    	return Plugin::getInstance()->gateways->getAllCustomerEnabledGateways();
+	}
 }
