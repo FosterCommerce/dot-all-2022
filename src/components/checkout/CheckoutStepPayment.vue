@@ -57,7 +57,6 @@
 			};*/
 
 			this.card = elements.create('card', /*{ style }*/);
-
 			this.card.mount('#card-element');
 		},
 		methods: {
@@ -77,17 +76,19 @@
 				};
 
 				this.stripe.createPaymentMethod('card', this.card, paymentData)
-					.then((result) => {
+					.then(async (result) => {
+						const errorElement = document.getElementById('card-errors');
 						console.log(result);
 
 						if (result.error) {
 							// Show the user any errors
-							const errorElement = document.getElementById('card-errors');
 							errorElement.textContent = result.error.message;
 						} else {
-							this.$api.submitStripePayment({
+							const response = await this.$api.submitStripePayment({
 								'paymentForm[stripe][paymentMethodId]': result.paymentMethod.id
 							});
+
+							console.log('response:', response);
 						}
 					});
 
