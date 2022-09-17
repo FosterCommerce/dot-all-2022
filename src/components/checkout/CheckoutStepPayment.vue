@@ -24,6 +24,7 @@
 				},
 				isLoading: false, // Loading state of the component
 				isSaving: false, // Saving state of the component
+				cardError: null,
 			};
 		},
 		computed: {
@@ -77,18 +78,19 @@
 
 				this.stripe.createPaymentMethod('card', this.card, paymentData)
 					.then(async (result) => {
-						const errorElement = document.getElementById('card-errors');
-						console.log(result);
-
 						if (result.error) {
 							// Show the user any errors
-							errorElement.textContent = result.error.message;
+							this.cardError = result.error.message;
 						} else {
 							const response = await this.$api.submitStripePayment({
 								'paymentForm[stripe][paymentMethodId]': result.paymentMethod.id
 							});
 
-							console.log('response:', response);
+							if (response.message) {
+								this.cardError = response.message;
+							} else {
+								// TODO Handle success
+							}
 						}
 					});
 
@@ -123,7 +125,7 @@
 				id="card-element"
 				class="mt-6 grid grid-cols-3 sm:grid-cols-4 gap-y-6 gap-x-4"
 			></div>
-			<div id="card-errors"></div>
+			<div v-if="cardError">{{ cardError }}</div>
 		</section>
 
 		<section aria-labelledby="billing-heading" class="mt-10">
