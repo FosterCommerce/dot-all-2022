@@ -62,9 +62,11 @@ class CriticalDataController extends Controller
 
 		$response = [
 			'success' => true,
-			'regions' => []
+			'gateways' => []
 		];
 
-		$response['regions'] = Fc::getInstance()->critical->getStorePaymentGateways();
+		$response['gateways'] = Fc::getInstance()->critical->getStorePaymentGateways();
+
+		return $this->asJson($response);
 	}
 }

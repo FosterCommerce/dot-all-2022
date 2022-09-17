@@ -39,7 +39,11 @@ export const state = () => ({
 	/**
 	 * The regions/states available to select during checkout
 	 */
-	regions: {}
+	regions: {},
+	/**
+	 * The payment gateways available to select during checkout
+	 */
+	gateways: {},
 });
 
 /**
@@ -125,6 +129,14 @@ export const getters = {
 	 */
 	getRegions(state) {
 		return state.regions;
+	},
+	/**
+	 * Gets the payment gateways available during checkout
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 */
+	getGateways(state) {
+		return state.gateways;
 	}
 };
 
@@ -167,10 +179,20 @@ export const mutations = {
 	 *
 	 * NOTE: The `state` property is pulled in automatically.
 	 *
-	 * @property {object} payload - An object with key value pairs of the country code and name
+	 * @property {object} payload - An object with key value pairs of the country code, and regions
 	 */
 	setRegions(state, payload) {
 		state.regions = payload;
+	},
+	/**
+	 * Set the stores configured gateways.
+	 *
+	 * NOTE: The `state` property is pulled in automatically.
+	 *
+	 * @property {object} payload - An object with key value pairs of the payment gateways
+	 */
+	setGateways(state, payload) {
+		state.gateways = payload;
 	}
 };
 
@@ -232,5 +254,14 @@ export const actions = {
 	async fetchRegions({ commit }) {
 		const { regions } =  await this.$api.get('/actions/fc/critical-data/get-store-regions');
 		commit('setRegions', regions);
+	},
+	/**
+	 * Fetches the enabled gateways configured in the Commerce store and sets them into state
+	 *
+	 * @property {function} commit  - Vuex commit method.
+	 */
+	async fetchGateways({ commit }) {
+		const { gateways } = await this.$api.get('/actions/fc/critical-data/get-store-payment-gateways');
+		commit('setGateways', gateways);
 	}
 };
