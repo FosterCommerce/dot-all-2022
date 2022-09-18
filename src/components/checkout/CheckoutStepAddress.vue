@@ -29,69 +29,68 @@
 		},
 		async fetch() {
 
-			// Set the loading state
-			this.isLoading = true;
+			if (process.client) {
 
-			// Fetch the cart when this step component loads
-			await this.$store.dispatch('cart/fetchCart');
+				// Set the loading state
+				this.isLoading = true;
 
-			// If the cart has an email, then lets use it to fetch the users data again
-			if (this.getEmail) {
-				this.email = this.getEmail;
-				await this.$store.dispatch('user/fetchUser', this.getEmail);
-				await this.$store.dispatch('user/fetchAddresses');
-			}
+				// Fetch the cart when this step component loads
+				/* await this.$store.dispatch('cart/fetchCart');
+				await this.$store.dispatch('user/fetchAddresses'); */
 
-			// Run the logic to set the local shippingAddress variable that we use for the address toggle
+				// Run the logic to set the local shippingAddress variable that we use for the address toggle
 
-			if (!this.getShippingAddressId && !this.getSourceShippingAddressId) {
+				if (!this.getShippingAddressId && !this.getSourceShippingAddressId) {
 
-				// There is no shipping address set, and no source shipping address set ...
-				// This means there is no shipping address in the cart, so for our UI we will
-				// want to set it to the first of our users addresses (if they have any saved)
+					// There is no shipping address set, and no source shipping address set ...
+					// This means there is no shipping address in the cart, so for our UI we will
+					// want to set it to the first of our users addresses (if they have any saved)
 
-				if (this.getAddresses.length) {
-					this.shippingAddress = this.getAddresses[0].id;
-				} else {
+					if (this.getAddresses && this.getAddresses.length) {
+						this.shippingAddress = this.getAddresses[0].id;
+					} else {
+						this.shippingAddress = 'new';
+					}
+
+				} else if (this.getShippingAddressId && !this.getSourceShippingAddressId) {
+
+					// There is a shipping address, but there is no source ID so its not related to a users saved address ...
+					// This is probably because the user is a guest, but they have already input a shipping address so
+					// we want to get the data from that address and save it to the 'newAddress' local data so it will be editable
+
+					const { data } = await this.$api.graphqlQuery(
+						Addresses,
+						{
+							id: this.getShippingAddressId,
+							limit: 1
+						}
+					);
+
+					if (data.addresses.length) {
+						this.newAddress = data.addresses[0];
+						this.newAddress.id = '';
+					}
+
 					this.shippingAddress = 'new';
+
+				} else {
+
+					// There is both a shipping address ID and a source address ID so it is related to a users saved address ...
+					// As such we will loop through the users addresses and find the match
+
+					this.getAddresses.forEach((address) => {
+						if (parseInt(address.id) === parseInt(this.getSourceShippingAddressId)) {
+							this.shippingAddress = address.id;
+						}
+					});
+
 				}
 
-			} else if (this.getShippingAddressId && !this.getSourceShippingAddressId) {
-
-				// There is a shipping address, but there is no source ID so its not related to a users saved address ...
-				// This is probably because the user is a guest, but they have already input a shipping address so
-				// we want to get the data from that address and save it to the 'newAddress' local data so it will be editable
-
-				const { data } = await this.$api.graphqlQuery(
-					Addresses,
-					{
-						id: this.getShippingAddressId,
-						limit: 1
-					}
-				);
-
-				if (data.addresses.length) {
-					this.newAddress = data.addresses[0];
-					this.newAddress.id = '';
-				}
-
-				this.shippingAddress = 'new';
-
-			} else {
-
-				// There is both a shipping address ID and a source address ID so it is related to a users saved address ...
-				// As such we will loop through the users addresses and find the match
-
-				this.getAddresses.forEach((address) => {
-					if (parseInt(address.id) === parseInt(this.getSourceShippingAddressId)) {
-						this.shippingAddress = address.id;
-					}
-				});
+				// Set the loading state
+				this.isLoading = false;
 
 			}
 
-			// Set the loading state
-			this.isLoading = false;
 		},
 		computed: {
 			...mapGetters('user', [
@@ -147,17 +146,6 @@
 			deleteAddress(id) {
 				this.loadAddress(id);
 				this.toggleDeleteAddressModal();
-			},
-
-			async fetchAddress(id) {
-				const { data } = await this.$api.graphqlQuery(
-					Addresses,
-					{
-						id,
-						limit: 1
-					}
-				);
-				return data.addresses.length ? data.addresses[0] : null;
 			},
 
 			async nextStep() {

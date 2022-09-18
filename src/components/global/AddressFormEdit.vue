@@ -46,7 +46,7 @@
 
 <template>
 	<form class="mt-6 space-y-6">
-		<CheckoutAddressFields v-model="addressData" context="user" />
+		<CheckoutAddressFields v-model="addressData" context="user" :use-full-name="true" />
 
 		<div class="flex flex-col space-y-3 pt-6 border-t border-gray-200 sm:flex-row-reverse sm:justify-between sm:items-center sm:space-y-0">
 			<button
