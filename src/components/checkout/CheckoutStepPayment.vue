@@ -8,7 +8,7 @@
 			return {
 				stripe: {},
 				card: {},
-				billingSameAsShipping: true, // The address that will be submitted to the cart
+				billingSameAsShipping: false,
 				newAddress: {
 					id: '',
 					title: 'Billing Address',
@@ -23,23 +23,29 @@
 					phone: '',
 				},
 				paymentGateway: 'stripe',
-				isLoading: false, // Loading state of the component
 				isSaving: false, // Saving state of the component
 				cardError: null,
 			};
 		},
 		computed: {
 			...mapGetters('cart', [
-				'getBillingAddressId',
-				'getSourceBillingAddressId',
+				'getBillingAddress',
 				'getBillingSameAsShipping',
 				'getCurrentCart',
+				'getCartErrors'
 			]),
 			...mapGetters('checkout', [
 				'getGateways'
 			]),
 		},
+		watch: {
+			billingSameAsShipping() {
+				this.saveBillingSameAsShipping(this.billingSameAsShipping);
+			}
+		},
 		async mounted() {
+			this.billingSameAsShipping = this.getBillingSameAsShipping;
+
 			// These are for testing purposes so I don't have to keep filling them in.
 			this.stripe = await loadStripe('pk_test_51IRhFCAvkPHIPB19Zv5OPWHz6a7iiiMHwRzMLni9yZSdnIegXpkuPhptWfVrkbne3QAdlNV0O0Mp9VVBpKy1YlQ400xhc1s7D4');
 			const elements = this.stripe.elements();
@@ -47,38 +53,53 @@
 			this.card.mount('#card-element');
 		},
 		methods: {
-			...mapMutations('checkout', [
-				'setBillingAddressId',
-				'setBillingSameAsShipping',
+			...mapActions('cart', [
+				'saveBillingSameAsShipping',
+				'saveBillingAddress'
 			]),
 			...mapActions('checkout', [
 				'decrementStep',
 				'incrementStep',
 			]),
-			processStripePayment() {
+			async saveBilling() {
+				if (this.billingSameAsShipping) {
+					await this.saveBillingSameAsShipping(true);
+				} else {
+					await this.saveBillingAddress(this.newAddress);
+				}
+			},
+			async processStripePayment() {
 				const paymentData = {
 					billing_details: {
 						email: this.getCurrentCart.customer.email,
 					}
 				};
 
-				this.stripe.createPaymentMethod('card', this.card, paymentData)
-					.then(async (result) => {
-						if (result.error) {
-							// Show the user any errors
-							this.cardError = result.error.message;
-						} else {
-							const response = await this.$api.submitStripePayment({
-								'paymentForm[stripe][paymentMethodId]': result.paymentMethod.id
-							});
+				await this.saveBilling();
 
-							if (response.message) {
-								this.cardError = response.message;
+				if (this.getCartErrors.length === 0) {
+
+					this.stripe.createPaymentMethod('card', this.card, paymentData)
+						.then(async (result) => {
+							if (result.error) {
+								// Show the user any errors
+								this.cardError = result.error.message;
 							} else {
-								// TODO Handle success
+								const response = await this.$api.submitStripePayment({
+									'paymentForm[stripe][paymentMethodId]': result.paymentMethod.id
+								});
+
+								if (response.message) {
+									this.cardError = response.message;
+								} else {
+									// TODO Handle success
+									console.log('Order Done', response);
+									this.incrementStep();
+								}
 							}
-						}
-					});
+						});
+
+				}
 			},
 			nextStep() {
 				if (this.paymentGateway === 'stripe') {
@@ -170,7 +191,7 @@
 			<div class="mt-6 flex items-center">
 				<input
 					id="same-as-shipping"
-					v-model="billingSameAsShipping"
+          v-model="billingSameAsShipping"
 					name="same-as-shipping"
 					type="checkbox"
 					class="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
@@ -183,7 +204,7 @@
 			</div>
 
 			<div v-if="!billingSameAsShipping">
-				<CheckoutAddressFields context="billing" />
+        <CheckoutAddressFields v-model="newAddress" context="billing" :use-full-name="true" />
 			</div>
 		</section>
 

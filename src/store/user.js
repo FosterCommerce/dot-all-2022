@@ -96,15 +96,17 @@ export const actions = {
 	},
 
 	async fetchUser({ commit }, email) {
-		const { data } = await this.$api.graphqlQuery(
-			User,
-			{
-				email
-			}
-		);
-		commit('setUserId', data.user.id);
-		commit('setEmail', data.user.email);
-		commit('setAddresses', data.user.addresses);
+		if (email) {
+			const { data } = await this.$api.graphqlQuery(
+				User,
+				{
+					email
+				}
+			);
+			commit('setUserId', data.user.id);
+			commit('setEmail', data.user.email);
+			commit('setAddresses', data.user.addresses);
+		}
 	},
 
 	/**
