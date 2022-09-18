@@ -101,9 +101,7 @@
 			...mapGetters('checkout', [
 				'getPreviousStep',
 				'getNextStep',
-				'getIsFirstStep',
-				'getCountries',
-				'getRegions'
+				'getIsFirstStep'
 			]),
 			...mapGetters('cart', [
 				'getEmail',
@@ -112,14 +110,6 @@
 				'getShippingAddress',
 				'getCartErrors'
 			]),
-			/** Gets the countries regions based on the country code */
-			countryRegions() {
-				let regions = null;
-				if (this.newAddress.countryCode && this.newAddress.countryCode in this.getRegions) {
-					regions = this.getRegions[this.newAddress.countryCode];
-				}
-				return !Array.isArray(regions) ? regions : null;
-			}
 		},
 		methods: {
 			...mapActions('user', [
@@ -309,161 +299,7 @@
 
 			<div v-show="shippingAddress === 'new'">
 
-				<div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-					<div class="sm:col-span-6">
-						<label :for="`FullName-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Your Full Name</label>
-						<div class="mt-1">
-							<input
-								:id="`FullName-${newAddress.id}`"
-								v-model="newAddress.fullName"
-								:name="`FullName`"
-								type="text"
-								class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-								required
-							/>
-						</div>
-					</div>
-
-					<div class="sm:col-span-6">
-						<div class="flex justify-between">
-							<label :for="`Company-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Company</label>
-							<span :id="`Company-optional-${newAddress.id}`" class="text-sm text-gray-400">Optional</span>
-						</div>
-						<div class="mt-1">
-							<input
-								:id="`Company-${newAddress.id}`"
-								v-model="newAddress.organization"
-								:name="`Company`"
-								:aria-describedby="`Company-optional-${newAddress.id}`"
-								type="text"
-								class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-							/>
-						</div>
-					</div>
-
-					<div class="sm:col-span-4">
-						<label :for="`Address1-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Street Address</label>
-						<div class="mt-1">
-							<input
-								:id="`Address1-${newAddress.id}`"
-								v-model="newAddress.addressLine1"
-								:name="`Address1`"
-								type="text"
-								autocomplete="street-address"
-								class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-								required
-							/>
-						</div>
-					</div>
-
-					<div class="sm:col-span-2">
-						<div class="flex justify-between">
-							<label :for="`Address2-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Apt.</label>
-							<span :id="`Address2-optional-${newAddress.id}`" class="text-sm text-gray-400">Optional</span>
-						</div>
-						<div class="mt-1">
-							<input
-								:id="`Address2-${newAddress.id}`"
-								v-model="newAddress.addressLine2"
-								type="text"
-								:name="`Address2`"
-								class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-								:aria-describedby="`Address2-optional${newAddress.id}`"
-							/>
-						</div>
-					</div>
-
-					<div class="sm:col-span-2">
-						<label :for="`City-${newAddress.id}`" class="block text-sm font-medium text-gray-700">City</label>
-						<div class="mt-1">
-							<input
-								:id="`City-${newAddress.id}`"
-								v-model="newAddress.locality"
-								type="text"
-								:name="`City`"
-								autocomplete="address-level2"
-								class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-								required
-							/>
-						</div>
-					</div>
-
-					<div class="sm:col-span-2">
-						<label :for="`Region-${newAddress.id}`" class="block text-sm font-medium text-gray-700">State / Province</label>
-						<div class="mt-1">
-							<select
-								v-if="countryRegions"
-								:id="`Region-${newAddress.id}`"
-								v-model="newAddress.administrativeArea"
-								:name="`Region`"
-								autocomplete="address-level1"
-								class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-								required
-							>
-								<option v-for="(name, value) in countryRegions" :key="value" :value="value">{{ name }}</option>
-							</select>
-							<input
-								v-else
-								:id="`Region-${newAddress.id}`"
-								v-model="newAddress.administrativeArea"
-								type="text"
-								:name="`Region`"
-								autocomplete="address-level1"
-								class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-								required
-							/>
-						</div>
-					</div>
-
-					<div class="sm:col-span-2">
-						<label :for="`Country-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Country</label>
-						<div class="mt-1">
-							<select
-								:id="`Country-${newAddress.id}`"
-								v-model="newAddress.countryCode"
-								:name="`Country`"
-								autocomplete="country-name"
-								class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-								required
-							>
-								<option v-for="(name, value) in getCountries" :key="value" :value="value">{{ name }}</option>
-							</select>
-						</div>
-					</div>
-
-					<div class="sm:col-span-3">
-						<label :for="`ZipCode-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Postal code</label>
-						<div class="mt-1">
-							<input
-								:id="`ZipCode-${newAddress.id}`"
-								v-model="newAddress.postalCode"
-								type="text"
-								:name="`ZipCode`"
-								autocomplete="postal-code"
-								class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-								required
-							/>
-						</div>
-					</div>
-
-					<div class="sm:col-span-3">
-						<div class="flex justify-between">
-							<label :for="`Phone-${newAddress.id}`" class="block text-sm font-medium text-gray-700">Phone</label>
-							<span :id="`Phone-optional-${newAddress.id}`" class="text-sm text-gray-400">Optional</span>
-						</div>
-						<div class="mt-1">
-							<input
-								:id="`Phone-${newAddress.id}`"
-								v-model="newAddress.phone"
-								type="tel"
-								:name="`Phone`"
-								autocomplete="tel"
-								class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-								:aria-describedby="`Phone-optional${newAddress.id}`"
-							/>
-						</div>
-					</div>
-				</div>
+				<CheckoutAddressFields v-model="newAddress" context="shipping" :use-full-name="true" />
 
 				<div v-if="getIsGuest" class="mt-6 sm:col-span-6">
 					<div class="relative flex items-start">

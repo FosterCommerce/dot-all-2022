@@ -183,7 +183,7 @@
 			</div>
 
 			<div v-if="!billingSameAsShipping">
-				<CheckoutAddressFields context="billing" />
+        <CheckoutAddressFields v-model="newAddress" context="billing" :use-full-name="true" />
 			</div>
 		</section>
 

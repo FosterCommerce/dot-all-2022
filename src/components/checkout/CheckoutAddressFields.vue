@@ -9,7 +9,7 @@
 				required: false,
 				default: 'shipping'
 			},
-			address: {
+			value: {
 				type: Object,
 				required: false,
 				default: () => ({
@@ -40,8 +40,8 @@
 			/** Gets the countries regions based on the country code */
 			countryRegions() {
 				let regions = null;
-				if (this.address.countryCode && this.address.countryCode in this.getRegions) {
-					regions = this.getRegions[this.address.countryCode];
+				if (this.value.countryCode && this.value.countryCode in this.getRegions) {
+					regions = this.getRegions[this.value.countryCode];
 				}
 				return !Array.isArray(regions) ? regions : null;
 			},
@@ -51,7 +51,7 @@
 		},
 		methods: {
 			update(key, value) {
-				this.$emit('input', { ...this.address, [key]: value });
+				this.$emit('input', { ...this.value, [key]: value });
 			}
 		}
 	}
@@ -60,47 +60,47 @@
 <template>
 	<div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
 		<div v-if="useFullName" class="sm:col-span-6">
-			<label :for="`${contextName}FullName-${address.id}`" class="block text-sm font-medium text-gray-700">Your Full Name</label>
+			<label :for="`${contextName}FullName-${value.id}`" class="block text-sm font-medium text-gray-700">Your Full Name</label>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}FullName-${address.id}`"
+					:id="`${contextName}FullName-${value.id}`"
 					:name="`${contextName}FullName`"
 					type="text"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					required
-					:value="address.fullName"
+					:value="value.fullName"
 					@input="update('fullName', $event.target.value)"
 				/>
 			</div>
 		</div>
 
 		<div v-if="!useFullName" class="sm:col-span-3">
-			<label :for="`${contextName}FirstName-${address.id}`" class="block text-sm font-medium text-gray-700">First Name</label>
+			<label :for="`${contextName}FirstName-${value.id}`" class="block text-sm font-medium text-gray-700">First Name</label>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}FirstName-${address.id}`"
+					:id="`${contextName}FirstName-${value.id}`"
 					:name="`${contextName}FirstName`"
 					type="text"
 					autocomplete="given-name"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					required
-					:value="address.firstName"
+					:value="value.firstName"
 					@input="update('firstName', $event.target.value)"
 				/>
 			</div>
 		</div>
 
 		<div v-if="!useFullName" class="sm:col-span-3">
-			<label :for="`${contextName}LastName-${address.id}`" class="block text-sm font-medium text-gray-700">Last Name</label>
+			<label :for="`${contextName}LastName-${value.id}`" class="block text-sm font-medium text-gray-700">Last Name</label>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}LastName-${address.id}`"
+					:id="`${contextName}LastName-${value.id}`"
 					:name="`${contextName}LastName`"
 					type="text"
 					autocomplete="family-name"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					required
-					:value="address.lastName"
+					:value="value.lastName"
 					@input="update('lastName', $event.target.value)"
 				/>
 			</div>
@@ -108,33 +108,33 @@
 
 		<div class="sm:col-span-6">
 			<div class="flex justify-between">
-				<label :for="`${contextName}Organization-${address.id}`" class="block text-sm font-medium text-gray-700">Company</label>
-				<span :id="`${contextName}Organization-optional-${address.id}`" class="text-sm text-gray-400">Optional</span>
+				<label :for="`${contextName}Organization-${value.id}`" class="block text-sm font-medium text-gray-700">Company</label>
+				<span :id="`${contextName}Organization-optional-${value.id}`" class="text-sm text-gray-400">Optional</span>
 			</div>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}Organization-${address.id}`"
+					:id="`${contextName}Organization-${value.id}`"
 					:name="`${contextName}Organization`"
-					:aria-describedby="`${contextName}Organization-optional-${address.id}`"
+					:aria-describedby="`${contextName}Organization-optional-${value.id}`"
 					type="text"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-					:value="address.organization"
+					:value="value.organization"
 					@input="update('organization', $event.target.value)"
 				/>
 			</div>
 		</div>
 
 		<div class="sm:col-span-4">
-			<label :for="`${contextName}AddressLine1-${address.id}`" class="block text-sm font-medium text-gray-700">Street Address</label>
+			<label :for="`${contextName}AddressLine1-${value.id}`" class="block text-sm font-medium text-gray-700">Street Address</label>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}AddressLine1-${address.id}`"
+					:id="`${contextName}AddressLine1-${value.id}`"
 					:name="`${contextName}AddressLine1`"
 					type="text"
 					autocomplete="street-address"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					required
-					:value="address.addressLine1"
+					:value="value.addressLine1"
 					@input="update('addressLine1', $event.target.value)"
 				/>
 			</div>
@@ -142,95 +142,95 @@
 
 		<div class="sm:col-span-2">
 			<div class="flex justify-between">
-				<label :for="`${contextName}AddressLine2-${address.id}`" class="block text-sm font-medium text-gray-700">Apt.</label>
-				<span :id="`${contextName}AddressLine2-optional-${address.id}`" class="text-sm text-gray-400">Optional</span>
+				<label :for="`${contextName}AddressLine2-${value.id}`" class="block text-sm font-medium text-gray-700">Apt.</label>
+				<span :id="`${contextName}AddressLine2-optional-${value.id}`" class="text-sm text-gray-400">Optional</span>
 			</div>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}AddressLine2-${address.id}`"
+					:id="`${contextName}AddressLine2-${value.id}`"
 					type="text"
 					:name="`${contextName}AddressLine2`"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-					:aria-describedby="`${contextName}AddressLine2-optional${address.id}`"
-					:value="address.addressLine2"
+					:aria-describedby="`${contextName}AddressLine2-optional${value.id}`"
+					:value="value.addressLine2"
 					@input="update('addressLine2', $event.target.value)"
 				/>
 			</div>
 		</div>
 
 		<div class="sm:col-span-2">
-			<label :for="`${contextName}Locality-${address.id}`" class="block text-sm font-medium text-gray-700">City</label>
+			<label :for="`${contextName}Locality-${value.id}`" class="block text-sm font-medium text-gray-700">City</label>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}Locality-${address.id}`"
+					:id="`${contextName}Locality-${value.id}`"
 					type="text"
 					:name="`${contextName}Locality`"
 					autocomplete="address-level2"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					required
-					:value="address.locality"
+					:value="value.locality"
 					@input="update('locality', $event.target.value)"
 				/>
 			</div>
 		</div>
 
 		<div class="sm:col-span-2">
-			<label :for="`${contextName}AdministrativeArea-${address.id}`" class="block text-sm font-medium text-gray-700">State / Province</label>
+			<label :for="`${contextName}AdministrativeArea-${value.id}`" class="block text-sm font-medium text-gray-700">State / Province</label>
 			<div class="mt-1">
 				<select
 					v-if="countryRegions"
-					:id="`${contextName}AdministrativeArea-${address.id}`"
+					:id="`${contextName}AdministrativeArea-${value.id}`"
 					:name="`${contextName}AdministrativeArea`"
 					autocomplete="address-level1"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					required
-					:value="address.administrativeArea"
+					:value="value.administrativeArea"
 					@change="update('administrativeArea', $event.target.value)"
 				>
-					<option v-for="(name, value) in countryRegions" :key="value" :value="value">{{ name }}</option>
+					<option v-for="(name, regionValue) in countryRegions" :key="regionValue" :value="regionValue">{{ name }}</option>
 				</select>
 				<input
 					v-else
-					:id="`${contextName}AdministrativeArea-${address.id}`"
+					:id="`${contextName}AdministrativeArea-${value.id}`"
 					type="text"
 					:name="`${contextName}AdministrativeArea`"
 					autocomplete="address-level1"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					required
-					:value="address.administrativeArea"
+					:value="value.administrativeArea"
 					@input="update('administrativeArea', $event.target.value)"
 				/>
 			</div>
 		</div>
 
 		<div class="sm:col-span-2">
-			<label :for="`${contextName}CountryCode-${address.id}`" class="block text-sm font-medium text-gray-700">Country</label>
+			<label :for="`${contextName}CountryCode-${value.id}`" class="block text-sm font-medium text-gray-700">Country</label>
 			<div class="mt-1">
 				<select
-					:id="`${contextName}CountryCode-${address.id}`"
+					:id="`${contextName}CountryCode-${value.id}`"
 					:name="`${contextName}CountryCode`"
 					autocomplete="country-name"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					required
-					:value="address.countryCode"
+					:value="value.countryCode"
 					@change="update('countryCode', $event.target.value)"
 				>
-					<option v-for="(name, value) in getCountries" :key="value" :value="value">{{ name }}</option>
+					<option v-for="(name, countryValue) in getCountries" :key="countryValue" :value="countryValue">{{ name }}</option>
 				</select>
 			</div>
 		</div>
 
 		<div class="sm:col-span-3">
-			<label :for="`${contextName}PostalCode-${address.id}`" class="block text-sm font-medium text-gray-700">Postal code</label>
+			<label :for="`${contextName}PostalCode-${value.id}`" class="block text-sm font-medium text-gray-700">Postal code</label>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}PostalCode-${address.id}`"
+					:id="`${contextName}PostalCode-${value.id}`"
 					type="text"
 					:name="`${contextName}PostalCode`"
 					autocomplete="postal-code"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					required
-					:value="address.postalCode"
+					:value="value.postalCode"
 					@input="update('postalCode', $event.target.value)"
 				/>
 			</div>
@@ -238,18 +238,18 @@
 
 		<div class="sm:col-span-3">
 			<div class="flex justify-between">
-				<label :for="`${contextName}Phone-${address.id}`" class="block text-sm font-medium text-gray-700">Phone</label>
-				<span :id="`${contextName}Phone-optional-${address.id}`" class="text-sm text-gray-400">Optional</span>
+				<label :for="`${contextName}Phone-${value.id}`" class="block text-sm font-medium text-gray-700">Phone</label>
+				<span :id="`${contextName}Phone-optional-${value.id}`" class="text-sm text-gray-400">Optional</span>
 			</div>
 			<div class="mt-1">
 				<input
-					:id="`${contextName}Phone-${address.id}`"
+					:id="`${contextName}Phone-${value.id}`"
 					type="tel"
 					:name="`${contextName}Phone`"
 					autocomplete="tel"
 					class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-					:aria-describedby="`${contextName}Phone-optional${address.id}`"
-					:value="address.phone"
+					:aria-describedby="`${contextName}Phone-optional${value.id}`"
+					:value="value.phone"
 					@input="update('phone', $event.target.value)"
 				/>
 			</div>
