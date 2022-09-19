@@ -47,8 +47,10 @@
 			paymentGateway() {
 				if (this.paymentGateway === 'paypal' && !this.paypalLoaded) {
 					const cart = this.getCurrentCart;
+					// TODO: Pull from .env
+					const clientId = 'AZ9iM136g7kn-klPmPM0Q3A301JZsJ5GrVoHO54IUI7hSSCme-RIIUb5JqCh3i6yo8wSBPVzAypgN-jF';
 
-					this.loadScriptAsync(`https://www.paypal.com/sdk/js?client-id=AZ9iM136g7kn-klPmPM0Q3A301JZsJ5GrVoHO54IUI7hSSCme-RIIUb5JqCh3i6yo8wSBPVzAypgN-jF&currency=${cart.currency}&intent=capture`, () => {
+					this.loadScriptAsync(`https://www.paypal.com/sdk/js?client-id${clientId}=&currency=${cart.currency}&intent=capture`, () => {
 						const paypal = typeof window.paypal !== "undefined" ? window.paypal : null;
 
 						if (paypal) {
