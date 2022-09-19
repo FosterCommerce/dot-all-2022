@@ -52,6 +52,7 @@ class Fc extends Module
                 $event->rules['api/get-store-countries'] = 'fc/critical-data/get-store-countries';
 				$event->rules['api/get-store-regions'] = 'fc/critical-data/get-store-regions';
 				$event->rules['api/get-store-payment-gateways'] = 'fc/critical-data/get-store-payment-gateways';
+				$event->rules['api/get-paypal-form'] = 'fc/payments/get-paypal-form-html';
             }
         );
 

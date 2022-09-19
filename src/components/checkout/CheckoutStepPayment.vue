@@ -1,5 +1,5 @@
 <script>
-	import { mapGetters, mapMutations, mapActions } from 'vuex';
+	import { mapGetters, mapActions } from 'vuex';
 	import { loadStripe } from '@stripe/stripe-js';
 
 	export default {
@@ -22,6 +22,8 @@
 					postalCode: '',
 					phone: '',
 				},
+				paypalForm: null,
+				paypalLoaded: false,
 				paymentGateway: 'stripe',
 				isSaving: false, // Saving state of the component
 				cardError: null,
@@ -41,7 +43,79 @@
 		watch: {
 			billingSameAsShipping() {
 				this.saveBillingSameAsShipping(this.billingSameAsShipping);
-			}
+			},
+			paymentGateway() {
+				if (this.paymentGateway === 'paypal' && !this.paypalLoaded) {
+					const cart = this.getCurrentCart;
+
+					this.loadScriptAsync(`https://www.paypal.com/sdk/js?client-id=AZ9iM136g7kn-klPmPM0Q3A301JZsJ5GrVoHO54IUI7hSSCme-RIIUb5JqCh3i6yo8wSBPVzAypgN-jF&currency=${cart.currency}&intent=capture`, () => {
+						const paypal = typeof window.paypal !== "undefined" ? window.paypal : null;
+
+						if (paypal) {
+							const paypalButtonsComponent = paypal.Buttons({
+								fundingSource: paypal.FUNDING.PAYPAL,
+
+								style: {
+									shape: 'rect',
+									height: 40,
+								},
+
+								// set up the transaction
+								createOrder: (data, actions) => {
+									const createOrderPayload = {
+										purchase_units: [
+											{
+												amount: {
+													value: cart.total,
+												},
+											},
+										],
+									};
+
+									return actions.order.create(createOrderPayload);
+								},
+
+								// finalize the transaction
+								onApprove: (data, actions) => {
+									const captureOrderHandler = (details) => {
+										const status = details.status;
+										const transactionId = details.id;
+										const unit = details.purchase_units[0];
+										const capture = unit.payments.captures[0];
+										const amount = capture.amount.value;
+										const currency = capture.amount.currency_code;
+										const paymentStatus = capture.status;
+
+										console.log(status, transactionId, amount, currency, paymentStatus);
+									};
+
+									return actions.order.capture().then(captureOrderHandler);
+								},
+
+								// handle unrecoverable errors
+								onError: (err) => {
+									console.error(
+										'An error prevented the buyer from checking out with PayPal',
+										err
+									);
+								},
+							});
+
+							if (paypalButtonsComponent.isEligible()) {
+								paypalButtonsComponent
+									.render('#paypal-button-container')
+									.catch((err) => {
+										console.error('PayPal Buttons failed to render', err);
+									});
+							} else {
+								console.log('The funding source is ineligible');
+							}
+
+							this.paypalLoaded = true;
+						}
+					});
+				}
+			},
 		},
 		async mounted() {
 			this.billingSameAsShipping = this.getBillingSameAsShipping;
@@ -54,6 +128,8 @@
 			this.card.on('change', () => {
 				this.cardError = null;
 			});
+
+			this.paypalForm = await this.$api.get('/actions/fc/payments/get-paypal-form-html');
 		},
 		methods: {
 			...mapActions('cart', [
@@ -118,6 +194,13 @@
 				// stepping back in the process
 				this.decrementStep();
 			},
+			loadScriptAsync(url, callback) {
+				const script = document.createElement('script');
+
+				script.setAttribute('src', url);
+				script.onload = callback;
+				document.head.insertBefore(script, document.head.firstElementChild);
+			},
 		},
 	};
 </script>
@@ -167,7 +250,7 @@
 
 				<div v-show="paymentGateway === 'paypal'">
 					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
-						<div>PayPal UI Here</div>
+						<div v-html="paypalForm"></div>
 					</div>
 				</div>
 
