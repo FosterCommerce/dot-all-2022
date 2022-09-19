@@ -45,12 +45,15 @@
 		},
 		async mounted() {
 			this.billingSameAsShipping = this.getBillingSameAsShipping;
-
-			// These are for testing purposes so I don't have to keep filling them in.
+			// TODO: pull from .env
 			this.stripe = await loadStripe('pk_test_51IRhFCAvkPHIPB19Zv5OPWHz6a7iiiMHwRzMLni9yZSdnIegXpkuPhptWfVrkbne3QAdlNV0O0Mp9VVBpKy1YlQ400xhc1s7D4');
 			const elements = this.stripe.elements();
 			this.card = elements.create('card');
 			this.card.mount('#card-element');
+
+			this.card.on('change', () => {
+				this.cardError = null;
+			});
 		},
 		methods: {
 			...mapActions('cart', [
@@ -78,7 +81,6 @@
 				await this.saveBilling();
 
 				if (this.getCartErrors.length === 0) {
-
 					this.stripe.createPaymentMethod('card', this.card, paymentData)
 						.then(async (result) => {
 							if (result.error) {
@@ -98,7 +100,6 @@
 								}
 							}
 						});
-
 				}
 			},
 			nextStep() {
