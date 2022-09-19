@@ -166,12 +166,15 @@ const api = ({$axios}, $config, store) => {
 			let response;
 
 			try {
-				response = await postAction('/commerce/payments/pay', paymentInfo);
+				return await postAction('/commerce/payments/pay', paymentInfo);
 			} catch (e) {
-				console.log(e);
+				if (e.response) {
+					return e.response.data;
+				} else {
+					// TODO Handle some case where response is not set
+					return null;
+				}
 			}
-
-			return response;
 		},
 	};
 };

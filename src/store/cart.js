@@ -23,7 +23,9 @@ export const state = () => ({
 
 	  availableShippingMethodOptions: {},
 
-		billingSameAsShipping: true,
+		billingAddressId: null,
+
+		sourceBillingAddressId: null,
 
     /**
      * Applied coupon code (if any).
@@ -131,8 +133,31 @@ export const getters = {
 		return state.currentCart.sourceBillingAddressId;
 	},
 
-	getBillingSameAsShipping(state) {
-		return state.currentCart.billingSameAsShipping
+	getBillingSameAsShipping(state, getters) {
+		// We get this value by comparing the two addresses in the cart as after the cart is fetched,
+		// the 'billingSameAsShipping' value in the cart does not persist and the shippingAddressId
+		// will be different from the billingAddressId as addresses are cloned over.
+		let isMatch = false;
+
+		if (getters.getShippingAddress && getters.getBillingAddress) {
+			const shipping = getters.getShippingAddress;
+			const billing = getters.getBillingAddress;
+
+			if (
+				billing.fullName === shipping.fullName &&
+				billing.addressLine1 === shipping.addressLine1 &&
+				billing.addressLine2 === shipping.addressLine2 &&
+				billing.organization === shipping.organization &&
+				billing.locality === shipping.locality &&
+				billing.countryCode === shipping.countryCode &&
+				billing.postalCode === shipping.postalCode &&
+				billing.phone === shipping.phone
+			) {
+				isMatch = true
+			}
+		}
+
+		return isMatch;
 	},
 
   /**
@@ -317,7 +342,8 @@ export const actions = {
 	async saveShippingAddress({ commit, dispatch }, shippingAddress) {
 		const params = {
 			shippingAddressId: shippingAddress.id,
-			shippingAddress
+			shippingAddress,
+			billingAddressSameAsShipping: 1
 		};
 		try {
 			const { cart } = await this.$api.postAction('/fc/cart/update-cart', params);
@@ -339,6 +365,37 @@ export const actions = {
 
 			if (errorNotices.length < 1) {
 				commit('setCurrentCart', cart);
+			}
+		} catch (error) {
+			handleError(commit, error);
+		}
+	},
+
+	async saveBillingSameAsShipping({ commit, dispatch }, billingSameAsShipping) {
+		try {
+			const { cart } = await this.$api.postAction('/fc/cart/update-cart', { billingAddressSameAsShipping: billingSameAsShipping });
+			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
+
+			if (errorNotices.length < 1) {
+				commit('setCurrentCart', cart);
+			}
+		} catch (error) {
+			handleError(commit, error);
+		}
+	},
+
+	async saveBillingAddress({ commit, dispatch }, billingAddress) {
+		const params = {
+			billingAddressId: billingAddress.id,
+			billingAddress
+		};
+		try {
+			const { cart } = await this.$api.postAction('/fc/cart/update-cart', params);
+			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
+
+			if (errorNotices.length < 1) {
+				commit('setCurrentCart', cart);
+				await dispatch('fetchAddresses', cart.id);
 			}
 		} catch (error) {
 			handleError(commit, error);

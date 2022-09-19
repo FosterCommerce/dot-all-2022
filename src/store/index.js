@@ -83,11 +83,14 @@ export const actions = {
 	 *
 	 * @param {function} commit - Vuex commit method.
 	 */
-	async nuxtServerInit({ commit }) {
+	async nuxtServerInit({ commit, dispatch }) {
 		// Fetch the settings entry to get the sites global navigation
 		const query = await import('@/queries/EntrySettings.gql').then((module) => module.default);
 		const { data: queryData } = await this.$api.graphqlQuery(query);
-
 		commit('setPrimaryNav', queryData.entry.primaryNavigation);
+
+		await dispatch('checkout/fetchCountries');
+		await dispatch('checkout/fetchRegions');
+		await dispatch('checkout/fetchGateways');
 	}
 };

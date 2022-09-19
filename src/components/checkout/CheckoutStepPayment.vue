@@ -8,7 +8,7 @@
 			return {
 				stripe: {},
 				card: {},
-				billingSameAsShipping: true, // The address that will be submitted to the cart
+				billingSameAsShipping: false,
 				newAddress: {
 					id: '',
 					title: 'Billing Address',
@@ -22,75 +22,93 @@
 					postalCode: '',
 					phone: '',
 				},
-				isLoading: false, // Loading state of the component
+				paymentGateway: 'stripe',
 				isSaving: false, // Saving state of the component
+				cardError: null,
 			};
 		},
 		computed: {
 			...mapGetters('cart', [
-				'getBillingAddressId',
-				'getSourceBillingAddressId',
+				'getBillingAddress',
 				'getBillingSameAsShipping',
-			]),
-			...mapGetters('cart', [
 				'getCurrentCart',
+				'getCartErrors'
+			]),
+			...mapGetters('checkout', [
+				'getGateways'
 			]),
 		},
+		watch: {
+			billingSameAsShipping() {
+				this.saveBillingSameAsShipping(this.billingSameAsShipping);
+			}
+		},
 		async mounted() {
+			this.billingSameAsShipping = this.getBillingSameAsShipping;
+
 			// These are for testing purposes so I don't have to keep filling them in.
 			this.stripe = await loadStripe('pk_test_51IRhFCAvkPHIPB19Zv5OPWHz6a7iiiMHwRzMLni9yZSdnIegXpkuPhptWfVrkbne3QAdlNV0O0Mp9VVBpKy1YlQ400xhc1s7D4');
 			const elements = this.stripe.elements();
-			/*const style = {
-				base: {
-					color: '#32325d',
-					fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-					fontSmoothing: 'antialiased',
-					fontSize: '16px',
-					'::placeholder': {
-						color: '#aab7c4'
-					}
-				},
-				invalid: {
-					color: '#fa755a',
-					iconColor: '#fa755a'
-				}
-			};*/
-
-			this.card = elements.create('card', /*{ style }*/);
+			this.card = elements.create('card');
 			this.card.mount('#card-element');
 		},
 		methods: {
-			...mapMutations('checkout', [
-				'setBillingAddressId',
-				'setBillingSameAsShipping',
+			...mapActions('cart', [
+				'saveBillingSameAsShipping',
+				'saveBillingAddress'
 			]),
 			...mapActions('checkout', [
 				'decrementStep',
 				'incrementStep',
 			]),
-			nextStep() {
+			async saveBilling() {
+				if (this.billingSameAsShipping) {
+					await this.saveBillingSameAsShipping(true);
+				} else {
+					await this.saveBillingAddress(this.newAddress);
+				}
+			},
+			async processStripePayment() {
 				const paymentData = {
 					billing_details: {
 						email: this.getCurrentCart.customer.email,
 					}
 				};
 
-				this.stripe.createPaymentMethod('card', this.card, paymentData)
-					.then(async (result) => {
-						const errorElement = document.getElementById('card-errors');
-						console.log(result);
+				await this.saveBilling();
 
-						if (result.error) {
-							// Show the user any errors
-							errorElement.textContent = result.error.message;
-						} else {
-							const response = await this.$api.submitStripePayment({
-								'paymentForm[stripe][paymentMethodId]': result.paymentMethod.id
-							});
+				if (this.getCartErrors.length === 0) {
 
-							console.log('response:', response);
-						}
-					});
+					this.stripe.createPaymentMethod('card', this.card, paymentData)
+						.then(async (result) => {
+							if (result.error) {
+								// Show the user any errors
+								this.cardError = result.error.message;
+							} else {
+								const response = await this.$api.submitStripePayment({
+									'paymentForm[stripe][paymentMethodId]': result.paymentMethod.id
+								});
+
+								if (response.message) {
+									this.cardError = response.message;
+								} else {
+									// TODO Handle success
+									console.log('Order Done', response);
+									this.incrementStep();
+								}
+							}
+						});
+
+				}
+			},
+			nextStep() {
+				if (this.paymentGateway === 'stripe') {
+					this.processStripePayment();
+				} else if (this.paymentGateway === 'paypal') {
+					// PayPal payment code here?
+				} else {
+					// Manual payment code here?
+				}
 
 				// this.incrementStep();
 			},
@@ -119,11 +137,47 @@
 				</p>
 			</div>
 
-			<div
-				id="card-element"
-				class="mt-6 grid grid-cols-3 sm:grid-cols-4 gap-y-6 gap-x-4"
-			></div>
-			<div id="card-errors"></div>
+			<div class="text-sm text-gray-500">Select a payment method</div>
+
+			<div class="mt-6">
+				<div class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
+					<div v-for="gateway in getGateways" :key="gateway.handle" class="flex items-center">
+						<input
+							:id="`gateway_${gateway.handle}`"
+							v-model="paymentGateway"
+							name="gateway"
+							type="radio"
+							:value="gateway.handle"
+							class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+						/>
+						<label :for="`gateway_${gateway.handle}`" class="ml-3 block text-sm font-medium text-gray-700">{{ gateway.name }}</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="mt-6">
+
+				<div v-show="paymentGateway === 'stripe'">
+					<div class="flex flex-col justify-center items-stretch w-full h-10 px-4 border border-gray-300 rounded-md">
+						<div id="card-element" />
+					</div>
+          <div v-if="cardError" class="text-red-500 text-sm mt-2">{{ cardError }}</div>
+				</div>
+
+				<div v-show="paymentGateway === 'paypal'">
+					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
+						<div>PayPal UI Here</div>
+					</div>
+				</div>
+
+				<div v-show="paymentGateway === 'manual'">
+					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
+						<div>Manual Payment Info Here</div>
+					</div>
+				</div>
+
+			</div>
+
 		</section>
 
 		<section aria-labelledby="billing-heading" class="mt-10">
@@ -137,7 +191,7 @@
 			<div class="mt-6 flex items-center">
 				<input
 					id="same-as-shipping"
-					v-model="billingSameAsShipping"
+          v-model="billingSameAsShipping"
 					name="same-as-shipping"
 					type="checkbox"
 					class="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
@@ -150,7 +204,7 @@
 			</div>
 
 			<div v-if="!billingSameAsShipping">
-				<CheckoutAddressFields context="billing" />
+        <CheckoutAddressFields v-model="newAddress" context="billing" :use-full-name="true" />
 			</div>
 		</section>
 
