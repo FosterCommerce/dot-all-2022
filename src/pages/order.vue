@@ -1,12 +1,46 @@
 <script>
 	import { mapGetters } from "vuex";
+	import Addresses from '@/queries/Addresses.gql';
 
 	export default {
+		data() {
+			return {
+				order: {},
+				addresses: [],
+			}
+		},
+		async fetch() {
+
+			const number = this.$route.query.number;
+			const { order } = await this.$api.get(`/actions/fc/cart/get-order-by-number?number=${number}`);
+			this.order = order;
+
+			const { data } = await this.$api.graphqlQuery(
+				Addresses,
+				{
+					id: [order.shippingAddressId, order.billingAddressId],
+					limit: 2
+				}
+			);
+
+			if (data.addresses.length) {
+				this.addresses = data.addresses;
+			}
+
+		},
 		computed: {
-			...mapGetters('cart', [
-				'getCurrentCart'
-			])
-		}
+			...mapGetters('checkout', [
+				'getGateways'
+			]),
+			paymentMethodName() {
+				let name = null;
+				const gateway = this.getGateways[this.order.gatewayId]
+				if (gateway) {
+					name = gateway.name;
+				}
+				return name;
+			}
+		},
 	}
 </script>
 
@@ -18,13 +52,8 @@
 					<div class="max-w-3xl mx-auto">
 						<div class="max-w-xl">
 							<h1 class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Thank you!</h1>
-							<p class="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl">It's on the way! : {{ getCurrentCart.totalAsCurrency }}</p>
-							<p class="mt-2 text-base text-gray-500">Your order #{{ getCurrentCart.number }}14034056 has shipped and will be with you soon.</p>
-
-							<dl class="mt-12 text-sm font-medium">
-								<dt class="text-gray-900">Tracking number</dt>
-								<dd class="text-indigo-600 mt-2">51547878755545848512</dd>
-							</dl>
+							<p class="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl">It's on the way!</p>
+							<p class="mt-2 text-base text-gray-500">Your order number <strong class="font-bold">{{ order.shortNumber }}</strong> has shipped and will be with you soon.</p>
 						</div>
 
 						<section aria-labelledby="order-heading" class="mt-10 border-t border-gray-200">
@@ -32,24 +61,30 @@
 
 							<h3 class="sr-only">Items</h3>
 
-							<div class="py-10 border-b border-gray-200 flex space-x-6">
-								<img src="https://tailwindui.com/img/ecommerce-images/confirmation-page-05-product-01.jpg" alt="Glass bottle with black plastic pour top and mesh insert." class="flex-none w-20 h-20 object-center object-cover bg-gray-100 rounded-lg sm:w-40 sm:h-40">
+							<div v-for="item in order.lineItems" :key="item.id" class="py-10 border-b border-gray-200 flex space-x-6">
+								<nuxt-img
+									v-if="item.image.url"
+									:src="item.image.url"
+									:alt="item.image.alt"
+									class="flex-none w-20 h-20 object-center object-cover bg-gray-100 rounded-lg sm:w-40 sm:h-40"
+									loading="lazy"
+								/>
 								<div class="flex-auto flex flex-col">
 									<div>
 										<h4 class="font-medium text-gray-900">
-											<a href="#"> Cold Brew Bottle </a>
+											<nuxt-link :to="item.uri">{{ item.title }}</nuxt-link>
 										</h4>
-										<p class="mt-2 text-sm text-gray-600">This glass bottle comes with a mesh insert for steeping tea or cold-brewing coffee. Pour from any angle and remove the top for easy cleaning.</p>
+										<p v-if="item.previewText" class="mt-2 text-sm text-gray-600">{{ item.previewText }}</p>
 									</div>
 									<div class="mt-6 flex-1 flex items-end">
 										<dl class="flex text-sm divide-x divide-gray-200 space-x-4 sm:space-x-6">
 											<div class="flex">
 												<dt class="font-medium text-gray-900">Quantity</dt>
-												<dd class="ml-2 text-gray-700">1</dd>
+												<dd class="ml-2 text-gray-700">{{ item.qty }}</dd>
 											</div>
 											<div class="pl-4 flex sm:pl-6">
 												<dt class="font-medium text-gray-900">Price</dt>
-												<dd class="ml-2 text-gray-700">$32.00</dd>
+												<dd class="ml-2 text-gray-700">{{ item.totalAsCurrency }}</dd>
 											</div>
 										</dl>
 									</div>
@@ -61,23 +96,20 @@
 
 								<h4 class="sr-only">Addresses</h4>
 								<dl class="grid grid-cols-2 gap-x-6 text-sm py-10">
-									<div>
-										<dt class="font-medium text-gray-900">Shipping address</dt>
+									<div v-for="address in addresses" :key="address.id">
+										<dt class="font-medium text-gray-900">{{ address.title }}</dt>
 										<dd class="mt-2 text-gray-700">
 											<address class="not-italic">
-												<span class="block">Kristin Watson</span>
-												<span class="block">7363 Cynthia Pass</span>
-												<span class="block">Toronto, ON N3Y 4H8</span>
-											</address>
-										</dd>
-									</div>
-									<div>
-										<dt class="font-medium text-gray-900">Billing address</dt>
-										<dd class="mt-2 text-gray-700">
-											<address class="not-italic">
-												<span class="block">Kristin Watson</span>
-												<span class="block">7363 Cynthia Pass</span>
-												<span class="block">Toronto, ON N3Y 4H8</span>
+												<span v-if="address.organization" class="block">{{ address.organization }} - {{ address.firstName }} {{ address.lastName }}</span>
+												<span v-if="!address.organization" class="block">{{ address.firstName }} {{ address.lastName }}</span>
+												<span class="block">{{ address.addressLine1 }}</span>
+												<span v-if="address.addressLine2" class="block">{{ address.addressLine2 }}</span>
+												<span class="block">
+													{{ address.locality }},
+													{{ address.administrativeArea }},
+													{{ address.postalCode }}
+												</span>
+												<span class="block">{{ address.countryCode }}</span>
 											</address>
 										</dd>
 									</div>
@@ -88,16 +120,13 @@
 									<div>
 										<dt class="font-medium text-gray-900">Payment method</dt>
 										<dd class="mt-2 text-gray-700">
-											<p>Apple Pay</p>
-											<p>Mastercard</p>
-											<p><span aria-hidden="true">•••• </span><span class="sr-only">Ending in </span>1545</p>
+											<p>{{ paymentMethodName }}</p>
 										</dd>
 									</div>
 									<div>
 										<dt class="font-medium text-gray-900">Shipping method</dt>
 										<dd class="mt-2 text-gray-700">
-											<p>DHL</p>
-											<p>Takes up to 3 working days</p>
+											<p>{{ order.shippingMethodName }}</p>
 										</dd>
 									</div>
 								</dl>
@@ -107,22 +136,26 @@
 								<dl class="space-y-6 border-t border-gray-200 text-sm pt-10">
 									<div class="flex justify-between">
 										<dt class="font-medium text-gray-900">Subtotal</dt>
-										<dd class="text-gray-700">$36.00</dd>
+										<dd class="text-gray-700">{{ order.itemSubtotalAsCurrency }}</dd>
 									</div>
-									<div class="flex justify-between">
+									<div v-if="order.couponCode && order.totalDiscountAsCurrency !== '$0.00'" class="flex justify-between">
 										<dt class="flex font-medium text-gray-900">
 											Discount
-											<span class="rounded-full bg-gray-200 text-xs text-gray-600 py-0.5 px-2 ml-2">STUDENT50</span>
+											<span class="rounded-full bg-gray-200 text-xs text-gray-600 py-0.5 px-2 ml-2">{{ order.couponCode }}</span>
 										</dt>
-										<dd class="text-gray-700">-$18.00 (50%)</dd>
+										<dd class="text-gray-700">-{{ order.totalDiscountAsCurrency }}</dd>
 									</div>
 									<div class="flex justify-between">
 										<dt class="font-medium text-gray-900">Shipping</dt>
-										<dd class="text-gray-700">$5.00</dd>
+										<dd class="text-gray-700">{{ order.totalShippingCostAsCurrency }}</dd>
+									</div>
+									<div class="flex justify-between">
+										<dt class="font-medium text-gray-900">Tax</dt>
+										<dd class="text-gray-700">{{ order.totalTaxAsCurrency }}</dd>
 									</div>
 									<div class="flex justify-between">
 										<dt class="font-medium text-gray-900">Total</dt>
-										<dd class="text-gray-900">$23.00</dd>
+										<dd class="text-gray-900">{{ order.totalAsCurrency }}</dd>
 									</div>
 								</dl>
 							</div>
