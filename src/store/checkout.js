@@ -21,10 +21,6 @@ export const state = () => ({
 		{
 			label: 'Payment',
 			handle: 'payment'
-		},
-		{
-			label: 'Confirmation',
-			handle: 'confirmation'
 		}
 	],
 	/**
@@ -202,6 +198,10 @@ export const mutations = {
 export const actions = {
 	/**
 	 * Initializes the steps and modifies them if a user is already logged in
+	 *
+	 * @property {function} commit  - Vuex commit method.
+	 * @property {object} getters - Vuex getters method.
+	 * @property {boolean} isGuest - If the user is logged in
 	 */
 	fetchSteps({ commit, getters }, isGuest) {
 		if (!isGuest) {
@@ -229,13 +229,28 @@ export const actions = {
 	 * Increment the current step number.
 	 *
 	 * @property {function} commit  - Vuex commit method.
-	 * @property {function} dispatch - Vuex dispatch method.
 	 * @property {object} getters - Vuex getters object.
 	 */
 	incrementStep({ commit, getters }) {
 		if (!getters.getIsLastStep) {
 			commit('setCurrentStepNumber', (getters.getCurrentStepNumber + 1));
 		}
+	},
+	/**
+	 * Sets the current step to the first step.
+	 *
+	 * @property {function} commit  - Vuex commit method.
+	 */
+	goToFirstStep({ commit }) {
+		commit('setCurrentStepNumber', 0);
+	},
+	/**
+	 * Sets the current step to the last step.
+	 *
+	 * @property {function} commit  - Vuex commit method.
+	 */
+	gotToLastStep({ commit, getters }) {
+		commit('setCurrentStepNumber', (getters.getTotalSteps - 1));
 	},
 	/**
 	 * Fetches the countries configured in the Commerce store and sets them into state

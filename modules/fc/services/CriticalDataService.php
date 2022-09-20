@@ -18,15 +18,27 @@ class CriticalDataService extends Component {
             'token' => Craft::$app->request->getCsrfToken()
         ];
     }
-
+	/**
+	 * Get the countries enabled in Commerce
+	 *
+	 * @return array
+	 */
     public function getStoreCountries(): array {
         return Plugin::getInstance()->getStore()->getStore()->getCountriesList();
     }
-
+	/**
+	 * Get the country regions enabled in Commerce
+	 *
+	 * @return array
+	 */
     public function getStoreRegions(): array {
         return Plugin::getInstance()->getStore()->getStore()->getAdministrativeAreasListByCountryCode();
     }
-
+	/**
+	 * Get the enabled payment gateways in Commerce
+	 *
+	 * @return array
+	 */
     public function getStorePaymentGateways(): array {
         $gateways = Plugin::getInstance()->gateways->getAllCustomerEnabledGateways();
         $result   = [];
