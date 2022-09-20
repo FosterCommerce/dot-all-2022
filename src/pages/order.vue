@@ -10,11 +10,12 @@
 			}
 		},
 		async fetch() {
-
+			// Get the order number from the URL param and then load the order
 			const number = this.$route.query.number;
 			const { order } = await this.$api.get(`/actions/fc/cart/get-order-by-number?number=${number}`);
 			this.order = order;
 
+			// Get the addresses (billing and shipping) used in the order via their IDs
 			const { data } = await this.$api.graphqlQuery(
 				Addresses,
 				{
@@ -22,16 +23,15 @@
 					limit: 2
 				}
 			);
-
 			if (data.addresses.length) {
 				this.addresses = data.addresses;
 			}
-
 		},
 		computed: {
 			...mapGetters('checkout', [
 				'getGateways'
 			]),
+			/** Gets the payment method name to display */
 			paymentMethodName() {
 				let name = null;
 				const gateway = this.getGateways[this.order.gatewayId]
@@ -75,6 +75,10 @@
 											<nuxt-link :to="item.uri">{{ item.title }}</nuxt-link>
 										</h4>
 										<p v-if="item.previewText" class="mt-2 text-sm text-gray-600">{{ item.previewText }}</p>
+										<div class="mt-2 flex text-sm divide-x divide-gray-200 space-x-4 sm:space-x-6">
+											<p class="text-gray-500">{{ item.color.charAt(0).toUpperCase() + item.color.slice(1) }}</p>
+											<p class="pl-4 text-gray-500 uppercase sm:pl-6">{{ item.size }}</p>
+										</div>
 									</div>
 									<div class="mt-6 flex-1 flex items-end">
 										<dl class="flex text-sm divide-x divide-gray-200 space-x-4 sm:space-x-6">

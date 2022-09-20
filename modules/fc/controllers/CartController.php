@@ -7,13 +7,25 @@ use craft\commerce;
 use craft\commerce\elements\Variant;
 use craft\commerce\elements\Order;
 use craft\commerce\controllers\CartController as Commerce_CartController;
+use yii\base\InvalidConfigException;
 use yii\web\Response;
 
 class CartController extends Commerce_CartController
 {
 
-	protected array|bool|int $allowAnonymous = ['get-order-by-number'];
+	protected array|bool|int $allowAnonymous = [
+		'get-cart',
+		'load-cart',
+		'update-cart',
+		'complete',
+		'get-order-by-number'
+	];
 
+	/**
+	 * Get a completed order based on the order number
+	 *
+	 * @return Response
+	 */
 	public function actionGetOrderByNumber(): Response {
 		$this->requireAcceptsJson();
 
@@ -32,6 +44,12 @@ class CartController extends Commerce_CartController
 		return $this->asJson($response);
 	}
 
+	/**
+	 * Override the Commerce cartArray method so we can add custom field data to line items
+	 *
+	 * @param Order $cart
+	 * @return array
+	 */
 	protected function cartArray(Order $cart): array
 	{
 		$data = parent::cartArray($cart);
@@ -42,6 +60,13 @@ class CartController extends Commerce_CartController
 		return $data;
 	}
 
+	/**
+	 * Format Commerce cart/order line item data to get custom field values
+	 *
+	 * @param Order $cart
+	 * @return array
+	 * @throws InvalidConfigException
+	 */
 	protected function formatLineItems(Order $cart): array {
 		// Create a line items array and loop through the line items in the cart to populate it
 		// So we can fetch the line item product and variant fields

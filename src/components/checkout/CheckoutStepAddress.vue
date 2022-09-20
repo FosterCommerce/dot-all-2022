@@ -6,10 +6,10 @@
 		name: "CheckoutStepAddress",
 		data() {
 			return {
-				editModalOpen: false, // Toggle for the edit address modal
-				deleteModalOpen: false, // Toggle for the delete address modal
-				loadedAddress: null, // The loaded address (user address that is being edited or deleted)
-				shippingAddress: 'new', // The address that will be submitted to the cart
+				editModalOpen: false,
+				deleteModalOpen: false,
+				loadedAddress: null,
+				shippingAddress: 'new',
 				newAddress: {
 					id: '',
 					title: 'Shipping Address',
@@ -331,6 +331,7 @@
 				<button
 					:class="{ 'opacity-25 cursor-not-allowed': isSaving }"
 					class="flex justify-center items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
+					:disabled="isSaving"
 					@click.prevent="nextStep"
 				>
 					<span v-if="isSaving">Saving Address ...</span>

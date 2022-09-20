@@ -11,7 +11,7 @@ use modules\fc\Fc;
 
 class CriticalDataController extends Controller
 {
-    protected array|bool|int $allowAnonymous = [ 'get-csrf-token', 'get-store-countries', 'get-store-regions', 'get-store-payment-gateways', 'get-order' ];
+    protected array|bool|int $allowAnonymous = [ 'get-csrf-token', 'get-store-countries', 'get-store-regions', 'get-store-payment-gateways' ];
 
     /**
      * Get the CSRF token from the Critical Data service
@@ -30,7 +30,11 @@ class CriticalDataController extends Controller
 
         return $this->asJson($response);
     }
-
+	/**
+	 * Get the countries enabled in Commerce
+	 *
+	 * @return Response
+	 */
     public function actionGetStoreCountries() : Response {
 		$this->requireAcceptsJson();
 
@@ -43,7 +47,11 @@ class CriticalDataController extends Controller
 
         return $this->asJson($response);
     }
-
+	/**
+	 * Get the country regions enabled in Commerce
+	 *
+	 * @return Response
+	 */
     public function actionGetStoreRegions() : Response {
 		$this->requireAcceptsJson();
 
@@ -56,7 +64,11 @@ class CriticalDataController extends Controller
 
         return $this->asJson($response);
     }
-
+	/**
+	 * Get the enabled payment gateways in Commerce
+	 *
+	 * @return Response
+	 */
     public function actionGetStorePaymentGateways() : Response {
 		$this->requireAcceptsJson();
 
