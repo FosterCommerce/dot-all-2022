@@ -38,8 +38,12 @@ class CartController extends Commerce_CartController
 
 		$order = commerce\Plugin::getInstance()->orders->getOrderByNumber($number);
 
-		$response['order'] = $order->toArray();
-		$response['order']['lineItems'] = $this->formatLineItems($order);
+		if ($order) {
+			$response['order'] = $order->toArray();
+			$response['order']['lineItems'] = $this->formatLineItems($order);
+		} else {
+			$response['order'] = null;
+		}
 
 		return $this->asJson($response);
 	}
