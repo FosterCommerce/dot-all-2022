@@ -237,6 +237,12 @@ export const actions = {
 			commit('setCurrentStepNumber', (getters.getCurrentStepNumber + 1));
 		}
 	},
+	firstStep({ commit }) {
+		commit('setCurrentStepNumber', 0);
+	},
+	lastStep({ commit, getters }) {
+		commit('setCurrentStepNumber', (getters.getTotalSteps - 1));
+	},
 	/**
 	 * Fetches the countries configured in the Commerce store and sets them into state
 	 *

@@ -141,6 +141,7 @@
 			...mapActions('checkout', [
 				'decrementStep',
 				'incrementStep',
+				'firstStep',
 			]),
 			async saveBilling() {
 				if (this.billingSameAsShipping) {
@@ -174,7 +175,9 @@
 								} else {
 									// TODO Handle success
 									console.log('Order Done', response);
-									this.incrementStep();
+									// this.incrementStep();
+									await this.$router.push('/order');
+									this.firstStep();
 								}
 							}
 						});
