@@ -1,4 +1,4 @@
-dateModified: 1663440268
+dateModified: 1663691284
 elementSources:
   craft\elements\Entry:
     -
@@ -52,7 +52,7 @@ meta:
     56fd568a-e1bd-46d2-af2f-8a5b610e47bf: PayPal # PayPal
     76a9bb5d-1499-4e0d-afff-29da6dde9d01: Heading # Heading
     81d425d5-6a7f-4da9-b64d-3752b8286594: Other # Other
-    148bf625-3ed8-48e1-9a43-70fc218ce67c: 'Check or Money Order' # Manual
+    148bf625-3ed8-48e1-9a43-70fc218ce67c: 'Check or Money Order' # Check or Money Order
     430acb24-9641-4661-b62e-0cdc21c0fe56: 'Menu Item' # Menu Item
     460addb0-40aa-48c7-ac8c-21f2f621ffbb: 'Site Schema' # Site Schema
     652c2871-27c1-4b30-8190-0a05255eb19b: Relations # Relations
@@ -86,7 +86,7 @@ plugins:
     edition: pro
     enabled: true
     licenseKey: BC5L8V3XR0KWNFDDARH9GPUI
-    schemaVersion: 4.1.0
+    schemaVersion: 4.1.1
   commerce-paypal-checkout:
     edition: standard
     enabled: true
