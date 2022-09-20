@@ -11,7 +11,7 @@ use modules\fc\Fc;
 
 class CriticalDataController extends Controller
 {
-    protected array|bool|int $allowAnonymous = [ 'get-csrf-token', 'get-store-countries', 'get-store-regions', 'get-store-payment-gateways' ];
+    protected array|bool|int $allowAnonymous = [ 'get-csrf-token', 'get-store-countries', 'get-store-regions', 'get-store-payment-gateways', 'get-order' ];
 
     /**
      * Get the CSRF token from the Critical Data service

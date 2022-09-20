@@ -3,17 +3,48 @@
 namespace modules\fc\controllers;
 
 use Craft;
+use craft\commerce;
 use craft\commerce\elements\Variant;
 use craft\commerce\elements\Order;
 use craft\commerce\controllers\CartController as Commerce_CartController;
+use yii\web\Response;
 
 class CartController extends Commerce_CartController
 {
+
+	protected array|bool|int $allowAnonymous = ['get-order-by-number'];
+
+	public function actionGetOrderByNumber(): Response {
+		$this->requireAcceptsJson();
+
+		$number = $this->request->getParam('number');
+
+		$response = [
+			'success' => true,
+			'order' => []
+		];
+
+		$order = commerce\Plugin::getInstance()->orders->getOrderByNumber($number);
+
+		$response['order'] = $order->toArray();
+		$response['order']['lineItems'] = $this->formatLineItems($order);
+
+		return $this->asJson($response);
+	}
+
 	protected function cartArray(Order $cart): array
 	{
 		$data = parent::cartArray($cart);
 
+		// Replace the current cart line items with the ones we have formatted to get the line item fields
+		$data['lineItems'] = $this->formatLineItems($cart);
+
+		return $data;
+	}
+
+	protected function formatLineItems(Order $cart): array {
 		// Create a line items array and loop through the line items in the cart to populate it
+		// So we can fetch the line item product and variant fields
 		$lineItems = [];
 		foreach ($cart->lineItems as $lineItem) {
 			// Replicate all the current data we get from line items
@@ -80,6 +111,7 @@ class CartController extends Commerce_CartController
 
 			// Add the values from the product
 			$lineItemData['title'] = $product->title;
+			$lineItemData['previewText'] = $product->previewText;
 			$lineItemData['uri'] = $product->uri;
 			$lineItemData['url'] = $product->url;
 			$lineItemData['slug'] = $product->slug;
@@ -88,9 +120,6 @@ class CartController extends Commerce_CartController
 			$lineItems[] = $lineItemData;
 		}
 
-		// Replace the current cart line items with the ones we have recreated
-		$data['lineItems'] = $lineItems;
-
-		return $data;
+		return $lineItems;
 	}
 }
