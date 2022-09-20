@@ -18,8 +18,8 @@
 					<div class="max-w-3xl mx-auto">
 						<div class="max-w-xl">
 							<h1 class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Thank you!</h1>
-							<p class="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl">It's on the way!</p>
-							<p class="mt-2 text-base text-gray-500">Your order #14034056 has shipped and will be with you soon.</p>
+							<p class="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl">It's on the way! : {{ getCurrentCart.totalAsCurrency }}</p>
+							<p class="mt-2 text-base text-gray-500">Your order #{{ getCurrentCart.number }}14034056 has shipped and will be with you soon.</p>
 
 							<dl class="mt-12 text-sm font-medium">
 								<dt class="text-gray-900">Tracking number</dt>
