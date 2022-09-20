@@ -8,15 +8,21 @@ use craft\web\Controller;
 use craft\commerce\Plugin as Commerce;
 
 class PaymentsController extends Controller {
-    protected array|bool|int $allowAnonymous = [ 'get-paypal-form-html' ];
+    protected array|bool|int $allowAnonymous = [ 'get-form-html' ];
 
-    public function actionGetPaypalFormHtml() {
-        $cart = Commerce::getInstance()->getCarts()->getCart();
+    public function actionGetFormHtml() {
+        $this->requireAcceptsJson();
+        $gatewayId = (int)Craft::$app->request->getQueryParam('id');
 
-        $cart->gatewayId = 3;
+        if ($gatewayId) {
+            $cart = Commerce::getInstance()->getCarts()->getCart();
 
-        return $cart->gateway->getPaymentFormHtml([
-            'currency' => $cart->paymentCurrency
-        ]);
+            $cart->gatewayId = $gatewayId;
+
+            return $cart->gateway->getPaymentFormHtml([
+                'currency' => $cart->paymentCurrency
+            ]);
+        }
+
     }
 }
