@@ -40,6 +40,23 @@ class CriticalDataService extends Component {
 	 * @return array
 	 */
     public function getStorePaymentGateways(): array {
-    	return Plugin::getInstance()->gateways->getAllCustomerEnabledGateways();
+        $gateways = Plugin::getInstance()->gateways->getAllCustomerEnabledGateways();
+        $result   = [];
+
+        foreach ($gateways as $gateway) {
+            $newGateway = [];
+
+            foreach ($gateway as $k => $v) {
+                if (preg_match('/^\$[A-Z0-9_]/', $v)) {
+                    $v = getenv(str_replace('$', '', $v));
+                }
+
+                $newGateway[$k] = $v;
+            }
+
+            $result[] = $newGateway;
+        }
+
+    	return $result;
 	}
 }

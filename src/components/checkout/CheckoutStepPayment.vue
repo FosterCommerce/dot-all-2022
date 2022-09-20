@@ -133,7 +133,12 @@
 				this.cardError = null;
 			});
 
-			this.paypalForm = await this.$api.get('/actions/fc/payments/get-paypal-form-html');
+			const payPalGateway = this.getGateways.filter((gateway) => gateway.name === 'PayPal');
+
+			if (payPalGateway && payPalGateway.length) {
+				const ppGatewayId = payPalGateway[0].id;
+				this.paypalForm = await this.$api.get(`/actions/fc/payments/get-form-html?id=${ppGatewayId}`);
+			}
 		},
 		methods: {
 			...mapActions('cart', [
@@ -171,6 +176,7 @@
 								// Show the user any errors
 								this.cardError = result.error.message;
 							} else {
+								console.log(result.paymentMethod.id);
 								const response = await this.$api.submitStripePayment({
 									'paymentForm[stripe][paymentMethodId]': result.paymentMethod.id
 								});
@@ -189,13 +195,22 @@
 						});
 				}
 			},
+			async processManualPayment() {
+				await this.saveBilling();
+
+				const response = await this.$api.submitManualPayment();
+
+				console.log(response);
+
+				this.incrementStep();
+			},
 			nextStep() {
 				if (this.paymentGateway === 'stripe') {
 					this.processStripePayment();
 				} else if (this.paymentGateway === 'paypal') {
 					// PayPal payment code here?
 				} else {
-					// Manual payment code here?
+					this.processManualPayment();
 				}
 
 				// this.incrementStep();

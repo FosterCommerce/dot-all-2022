@@ -3,6 +3,6 @@ isFrontendEnabled: $MANUAL_ENABLED
 name: 'Check or Money Order'
 paymentType: authorize
 settings:
-  onlyAllowForZeroPriceOrders: true
+  onlyAllowForZeroPriceOrders: $MANUAL_ONLY_ZERO_ORDERS
 sortOrder: 3
 type: craft\commerce\gateways\Manual
