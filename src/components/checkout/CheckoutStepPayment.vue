@@ -27,6 +27,8 @@
 				paymentGateway: 'stripe',
 				isSaving: false,
 				cardError: null,
+				paypalError: null,
+				manualError: null,
 			};
 		},
 		computed: {
@@ -96,8 +98,8 @@
 								},
 
 								// handle unrecoverable errors
-								onError: (err) => {
-									console.error(
+								onError: () => {
+									this.paypalError = 'An error has occurred while processing the payment.';
 										'An error prevented the buyer from checking out with PayPal',
 										err
 									);
@@ -111,7 +113,7 @@
 										console.error('PayPal Buttons failed to render', err);
 									});
 							} else {
-								console.log('The funding source is ineligible');
+								this.paypalError = 'The funding source is ineligible';
 							}
 
 							this.paypalLoaded = true;
@@ -200,7 +202,7 @@
 				console.log(response);
 
 				if (response.message) {
-					this.cardError = response.message;
+						this.manualError = response.message;
 				} else {
 					// TODO Handle success
 					console.log('Order Done', response);
@@ -280,13 +282,14 @@
 				<div v-show="paymentGateway === 'paypal'">
 					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
 						<div v-html="paypalForm"></div>
+						<div v-if="paypalError" class="text-red-500 text-sm mt-2">{{ paypalError }}</div>
 					</div>
 				</div>
 
 				<div v-show="paymentGateway === 'manual'">
 					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
 						<div>Manual Payment Info Here</div>
-						<div v-if="cardError" class="text-red-500 text-sm mt-2">{{ cardError }}</div>
+						<div v-if="manualError" class="text-red-500 text-sm mt-2">{{ manualError }}</div>
 					</div>
 				</div>
 
