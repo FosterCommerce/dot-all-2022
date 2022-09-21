@@ -123,7 +123,7 @@
 				this.cardError = null;
 			});
 
-			const payPalGateway = this.getGateways.filter((gateway) => gateway.name === 'PayPal');
+			const payPalGateway = this.getGateways.filter((gateway) => gateway.handle === 'paypal');
 
 			if (payPalGateway && payPalGateway.length) {
 				const ppGatewayId = payPalGateway[0].id;
@@ -189,7 +189,7 @@
 			async processManualPayment() {
 				await this.saveBilling();
 
-				const manualGateway = this.getGateways.filter((gateway) => gateway.name === 'Manual');
+				const manualGateway = this.getGateways.filter((gateway) => gateway.handle === 'manual');
 
 				if (manualGateway && manualGateway.length) {
 					const response = await this.$api.submitManualPayment(manualGateway[0].id);
