@@ -41,6 +41,7 @@ class CartController extends Commerce_CartController
 		if ($order) {
 			$response['order'] = $order->toArray();
 			$response['order']['lineItems'] = $this->formatLineItems($order);
+			$response['order']['pdfUrl'] = $order->pdfUrl;
 		} else {
 			$response['order'] = null;
 		}
