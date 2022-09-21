@@ -24,6 +24,8 @@
 				},
 				paypalForm: null,
 				paypalLoaded: false,
+				paypalAuthId: null,
+				paypalOrderId: null,
 				paymentGateway: 'stripe',
 				isSaving: false,
 				cardError: null,
@@ -80,29 +82,17 @@
 									return actions.order.create(createOrderPayload);
 								},
 
-								// finalize the transaction
+								// Authorize the transaction but don't process it yet.
 								onApprove: (data, actions) => {
-									const captureOrderHandler = (details) => {
-										const status = details.status;
-										const transactionId = details.id;
-										const unit = details.purchase_units[0];
-										const capture = unit.payments.captures[0];
-										const amount = capture.amount.value;
-										const currency = capture.amount.currency_code;
-										const paymentStatus = capture.status;
-
-										console.log(status, transactionId, amount, currency, paymentStatus);
-									};
-
-									return actions.order.capture().then(captureOrderHandler);
+									actions.order.authorize().then((authorization) => {
+										this.paypalAuthId = authorization.purchase_units[0].payments.authorizations[0].id;
+										this.paypalOrderId = data.orderID;
+									});
 								},
 
 								// handle unrecoverable errors
 								onError: () => {
 									this.paypalError = 'An error has occurred while processing the payment.';
-										'An error prevented the buyer from checking out with PayPal',
-										err
-									);
 								},
 							});
 
@@ -158,7 +148,6 @@
 				}
 			},
 			async processStripePayment() {
-
 				this.isSaving = true;
 
 				const paymentData = {
@@ -194,6 +183,9 @@
 						});
 				}
 			},
+			async processPaypalPayment() {
+				await this.saveBilling();
+			},
 			async processManualPayment() {
 				await this.saveBilling();
 
@@ -215,12 +207,10 @@
 				if (this.paymentGateway === 'stripe') {
 					this.processStripePayment();
 				} else if (this.paymentGateway === 'paypal') {
-					// PayPal payment code here?
+					this.processPaypalPayment();
 				} else {
 					this.processManualPayment();
 				}
-
-				// this.incrementStep();
 			},
 			previousStep() {
 				// ... Any code that needs to happen here before
