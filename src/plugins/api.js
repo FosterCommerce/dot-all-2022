@@ -175,10 +175,10 @@ const api = ({$axios}, $config, store) => {
 			}
 		},
 
-		submitManualPayment: async () => {
+		submitManualPayment: async (gatewayId) => {
 			try {
 				return await postAction('/commerce/payments/pay', {
-					gatewayId: 4,
+					gatewayId,
 				});
 			} catch (e) {
 				if (e.response) {

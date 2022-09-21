@@ -197,16 +197,18 @@
 			async processManualPayment() {
 				await this.saveBilling();
 
-				const response = await this.$api.submitManualPayment();
+				const manualGateway = this.getGateways.filter((gateway) => gateway.name === 'Manual');
 
-				console.log(response);
+				if (manualGateway && manualGateway.length) {
+					const response = await this.$api.submitManualPayment(manualGateway[0].id);
 
-				if (response.message) {
+					if (response.message) {
 						this.manualError = response.message;
-				} else {
-					// TODO Handle success
-					console.log('Order Done', response);
-					this.incrementStep();
+					} else {
+						// TODO Handle success
+						console.log('Order Done', response);
+						this.incrementStep();
+					}
 				}
 			},
 			nextStep() {
