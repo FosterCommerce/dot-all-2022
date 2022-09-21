@@ -49,10 +49,9 @@
 			paymentGateway() {
 				if (this.paymentGateway === 'paypal' && !this.paypalLoaded) {
 					const cart = this.getCurrentCart;
-					// TODO: Pull from .env
-					const clientId = 'AZ9iM136g7kn-klPmPM0Q3A301JZsJ5GrVoHO54IUI7hSSCme-RIIUb5JqCh3i6yo8wSBPVzAypgN-jF';
+					const clientId = process.env.ppClientId;
 
-					this.loadScriptAsync(`https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${cart.currency}&intent=capture`, () => {
+					this.loadScriptAsync(`https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${cart.currency}&intent=authorize`, () => {
 						const paypal = typeof window.paypal !== "undefined" ? window.paypal : null;
 
 						if (paypal) {
@@ -123,8 +122,7 @@
 		},
 		async mounted() {
 			this.billingSameAsShipping = this.getBillingSameAsShipping;
-			// TODO: pull from .env
-			this.stripe = await loadStripe('pk_test_51IRhFCAvkPHIPB19Zv5OPWHz6a7iiiMHwRzMLni9yZSdnIegXpkuPhptWfVrkbne3QAdlNV0O0Mp9VVBpKy1YlQ400xhc1s7D4');
+			this.stripe = await loadStripe(process.env.stripePublicKey);
 			const elements = this.stripe.elements();
 			this.card = elements.create('card');
 			this.card.mount('#card-element');
