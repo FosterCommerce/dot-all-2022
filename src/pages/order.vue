@@ -7,9 +7,12 @@
 			return {
 				order: null,
 				addresses: [],
+				isLoading: false
 			}
 		},
 		async fetch() {
+			this.isLoading = true;
+
 			// Get the order number from the URL param and then load the order
 			const number = this.$route.query.number;
 			const { order } = await this.$api.get(`/actions/fc/cart/get-order-by-number?number=${number}`);
@@ -28,19 +31,26 @@
 					this.addresses = data.addresses;
 				}
 			}
+
+			this.isLoading = false;
 		},
 		computed: {
 			...mapGetters('checkout', [
 				'getGateways'
 			]),
 			/** Gets the payment method name to display */
-			paymentMethodName() {
-				let name = null;
-				const gateway = this.getGateways[this.order.gatewayId]
-				if (gateway) {
-					name = gateway.name;
+			paymentMethod() {
+				let method = {
+					id: 0,
+					handle: '',
+				};
+				const findGateway = this.getGateways.filter((gateway) => {
+					return parseInt(gateway.id) === parseInt(this.order.gatewayId);
+				});
+				if (findGateway.length) {
+					method = findGateway[0];
 				}
-				return name;
+				return method;
 			}
 		}
 	}
@@ -48,13 +58,30 @@
 
 <template>
 	<div>
-		<div v-if="order">
-			<div class="bg-white px-4 pt-16 pb-24 sm:px-6 sm:pt-24 lg:px-8 lg:py-32">
+		<div v-if="!isLoading">
+			<div v-if="order" class="bg-white px-4 pt-16 pb-24 sm:px-6 sm:pt-24 lg:px-8 lg:py-32">
 				<div class="max-w-3xl mx-auto">
 					<div class="max-w-xl">
 						<h1 class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Thank you!</h1>
-						<p class="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl">It's on the way!</p>
-						<p class="mt-2 text-base text-gray-500">Your order number <strong class="font-bold">{{ order.reference }}</strong> has shipped and will be with you soon.</p>
+						<p class="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl">{{ paymentMethod.handle === 'manual' ? "We have received your order" : "It's on the way" }}!</p>
+						<p class="mt-2 text-base text-gray-500">Your order number <strong class="font-bold">{{ order.reference }}</strong> has been received.</p>
+
+						<div v-if="paymentMethod.handle === 'manual'" class="mt-12 text-base">
+							<p class="text-gray-900">Please send us your check or money order to the following address so we may continue to process the order:</p>
+							<address class="mt-2 not-italic text-gray-500">
+								<span class="block">Foster Clothing Inc.</span>
+								<span class="block">1234 Test Street</span>
+								<span class="block">Los Angeles, CA, 93277</span>
+								<span class="block">US</span>
+							</address>
+						</div>
+
+						<dl class="mt-12 text-sm font-medium">
+							<dt class="text-gray-900">{{ paymentMethod.handle === 'manual' ? 'Your Order' : 'Your Receipt' }}</dt>
+							<dd class="mt-2">
+								<a :href="order.pdfUrl" :download="`Order_${order.number}`" class="text-indigo-600">Download PDF File</a>
+							</dd>
+						</dl>
 					</div>
 
 					<section aria-labelledby="order-heading" class="mt-10 border-t border-gray-200">
@@ -125,7 +152,7 @@
 								<div>
 									<dt class="font-medium text-gray-900">Payment method</dt>
 									<dd class="mt-2 text-gray-700">
-										<p>{{ paymentMethodName }}</p>
+										<p>{{ paymentMethod.name }}</p>
 									</dd>
 								</div>
 								<div>
@@ -167,6 +194,10 @@
 					</section>
 				</div>
 			</div>
+		</div>
+
+		<div v-else class="py-12 flex justify-center items-end">
+			<BaseLoader />
 		</div>
 	</div>
 </template>
