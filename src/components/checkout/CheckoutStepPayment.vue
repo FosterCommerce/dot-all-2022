@@ -185,6 +185,19 @@
 			},
 			async processPaypalPayment() {
 				await this.saveBilling();
+
+				try {
+					await this.$api.postAction('/commerce/payments/pay', {
+						'paymentForm[paypal][paymentMethodId]': this.paypalAuthId
+					});
+				} catch (e) {
+					if (e.response) {
+						return e.response.data;
+					} else {
+						// TODO Handle some case where response is not set
+						return null;
+					}
+				}
 			},
 			async processManualPayment() {
 				await this.saveBilling();
