@@ -23,6 +23,5 @@ class PaymentsController extends Controller {
                 'currency' => $cart->paymentCurrency
             ]);
         }
-
     }
 }

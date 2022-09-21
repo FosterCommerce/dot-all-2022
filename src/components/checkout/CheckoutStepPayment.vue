@@ -170,7 +170,6 @@
 								// Show the user any errors
 								this.cardError = result.error.message;
 							} else {
-								console.log(result.paymentMethod.id);
 								const response = await this.$api.submitStripePayment({
 									'paymentForm[stripe][paymentMethodId]': result.paymentMethod.id
 								});
@@ -193,7 +192,13 @@
 
 				console.log(response);
 
-				this.incrementStep();
+				if (response.message) {
+					this.cardError = response.message;
+				} else {
+					// TODO Handle success
+					console.log('Order Done', response);
+					this.incrementStep();
+				}
 			},
 			nextStep() {
 				if (this.paymentGateway === 'stripe') {
@@ -274,6 +279,7 @@
 				<div v-show="paymentGateway === 'manual'">
 					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
 						<div>Manual Payment Info Here</div>
+						<div v-if="cardError" class="text-red-500 text-sm mt-2">{{ cardError }}</div>
 					</div>
 				</div>
 
