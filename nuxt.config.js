@@ -27,7 +27,6 @@ export default {
     ]
   },
 
-
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [],
 
@@ -98,7 +97,10 @@ export default {
 
   // Environment configuration
   env: {
-    currentEnv: process.env.CRAFT_ENVIRONMENT || 'dev'
+    currentEnv: process.env.CRAFT_ENVIRONMENT || 'dev',
+    baseUrl: process.env.CRAFT_BASE_URL,
+    stripePublicKey: process.env.STRIPE_PUB_KEY,
+    ppClientId: process.env.PAYPAL_CLIENT_ID,
   },
 
   // server-only-runtime-config

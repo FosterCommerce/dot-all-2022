@@ -24,9 +24,13 @@
 				},
 				paypalForm: null,
 				paypalLoaded: false,
+				transactionHash: null,
+				// paypalOrderId: null,
 				paymentGateway: 'stripe',
 				isSaving: false,
 				cardError: null,
+				paypalError: null,
+				manualError: null,
 			};
 		},
 		computed: {
@@ -46,11 +50,15 @@
 			billingSameAsShipping() {
 				this.saveBillingSameAsShipping(this.billingSameAsShipping);
 			},
-			paymentGateway() {
+			async paymentGateway() {
+				const gateway = this.getGateways.filter((gateway) => gateway.handle === this.paymentGateway);
+				const gatewayId = gateway[0].id;
+
+				await this.$api.postAction('/fc/cart/update-cart', { gatewayId, });
+
 				if (this.paymentGateway === 'paypal' && !this.paypalLoaded) {
 					const cart = this.getCurrentCart;
-					// TODO: Pull from .env
-					const clientId = 'AZ9iM136g7kn-klPmPM0Q3A301JZsJ5GrVoHO54IUI7hSSCme-RIIUb5JqCh3i6yo8wSBPVzAypgN-jF';
+					const clientId = process.env.ppClientId;
 
 					this.loadScriptAsync(`https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${cart.currency}&intent=capture`, () => {
 						const paypal = typeof window.paypal !== "undefined" ? window.paypal : null;
@@ -65,43 +73,31 @@
 								},
 
 								// set up the transaction
-								createOrder: (data, actions) => {
-									const createOrderPayload = {
-										purchase_units: [
-											{
-												amount: {
-													value: cart.total,
-												},
-											},
-										],
-									};
-
-									return actions.order.create(createOrderPayload);
+								createOrder: () => {
+									return this.$api.postAction('/commerce/payments/pay').then((res) => {
+										return res;
+									}).then((data) => {
+										this.transactionHash = data.transactionHash;
+										return data.transactionId;
+									});
 								},
 
-								// finalize the transaction
-								onApprove: (data, actions) => {
-									const captureOrderHandler = (details) => {
-										const status = details.status;
-										const transactionId = details.id;
-										const unit = details.purchase_units[0];
-										const capture = unit.payments.captures[0];
-										const amount = capture.amount.value;
-										const currency = capture.amount.currency_code;
-										const paymentStatus = capture.status;
+								// Finalize the transaction.
+								onApprove: async () => {
+									await this.saveBilling();
 
-										console.log(status, transactionId, amount, currency, paymentStatus);
-									};
+									const response = await this.$api.get(`/actions/commerce/payments/complete-payment?commerceTransactionHash=${this.transactionHash}`);
 
-									return actions.order.capture().then(captureOrderHandler);
+									// TODO Handle success
+									console.log('Order Done', response);
+									this.incrementStep();
+
+									return response;
 								},
 
 								// handle unrecoverable errors
-								onError: (err) => {
-									console.error(
-										'An error prevented the buyer from checking out with PayPal',
-										err
-									);
+								onError: () => {
+									this.paypalError = 'An error has occurred while processing the payment.';
 								},
 							});
 
@@ -112,7 +108,7 @@
 										console.error('PayPal Buttons failed to render', err);
 									});
 							} else {
-								console.log('The funding source is ineligible');
+								this.paypalError = 'The funding source is ineligible';
 							}
 
 							this.paypalLoaded = true;
@@ -123,8 +119,7 @@
 		},
 		async mounted() {
 			this.billingSameAsShipping = this.getBillingSameAsShipping;
-			// TODO: pull from .env
-			this.stripe = await loadStripe('pk_test_51IRhFCAvkPHIPB19Zv5OPWHz6a7iiiMHwRzMLni9yZSdnIegXpkuPhptWfVrkbne3QAdlNV0O0Mp9VVBpKy1YlQ400xhc1s7D4');
+			this.stripe = await loadStripe(process.env.stripePublicKey);
 			const elements = this.stripe.elements();
 			this.card = elements.create('card');
 			this.card.mount('#card-element');
@@ -133,7 +128,7 @@
 				this.cardError = null;
 			});
 
-			const payPalGateway = this.getGateways.filter((gateway) => gateway.name === 'PayPal');
+			const payPalGateway = this.getGateways.filter((gateway) => gateway.handle === 'paypal');
 
 			if (payPalGateway && payPalGateway.length) {
 				const ppGatewayId = payPalGateway[0].id;
@@ -158,7 +153,6 @@
 				}
 			},
 			async processStripePayment() {
-
 				this.isSaving = true;
 
 				const paymentData = {
@@ -199,10 +193,8 @@
 
 				const response = await this.$api.submitManualPayment();
 
-				console.log(response);
-
 				if (response.message) {
-					this.cardError = response.message;
+					this.manualError = response.message;
 				} else {
 					// TODO Handle success
 					console.log('Order Done', response);
@@ -213,12 +205,10 @@
 				if (this.paymentGateway === 'stripe') {
 					this.processStripePayment();
 				} else if (this.paymentGateway === 'paypal') {
-					// PayPal payment code here?
+					this.processPaypalPayment();
 				} else {
 					this.processManualPayment();
 				}
-
-				// this.incrementStep();
 			},
 			previousStep() {
 				// ... Any code that needs to happen here before
@@ -281,14 +271,18 @@
 
 				<div v-show="paymentGateway === 'paypal'">
 					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
-						<div v-html="paypalForm"></div>
+						<form>
+							<div v-html="paypalForm"></div>
+						</form>
+
+						<div v-if="paypalError" class="text-red-500 text-sm mt-2">{{ paypalError }}</div>
 					</div>
 				</div>
 
 				<div v-show="paymentGateway === 'manual'">
 					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
 						<div>Manual Payment Info Here</div>
-						<div v-if="cardError" class="text-red-500 text-sm mt-2">{{ cardError }}</div>
+						<div v-if="manualError" class="text-red-500 text-sm mt-2">{{ manualError }}</div>
 					</div>
 				</div>
 
@@ -365,3 +359,10 @@
 		</div>
 	</div>
 </template>
+
+<style scoped>
+	#paypal-button-container,
+	.paypal-rest-form {
+		display: none;
+	}
+</style>
