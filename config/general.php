@@ -47,6 +47,9 @@ return [
 	// Gotta keep it locked down tight
 	'enableCsrfProtection' => true,
 
+	// Enables basic http auth from our front-end
+	'enableBasicHttpAuth' => true,
+
 	// The maximum number of revisions that should be stored for each element.
 	'maxRevisions' => 8,
 
