@@ -24,8 +24,8 @@
 				},
 				paypalForm: null,
 				paypalLoaded: false,
-				paypalAuthId: null,
-				paypalOrderId: null,
+				transactionHash: null,
+				// paypalOrderId: null,
 				paymentGateway: 'stripe',
 				isSaving: false,
 				cardError: null,
@@ -50,12 +50,17 @@
 			billingSameAsShipping() {
 				this.saveBillingSameAsShipping(this.billingSameAsShipping);
 			},
-			paymentGateway() {
+			async paymentGateway() {
+				const gateway = this.getGateways.filter((gateway) => gateway.handle === this.paymentGateway);
+				const gatewayId = gateway[0].id;
+
+				await this.$api.postAction('/fc/cart/update-cart', { gatewayId, });
+
 				if (this.paymentGateway === 'paypal' && !this.paypalLoaded) {
 					const cart = this.getCurrentCart;
 					const clientId = process.env.ppClientId;
 
-					this.loadScriptAsync(`https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${cart.currency}&intent=authorize`, () => {
+					this.loadScriptAsync(`https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${cart.currency}&intent=capture`, () => {
 						const paypal = typeof window.paypal !== "undefined" ? window.paypal : null;
 
 						if (paypal) {
@@ -68,26 +73,26 @@
 								},
 
 								// set up the transaction
-								createOrder: (data, actions) => {
-									const createOrderPayload = {
-										purchase_units: [
-											{
-												amount: {
-													value: cart.total,
-												},
-											},
-										],
-									};
-
-									return actions.order.create(createOrderPayload);
+								createOrder: () => {
+									return this.$api.postAction('/commerce/payments/pay').then((res) => {
+										return res;
+									}).then((data) => {
+										this.transactionHash = data.transactionHash;
+										return data.transactionId;
+									});
 								},
 
-								// Authorize the transaction but don't process it yet.
-								onApprove: (data, actions) => {
-									actions.order.authorize().then((authorization) => {
-										this.paypalAuthId = authorization.purchase_units[0].payments.authorizations[0].id;
-										this.paypalOrderId = data.orderID;
-									});
+								// Finalize the transaction.
+								onApprove: async () => {
+									await this.saveBilling();
+
+									const response = await this.$api.get(`/actions/commerce/payments/complete-payment?commerceTransactionHash=${this.transactionHash}`);
+
+									// TODO Handle success
+									console.log('Order Done', response);
+									this.incrementStep();
+
+									return response;
 								},
 
 								// handle unrecoverable errors
@@ -183,37 +188,17 @@
 						});
 				}
 			},
-			async processPaypalPayment() {
-				await this.saveBilling();
-
-				try {
-					await this.$api.postAction('/commerce/payments/pay', {
-						'paymentForm[paypal][paymentMethodId]': this.paypalAuthId
-					});
-				} catch (e) {
-					if (e.response) {
-						return e.response.data;
-					} else {
-						// TODO Handle some case where response is not set
-						return null;
-					}
-				}
-			},
 			async processManualPayment() {
 				await this.saveBilling();
 
-				const manualGateway = this.getGateways.filter((gateway) => gateway.handle === 'manual');
+				const response = await this.$api.submitManualPayment();
 
-				if (manualGateway && manualGateway.length) {
-					const response = await this.$api.submitManualPayment(manualGateway[0].id);
-
-					if (response.message) {
-						this.manualError = response.message;
-					} else {
-						// TODO Handle success
-						console.log('Order Done', response);
-						this.incrementStep();
-					}
+				if (response.message) {
+					this.manualError = response.message;
+				} else {
+					// TODO Handle success
+					console.log('Order Done', response);
+					this.incrementStep();
 				}
 			},
 			nextStep() {
@@ -286,7 +271,10 @@
 
 				<div v-show="paymentGateway === 'paypal'">
 					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
-						<div v-html="paypalForm"></div>
+						<form>
+							<div v-html="paypalForm"></div>
+						</form>
+
 						<div v-if="paypalError" class="text-red-500 text-sm mt-2">{{ paypalError }}</div>
 					</div>
 				</div>
@@ -371,3 +359,10 @@
 		</div>
 	</div>
 </template>
+
+<style scoped>
+	#paypal-button-container,
+	.paypal-rest-form {
+		display: none;
+	}
+</style>
