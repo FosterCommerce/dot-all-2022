@@ -27,7 +27,7 @@ get this project up and running quickly by doing the following:
 
         ddev start
         
-   If you have problems starting ddev because ports are in use then make sure you shut down other servers, such as Nitro, on your system and try starting ddev again.
+   If you have problems starting ddev because ports are in use then make sure you shut down other servers that may be using the same ports (such as Nitro) and try starting ddev again.
 
 4. Once DDEV has finished downloading and configuring its Docker containers and starts to run, install the project's composer dependencies :
 
@@ -59,12 +59,14 @@ get this project up and running quickly by doing the following:
 run the following command :
 
         ddev exec yarn install
+
+*Note This process can take a few minutes to download and install the necessary packages.
         
-9. To run the front end of the project in dev mode, you then use the following command :
+1. To run the front end of the project in dev mode, you then use the following command :
 
         ddev exec yarn dev
 
-10. In your browser you can now access the site running locally in DDEV :
+2.  In your browser you can now access the site running locally in DDEV :
     
     * **Craft Admin**
 
