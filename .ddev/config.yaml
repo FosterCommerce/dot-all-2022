@@ -6,7 +6,6 @@ webserver_type: nginx-fpm
 router_http_port: "80"
 router_https_port: "443"
 xdebug_enabled: false
-project_tld: "fostercommerce.test"
 additional_hostnames: []
 additional_fqdns: []
 database:
@@ -14,6 +13,7 @@ database:
   version: "10.3"
 nfs_mount_enabled: false
 mutagen_enabled: false
+project_tld: fostercommerce.test
 use_dns_when_possible: true
 composer_version: "2"
 web_environment: []
@@ -114,7 +114,7 @@ nodejs_version: "16"
 # See https://ddev.readthedocs.io/en/stable/users/performance/#using-nfs-to-mount-the-project-into-the-container
 
 # mutagen_enabled: false
-# Performance improvement using mutagen asynchronous updates.
+# Experimental performance improvement using mutagen asynchronous updates.
 # See https://ddev.readthedocs.io/en/latest/users/performance/#using-mutagen
 
 # fail_on_hook_fail: False
@@ -170,7 +170,7 @@ nodejs_version: "16"
 # If you prefer you can change this to "ddev.local" to preserve
 # pre-v1.9 behavior.
 
-# ngrok_args: --basic-auth username:pass1234
+# ngrok_args: --subdomain mysite --auth username:pass
 # Provide extra flags to the "ngrok http" command, see
 # https://ngrok.com/docs#http or run "ngrok http -h"
 
@@ -196,14 +196,10 @@ nodejs_version: "16"
 # will be available on the local network if the host firewall
 # allows it.
 
-# default_container_timeout: 120
-# The default time that ddev waits for all containers to become ready can be increased from
-# the default 120. This helps in importing huge databases, for example.
-
 # Many ddev commands can be extended to run tasks before or after the
 # ddev command is executed, for example "post-start", "post-import-db",
 # "pre-composer", "post-composer"
-# See https://ddev.readthedocs.io/en/stable/users/extend/custom-commands/ for more
+# See https://ddev.readthedocs.io/en/stable/users/extending-commands/ for more
 # information on the commands that can be extended and the tasks you can define
 # for them. Example:
 #hooks:

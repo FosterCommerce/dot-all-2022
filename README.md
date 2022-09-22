@@ -2,6 +2,10 @@
 
 ## Installation
 
+You will need Docker Desktop and DDEV in order to run this project.
+
+Take a look at this blog post for a quick guide for installing Docker and DDEV. https://blog.fortrabbit.com/local-craft-dev-site-ddev-development-tool. You only need follow the part titled "Install DDEV to power your local Craft CMS dev sites".
+
 ### Installation with DDEV
 
 This workshop repo includes DDEV config files so if you have Docker Desktop and DDEV installed on your machine, you can
@@ -31,6 +35,8 @@ get this project up and running quickly by doing the following:
         CRAFT_BASE_URL=https://dot-all-2022.fostercommerce.test
         NUXT_BASE_URL=http://localhost:3000
         ASSET_BASE_URL=https://dot-all-2022.fostercommerce.test/assets
+        
+   The APP_ID and CRAFT_SECURITY_KEY can be any random strings. Use something like https://www.allkeysgenerator.com/Random/Security-Encryption-Key-Generator.aspx or just mash that keyboard.
 
 2. Open your terminal and go to the projects root directory :
 
@@ -39,12 +45,14 @@ get this project up and running quickly by doing the following:
 3. Start up Docker Desktop and after it loads, start DDEV in your terminal :
 
         ddev start
+        
+   If you have problems starting ddev because ports are in use then make sure you shut down other servers, such as Nitro, on your system and try starting ddev again.
 
 4. Once DDEV has finished downloading and configuring its Docker containers and starts to run, install the project's composer dependencies :
 
         ddev composer install
             
-6. Import the projects seed database into DDEV :
+5. Import the projects seed database into DDEV :
 
         ddev import-db --src=project_db.sql.tar.gz
         
@@ -60,7 +68,7 @@ get this project up and running quickly by doing the following:
         // Using SequelAce
         ddev sequelace
         
-7. Get Craft up and running and apply any changes to the config:
+6. Get Craft up and running and apply any changes to the config:
 
         ddev exec php craft up
         
