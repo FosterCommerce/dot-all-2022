@@ -11,30 +11,11 @@ Take a look at this blog post for a quick guide for installing Docker and DDEV. 
 This workshop repo includes DDEV config files so if you have Docker Desktop and DDEV installed on your machine, you can
 get this project up and running quickly by doing the following:
 
-1. Save the .env.example file as .env, and edit the following values in it :
+1. Save the .env.example file as .env, and add values for CRAFT_APP_ID and CRAFT_SECURITY_KEY :
 
         // Craft App Settings
-        
         CRAFT_APP_ID=
-        CRAFT_ENVIRONMENT=dev
         CRAFT_SECURITY_KEY=
-        
-        // Database Settings
-        
-        CRAFT_DB_DRIVER=mysql
-        CRAFT_DB_PORT=3306
-        CRAFT_DB_SERVER=db
-        CRAFT_DB_DATABASE=db
-        CRAFT_DB_USER=db
-        CRAFT_DB_PASSWORD=db
-        CRAFT_DB_SCHEMA=public
-        CRAFT_DB_TABLE_PREFIX=
-        
-        // Base URLs
-        
-        CRAFT_BASE_URL=https://dot-all-2022.fostercommerce.test
-        NUXT_BASE_URL=http://localhost:3000
-        ASSET_BASE_URL=https://dot-all-2022.fostercommerce.test/assets
         
    The APP_ID and CRAFT_SECURITY_KEY can be any random strings. Use something like https://www.allkeysgenerator.com/Random/Security-Encryption-Key-Generator.aspx or just mash that keyboard.
 
