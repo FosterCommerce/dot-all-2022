@@ -2,35 +2,22 @@
 
 ## Installation
 
+You will need Docker Desktop and DDEV in order to run this project.
+
+Take a look at this blog post for a quick guide for installing Docker and DDEV. https://blog.fortrabbit.com/local-craft-dev-site-ddev-development-tool. You only need follow the part titled "Install DDEV to power your local Craft CMS dev sites".
+
 ### Installation with DDEV
 
 This workshop repo includes DDEV config files so if you have Docker Desktop and DDEV installed on your machine, you can
 get this project up and running quickly by doing the following:
 
-1. Save the .env.example file as .env, and edit the following values in it :
+1. Save the .env.example file as .env, and add values for CRAFT_APP_ID and CRAFT_SECURITY_KEY :
 
         // Craft App Settings
-        
         CRAFT_APP_ID=
-        CRAFT_ENVIRONMENT=dev
         CRAFT_SECURITY_KEY=
         
-        // Database Settings
-        
-        CRAFT_DB_DRIVER=mysql
-        CRAFT_DB_PORT=3306
-        CRAFT_DB_SERVER=db
-        CRAFT_DB_DATABASE=db
-        CRAFT_DB_USER=db
-        CRAFT_DB_PASSWORD=db
-        CRAFT_DB_SCHEMA=public
-        CRAFT_DB_TABLE_PREFIX=
-        
-        // Base URLs
-        
-        CRAFT_BASE_URL=https://dot-all-2022.fostercommerce.test
-        NUXT_BASE_URL=http://localhost:3000
-        ASSET_BASE_URL=https://dot-all-2022.fostercommerce.test/assets
+   The APP_ID and CRAFT_SECURITY_KEY can be any random strings. Use something like https://www.allkeysgenerator.com/Random/Security-Encryption-Key-Generator.aspx or just mash that keyboard.
 
 2. Open your terminal and go to the projects root directory :
 
@@ -39,12 +26,14 @@ get this project up and running quickly by doing the following:
 3. Start up Docker Desktop and after it loads, start DDEV in your terminal :
 
         ddev start
+        
+   If you have problems starting ddev because ports are in use then make sure you shut down other servers that may be using the same ports (such as Nitro) and try starting ddev again.
 
 4. Once DDEV has finished downloading and configuring its Docker containers and starts to run, install the project's composer dependencies :
 
         ddev composer install
             
-6. Import the projects seed database into DDEV :
+5. Import the projects seed database into DDEV :
 
         ddev import-db --src=project_db.sql.tar.gz
         
@@ -60,7 +49,7 @@ get this project up and running quickly by doing the following:
         // Using SequelAce
         ddev sequelace
         
-7. Get Craft up and running and apply any changes to the config:
+6. Get Craft up and running and apply any changes to the config:
 
         ddev exec php craft up
         
@@ -69,13 +58,15 @@ get this project up and running quickly by doing the following:
 8. Next we need to install Nuxt and the other dependencies for the front end build. In your terminal
 run the following command :
 
-        ddev exec yarn install
+        ddev yarn install
+
+*Note This process can take a few minutes to download and install the necessary packages.
         
-9. To run the front end of the project in dev mode, you then use the following command :
+1. To run the front end of the project in dev mode, you then use the following command :
 
-        ddev exec yarn dev
+        ddev yarn dev
 
-10. In your browser you can now access the site running locally in DDEV :
+2.  In your browser you can now access the site running locally in DDEV :
     
     * **Craft Admin**
 
@@ -87,5 +78,3 @@ run the following command :
     * **Front End** (on port 3000)
     
             https://dot-all-2022.fostercommerce.test:3000
-
-### Manual Installation

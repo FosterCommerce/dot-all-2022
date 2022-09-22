@@ -87,6 +87,10 @@ export const actions = {
 	async fetchSessionData({ commit, dispatch }) {
 		// Get the session data from Craft and set it into state
 		const sessionInfo = await this.$api.get('/actions/users/session-info');
+
+		// Console out the session data we get back (to test on staging)
+		console.log('Session Info Returned:', sessionInfo);
+
 		commit('setCsrfToken', sessionInfo.csrfTokenValue, { root: true });
 		commit('setIsGuest', sessionInfo.isGuest);
 		if (!sessionInfo.isGuest) {
