@@ -58,13 +58,13 @@ get this project up and running quickly by doing the following:
 8. Next we need to install Nuxt and the other dependencies for the front end build. In your terminal
 run the following command :
 
-        ddev exec yarn install
+        ddev yarn install
 
 *Note This process can take a few minutes to download and install the necessary packages.
         
 1. To run the front end of the project in dev mode, you then use the following command :
 
-        ddev exec yarn dev
+        ddev yarn dev
 
 2.  In your browser you can now access the site running locally in DDEV :
     
