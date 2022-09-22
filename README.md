@@ -78,5 +78,3 @@ run the following command :
     * **Front End** (on port 3000)
     
             https://dot-all-2022.fostercommerce.test:3000
-
-### Manual Installation
