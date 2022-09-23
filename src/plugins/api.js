@@ -87,12 +87,6 @@ const api = ({$axios}, $config, store) => {
 			return response.data;
 		},
 		/**
-		 * Get the user's cart from the Craft back end.
-		 */
-		getCart: async () => {
-			return await get('/actions/fc/cart/get-cart');
-		},
-		/**
 		 * For adding an item to the cart.
 		 *
 		 * @property {object} item - The item to add to the cart.

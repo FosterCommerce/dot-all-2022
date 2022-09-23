@@ -232,7 +232,7 @@ export const actions = {
 	 */
 	async fetchCart({ commit, dispatch }) {
 		// Get the cart from commerce and set it into state
-		const { cart } = await this.$api.getCart();
+		const { cart } = await this.$api.get('/actions/fc/cart/get-cart');
 		commit('setCurrentCart', cart);
 		await dispatch('fetchAddresses', cart.id);
 		commit('setLoading', false);
