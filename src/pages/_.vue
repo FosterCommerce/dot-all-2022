@@ -15,7 +15,7 @@
 			// Check for Craft Live Preview params
 			let previewParams = null;
 			let allowDraft = false;
-			if (route.query['x-craft-live-preview']) {
+			if (route.query.token) {
 				allowDraft = true;
 				previewParams = {
 					token: route.query.token,
