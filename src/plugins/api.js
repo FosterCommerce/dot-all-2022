@@ -87,28 +87,6 @@ const api = ({$axios}, $config, store) => {
 			return response.data;
 		},
 		/**
-		 * For updating the quantity of an item in the cart.
-		 *
-		 * @property {object} item - The item to update the quantity for.
-		 */
-		updateQty: async (item) => {
-			const data = {
-				lineItems: { [item.itemId]: {'qty': item.qty} },
-			};
-			return await postAction('/fc/cart/update-cart', data);
-		},
-		/**
-		 * For removing an item from the cart.
-		 *
-		 * @property {object} item - The item to remove from the cart.
-		 */
-		removeItem: async (item) => {
-			const data = {
-				lineItems: {[item.itemId]: {'remove': true}},
-			};
-			return await postAction('/fc/cart/update-cart', data);
-		},
-		/**
 		 * Apply a coupon to the cart.
 		 *
 		 * @property {object} item - The coupon object.
