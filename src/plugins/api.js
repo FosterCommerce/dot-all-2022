@@ -86,16 +86,6 @@ const api = ({$axios}, $config, store) => {
 			);
 			return response.data;
 		},
-		/**
-		 * Clears errors/notices from the Craft back end for the cart.
-		 */
-		clearNotices: async () => {
-			const data = {
-				clearNotices: 'clearNotices',
-			};
-			return await postAction('/fc/cart/update-cart', data);
-		},
-
 		saveAddress: async (address) => {
 			const data = {
 				addressId: address.id,

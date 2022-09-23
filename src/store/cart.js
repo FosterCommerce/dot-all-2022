@@ -451,7 +451,9 @@ export const actions = {
    * @property {function} commit - Vuex commit method.
    */
   async clearNotices({ commit }) {
-    const { cart } = await this.$api.clearNotices();
+  	const { cart } = await this.$api.postAction('/fc/cart/update-cart', {
+			clearNotices: 'clearNotices'
+		});
     commit('setCurrentCart', cart);
   },
 };
