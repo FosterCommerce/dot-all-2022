@@ -115,5 +115,10 @@ Vercel will be pulling code from your repository. It works with GitHub, GitLab, 
 
 For our purposes, we are going to assume you already have an account with one of the providers listed and have logged in using that.
 
-You should now see a list of your repositories
+You should now see a list of your repositories and you can select the project to deploy to Vercel.
+
+Vercel is only hosting the Front-end of the site, the pages that your users will interact with. The Back-end, the Craft installation itself and the database, is running on Foster Commerce's server hosted on Forge.
+
+
+
 
