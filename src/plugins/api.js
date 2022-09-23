@@ -86,32 +86,6 @@ const api = ({$axios}, $config, store) => {
 			);
 			return response.data;
 		},
-
-		submitStripePayment: async (paymentInfo) => {
-			try {
-				return await postAction('/commerce/payments/pay', paymentInfo);
-			} catch (e) {
-				if (e.response) {
-					return e.response.data;
-				} else {
-					// TODO Handle some case where response is not set
-					return null;
-				}
-			}
-		},
-
-		submitManualPayment: async () => {
-			try {
-				return await postAction('/commerce/payments/pay');
-			} catch (e) {
-				if (e.response) {
-					return e.response.data;
-				} else {
-					// TODO Handle some case where response is not set
-					return null;
-				}
-			}
-		},
 	};
 };
 

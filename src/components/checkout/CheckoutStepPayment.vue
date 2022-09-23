@@ -152,6 +152,7 @@
 					await this.saveBillingAddress(this.newAddress);
 				}
 			},
+
 			async processStripePayment() {
 				this.isSaving = true;
 
@@ -170,7 +171,8 @@
 								// Show the user any errors
 								this.cardError = result.error.message;
 							} else {
-								const response = await this.$api.submitStripePayment({
+
+								const response = await this.$api.postAction('/commerce/payments/pay', {
 									'paymentForm[stripe][paymentMethodId]': result.paymentMethod.id
 								});
 
@@ -188,10 +190,11 @@
 						});
 				}
 			},
+
 			async processManualPayment() {
 				await this.saveBilling();
 
-				const response = await this.$api.submitManualPayment();
+				const response = await this.$api.postAction('/commerce/payments/pay')
 
 				if (response.message) {
 					this.manualError = response.message;
@@ -202,6 +205,7 @@
 					this.goToFirstStep();
 				}
 			},
+
 			nextStep() {
 				if (this.paymentGateway === 'stripe') {
 					this.processStripePayment();
