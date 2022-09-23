@@ -5,7 +5,7 @@
 		async asyncData({ $api, route }) {
 			// Check for Craft Live Preview params
 			let previewParams = null;
-			if (route.query['x-craft-live-preview']) {
+			if (route.query.token) {
 				previewParams = {
 					token: route.query.token,
 					'x-craft-live-preview': route.query['x-craft-live-preview'],
