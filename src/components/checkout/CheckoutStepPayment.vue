@@ -40,21 +40,26 @@
 				'getCurrentCart',
 				'getCartErrors'
 			]),
+
 			...mapGetters('checkout', [
 				'getIsFirstStep',
 				'getPreviousStep',
 				'getGateways'
 			]),
+
+			gatewayId() {
+				const gateway = this.getGateways.filter((gateway) => gateway.handle === this.paymentGateway);
+
+				return gateway[0].id;
+			},
 		},
 		watch: {
 			billingSameAsShipping() {
 				this.saveBillingSameAsShipping(this.billingSameAsShipping);
 			},
-			async paymentGateway() {
-				const gateway = this.getGateways.filter((gateway) => gateway.handle === this.paymentGateway);
-				const gatewayId = gateway[0].id;
 
-				await this.$api.postAction('/fc/cart/update-cart', { gatewayId });
+			async paymentGateway() {
+				await this.updateCartGateway();
 
 				if (this.paymentGateway === 'paypal' && !this.paypalLoaded) {
 					const cart = this.getCurrentCart;
@@ -73,14 +78,8 @@
 								},
 
 								// set up the transaction
-								// we need to hash the 'cancelUrl' (and 'return'?) params like what happens in Twig
-								// TODO: Create a custom controller that adds the hmac hash like the Twig filter does.
-								// Then load it before we post here
 								createOrder: () => {
-									return this.$api.postAction('/commerce/payments/pay', {
-										// redirect: 'https://www.fostercommerce.com/checkout',
-										// cancelUrl: `https://www.fostercommerce.com/order?number=${this.getCurrentCart.number}`
-									}).then((res) => {
+									return this.$api.postAction('/commerce/payments/pay').then((res) => {
 										return res;
 									}).then((data) => {
 										this.transactionHash = data.transactionHash;
@@ -92,13 +91,9 @@
 								onApprove: async () => {
 									await this.saveBilling();
 
-									const response = await this.$api.get(`/actions/commerce/payments/complete-payment?commerceTransactionHash=${this.transactionHash}`);
-
-									// TODO Handle success
-									console.log('Order Done', response);
-									this.incrementStep();
-
-									return response;
+									return await this.$api.get(
+										`/actions/commerce/payments/complete-payment?commerceTransactionHash=${this.transactionHash}`
+									);
 								},
 
 								// handle unrecoverable errors
@@ -124,6 +119,7 @@
 			},
 		},
 		async mounted() {
+			await this.updateCartGateway();
 			this.billingSameAsShipping = this.getBillingSameAsShipping;
 			this.stripe = await loadStripe(process.env.stripePublicKey);
 			const elements = this.stripe.elements();
@@ -146,11 +142,13 @@
 				'saveBillingSameAsShipping',
 				'saveBillingAddress'
 			]),
+
 			...mapActions('checkout', [
 				'decrementStep',
 				'incrementStep',
 				'goToFirstStep',
 			]),
+
 			async saveBilling() {
 				if (this.billingSameAsShipping) {
 					await this.saveBillingSameAsShipping(true);
@@ -221,17 +219,25 @@
 					this.processManualPayment();
 				}
 			},
+
 			previousStep() {
 				// ... Any code that needs to happen here before
 				// stepping back in the process
 				this.decrementStep();
 			},
+
 			loadScriptAsync(url, callback) {
 				const script = document.createElement('script');
 
 				script.setAttribute('src', url);
 				script.onload = callback;
 				document.head.insertBefore(script, document.head.firstElementChild);
+			},
+
+			async updateCartGateway() {
+				await this.$api.postAction('/fc/cart/update-cart', {
+					gatewayId: this.gatewayId
+				});
 			},
 		},
 	};
