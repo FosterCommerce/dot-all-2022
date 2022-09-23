@@ -198,7 +198,8 @@
 				} else {
 					// TODO Handle success
 					console.log('Order Done', response);
-					this.incrementStep();
+					await this.$router.push(`/order?number=${this.getCurrentCart.number}`);
+					this.goToFirstStep();
 				}
 			},
 			nextStep() {

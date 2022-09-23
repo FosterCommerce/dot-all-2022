@@ -29,14 +29,15 @@
 		},
 		methods: {
 			...mapActions('user', [
-				'fetchAddresses'
+				'fetchAddresses',
+				'deleteAddress'
 			]),
 			close() {
 				this.$emit('close');
 			},
-			async deleteAddress() {
-				await this.$api.deleteAddress(this.address);
-				this.fetchAddresses();
+			async deleteUserAddress() {
+				await this.deleteAddress(this.address);
+				await this.fetchAddresses();
 				this.close();
 			}
 		}
@@ -76,7 +77,7 @@
 			<button
 				type="submit"
 				class="flex justify-center items-center px-4 py-2 bg-red-600 text-base font-medium rounded-md text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:inline-flex"
-				@click.prevent="deleteAddress"
+				@click.prevent="deleteUserAddress"
 			>
 				Delete Address
 			</button>

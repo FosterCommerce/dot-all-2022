@@ -30,13 +30,14 @@
 		},
 		methods: {
 			...mapActions('user', [
-				'fetchAddresses'
+				'fetchAddresses',
+				'saveAddress'
 			]),
 			close() {
 				this.$emit('close');
 			},
-			async saveAddress() {
-				await this.$api.saveAddress(this.addressData);
+			async saveUserAddress() {
+				await this.saveAddress(this.addressData);
 				await this.fetchAddresses();
 				this.close();
 			}
@@ -52,7 +53,7 @@
 			<button
 				type="submit"
 				class="flex justify-center items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
-				@click.prevent="saveAddress"
+				@click.prevent="saveUserAddress"
 			>
 				Save Address
 			</button>
