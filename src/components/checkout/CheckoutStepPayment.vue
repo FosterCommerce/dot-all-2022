@@ -271,9 +271,7 @@
 
 				<div v-show="paymentGateway === 'paypal'">
 					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
-						<form>
-							<div v-html="paypalForm"></div>
-						</form>
+						<div>PayPal text here.</div>
 
 						<div v-if="paypalError" class="text-red-500 text-sm mt-2">{{ paypalError }}</div>
 					</div>
@@ -290,7 +288,7 @@
 
 		</section>
 
-		<section aria-labelledby="billing-heading" class="mt-10">
+		<section v-show="paymentGateway !== 'paypal'" aria-labelledby="billing-heading" class="mt-10">
 			<h2 id="billing-heading" class="text-xl font-medium text-gray-900 lg:text-2xl">
 				Billing address
 			</h2>
@@ -322,6 +320,7 @@
 			class="flex flex-col justify-start items-stretch gap-y-4 pt-8 sm:flex-row-reverse sm:justify-between sm:items-center lg:pt-16"
 		>
 			<button
+				v-if="paymentGateway !== 'paypal'"
 				:class="{ 'opacity-25 cursor-not-allowed': isSaving }"
 				class="flex justify-center items-center px-8 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:inline-flex"
 				:disabled="isSaving"
@@ -334,6 +333,7 @@
 					<path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
 				</svg>
 			</button>
+			<div v-else v-html="paypalForm"></div>
 
 			<nuxt-link
 				v-if="getIsFirstStep"
