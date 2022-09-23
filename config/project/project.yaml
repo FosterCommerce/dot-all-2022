@@ -1,4 +1,4 @@
-dateModified: 1663879859
+dateModified: 1663927475
 elementSources:
   craft\elements\Entry:
     -
@@ -158,5 +158,6 @@ system:
   edition: pro
   live: true
   name: 'Foster Commerce Dot All 2022'
+  retryDuration: null
   schemaVersion: 4.0.0.9
   timeZone: America/Los_Angeles

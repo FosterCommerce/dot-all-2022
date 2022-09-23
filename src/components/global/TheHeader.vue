@@ -76,8 +76,8 @@
             <div class="hidden lg:flex-1 lg:block lg:self-stretch">
               <div class="h-full flex space-x-8">
 								<template v-for="(link, index) in navItems">
-									<nuxt-link v-if="link.type === 'internal'" :key="index" :to="link.url" :target="link.target" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">{{ link.label }}</nuxt-link>
-									<a v-else :key="index" :href="link.url" :target="link.target" class="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800">{{ link.label }}</a>
+									<nuxt-link v-if="link.type === 'internal'" :key="index" :to="link.url" :target="link.target" class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-700 hover:underline">{{ link.label }}</nuxt-link>
+									<a v-else :key="index" :href="link.url" :target="link.target" class="flex items-center text-sm font-medium text-gray-700  hover:text-indigo-700 hover:underline">{{ link.label }}</a>
 								</template>
               </div>
             </div>
