@@ -128,4 +128,21 @@ export const actions = {
 		);
 		commit('setAddresses', data.addresses);
 	},
+
+	async saveAddress({ dispatch }, address) {
+		const data = {
+			addressId: address.id,
+			...address
+		};
+		const { model } = await this.$api.postAction('users/save-address', data);
+		return model;
+	},
+
+	async deleteAddress({ dispatch }, address) {
+		const data = {
+			addressId: address.id,
+		};
+		const { model } = await this.$api.postAction('users/delete-address', data);
+		return model;
+	}
 }

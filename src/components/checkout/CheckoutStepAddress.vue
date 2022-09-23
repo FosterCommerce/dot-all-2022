@@ -112,7 +112,8 @@
 		},
 		methods: {
 			...mapActions('user', [
-				'fetchAddresses'
+				'fetchAddresses',
+				'saveAddress',
 			]),
 			...mapActions('checkout', [
 				'decrementStep',
@@ -138,12 +139,12 @@
 				this.deleteModalOpen = !this.deleteModalOpen;
 			},
 
-			editAddress(id) {
+			editUserAddress(id) {
 				this.loadAddress(id);
 				this.toggleEditAddressModal();
 			},
 
-			deleteAddress(id) {
+			deleteUserAddress(id) {
 				this.loadAddress(id);
 				this.toggleDeleteAddressModal();
 			},
@@ -160,11 +161,10 @@
 
 					if (!this.getIsGuest) {
 
-						// The user is logged in, so let's save the address to their addresses first, and then
-						// set it as the 'selectedAddress' we will use.
+						// The user is logged in, so let's save the address to their addresses,
+						// and set it as the 'selectedAddress' we will use.
 
-						const userAddress = await this.$api.saveAddress(this.newAddress);
-						selectedAddress = userAddress.model
+						selectedAddress = await this.saveAddress(this.newAddress);
 
 					} else {
 
@@ -237,7 +237,7 @@
 							<button
 								type="button"
 								class="inline-flex items-center mt-2 px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-								@click="editAddress(address.id)"
+								@click="editUserAddress(address.id)"
 							>
 								Edit
 							</button>
@@ -246,7 +246,7 @@
 								:class="{ 'opacity-25 cursor-not-allowed': parseInt(address.id) === parseInt(shippingAddress) }"
 								class="inline-flex items-center mt-2 px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 								:disabled="parseInt(address.id) === parseInt(shippingAddress)"
-								@click="deleteAddress(address.id)"
+								@click="deleteUserAddress(address.id)"
 							>
 								Delete
 							</button>
