@@ -232,7 +232,7 @@ export const actions = {
 	 */
 	async fetchCart({ commit, dispatch }) {
 		// Get the cart from commerce and set it into state
-		const { cart } = await this.$api.getCart();
+		const { cart } = await this.$api.get('/actions/fc/cart/get-cart');
 		commit('setCurrentCart', cart);
 		await dispatch('fetchAddresses', cart.id);
 		commit('setLoading', false);
@@ -253,14 +253,15 @@ export const actions = {
    *
    * @property {function} dispatch - Vuex dispatch method.
    * @property {function} commit   - Vuex commit method.
-   * @property {object}   item     - The item object to add to the cart.
+   * @property {object}   item     - The purchasable item to add to the cart.
    */
   async addNewItem({ commit, dispatch }, item) {
     try {
-        const { cart } = await this.$api.addItem({
-          id: item.id,
-          qty: item.qty,
-        });
+    		const { cart } = await this.$api.postAction('/fc/cart/update-cart', {
+					purchasableId: item.id,
+					qty: item.qty,
+				});
+
        const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
        if (errorNotices.length < 1) {
@@ -270,52 +271,60 @@ export const actions = {
       handleError(commit, error);
     }
   },
+	/**
+	 * Set the quantity of a line item.
+	 *
+	 * @property {function} dispatch - Vuex dispatch method.
+	 * @property {function} commit   - Vuex commit method.
+	 * @property {object}   item     - The line item to set the quantity for.
+	 */
+	async setItemQty({ dispatch, commit }, item) {
+		try {
+			const { cart } = await this.$api.postAction('/fc/cart/update-cart', {
+				lineItems: {
+					[Number(item.id)]: {
+						qty: Number(item.qty)
+					}
+				}
+			});
+
+			const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
+
+			if (errorNotices.length < 1) {
+				if (item.qty === 0) {
+					return dispatch('removeItem', item);
+				}
+				commit('setCurrentCart', cart);
+				return true;
+			}
+		} catch (error) {
+			handleError(commit, error);
+			return false;
+		}
+	},
   /**
-   * Remove an item entirely from the cart.
+   * Remove a line item entirely from the cart.
    *
    * @property {function} dispatch - Vuex dispatch method.
    * @property {function} commit   - Vuex commit method.
-   * @property {object}   item     - The item object to remove from the cart.
+   * @property {object}   item     - The line item to remove from the cart.
    */
   async removeItem({ commit, dispatch }, item) {
     try {
-       const { cart } = await this.$api.removeItem({ itemId: item.id });
-       const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
+    	const { cart } = await this.$api.postAction('/fc/cart/update-cart', {
+				lineItems: {
+					[Number(item.id)]: {
+						remove: true
+					}},
+			});
 
-       if (errorNotices.length < 1) {
-          commit('setCurrentCart', cart);
-       }
+    	const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
+
+			if (errorNotices.length < 1) {
+				commit('setCurrentCart', cart);
+			}
     } catch (error) {
        handleError(commit, error);
-    }
-  },
-
-  /**
-   * Set the quantity of an item.
-   *
-   * @property {function} dispatch - Vuex dispatch method.
-   * @property {function} commit   - Vuex commit method.
-   * @property {object}   item     - The item object to set the quantity for.
-   */
-  async setItemQty({ dispatch, commit }, item) {
-  	console.log(item.id)
-    try {
-      const { cart } = await this.$api.updateQty({
-        itemId: Number(item.id),
-        qty: Number(item.qty),
-      });
-      const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
-
-      if (errorNotices.length < 1) {
-        if (item.qty === 0) {
-          return dispatch('removeItem', item);
-        }
-        commit('setCurrentCart', cart);
-        return true;
-      }
-    } catch (error) {
-      handleError(commit, error);
-      return false;
     }
   },
 
@@ -407,11 +416,14 @@ export const actions = {
    *
    * @property {function} dispatch - Vuex dispatch method.
    * @property {function} commit   - Vuex commit method.
-   * @property {object}   item     - The object that contains the coupon code property.
+   * @property {string} couponCode - The coupon code to apply to the cart.
    */
-  async applyCoupon({ dispatch, commit }, item) {
+  async applyCoupon({ dispatch, commit }, couponCode) {
     try {
-      const { cart } = await this.$api.applyCoupon({ couponCode: item.couponCode });
+      const { cart } = await this.$api.postAction('/fc/cart/update-cart',{
+				couponCode
+			});
+
       const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
       if (errorNotices.length < 1) {
@@ -439,7 +451,9 @@ export const actions = {
    * @property {function} commit - Vuex commit method.
    */
   async clearNotices({ commit }) {
-    const { cart } = await this.$api.clearNotices();
+  	const { cart } = await this.$api.postAction('/fc/cart/update-cart', {
+			clearNotices: 'clearNotices'
+		});
     commit('setCurrentCart', cart);
   },
 };
