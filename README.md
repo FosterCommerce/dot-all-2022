@@ -120,5 +120,21 @@ You should now see a list of your repositories and you can select the project to
 Vercel is only hosting the Front-end of the site, the pages that your users will interact with. The Back-end, the Craft installation itself and the database, is running on Foster Commerce's server hosted on Forge.
 
 
+# Testing the site
+
+If you have used the example .env file then you will already be hooked up to our test Stripe and Paypal accounts. Feel free to change the keys to use your own test accounts.
+## Checking out with Stripe
+We have hooked the site up to a Stripe Test account. 
+Stripe test card: 4242424242424242
+Expiry: any future date
+CVV: 123
+
+## Checking out with Paypal
+We have hooked the site up to our Paypal Sandbox account so to checkout using Paypal you will need to use the following credentials
+Email: sb-rqy43z21028865@personal.example.com
+Password: fcdotall
+Paypal test card number: 4111111111111111
+Expiry: any future date
+CVV: 123
 
 
