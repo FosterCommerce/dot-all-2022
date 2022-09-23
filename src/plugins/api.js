@@ -87,18 +87,6 @@ const api = ({$axios}, $config, store) => {
 			return response.data;
 		},
 		/**
-		 * For adding an item to the cart.
-		 *
-		 * @property {object} item - The item to add to the cart.
-		 */
-		addItem: async(item) => {
-			const data = {
-				purchasableId: item.id,
-				qty: item.qty,
-			};
-			return await postAction('/fc/cart/update-cart', data);
-		},
-		/**
 		 * For updating the quantity of an item in the cart.
 		 *
 		 * @property {object} item - The item to update the quantity for.

@@ -257,10 +257,10 @@ export const actions = {
    */
   async addNewItem({ commit, dispatch }, item) {
     try {
-        const { cart } = await this.$api.addItem({
-          id: item.id,
-          qty: item.qty,
-        });
+    		const { cart } = await this.$api.postAction('/fc/cart/update-cart', {
+					purchasableId: item.id,
+					qty: item.qty,
+				});
        const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
        if (errorNotices.length < 1) {
