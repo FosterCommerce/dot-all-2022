@@ -1,4 +1,6 @@
 <script>
+	import { mapActions } from 'vuex';
+
 	export default {
 		name: 'CheckoutDiscount',
 		props: {
@@ -8,8 +10,7 @@
 		},
 		data() {
 			return {
-				coupon:'',
-				error: null
+				coupon: '',
 			}
 		},
 		computed: {
@@ -17,12 +18,15 @@
 				return this.isMobile ? 'mobile' : 'desktop';
 			}
 		},
-		methods:{
-			applyCoupon(){
+		methods: {
+			...mapActions('cart', [
+				'applyCoupon'
+			]),
+			async applyCouponCode() {
 				if (this.coupon === '') {
-					return
+					return;
 				}
-				this.$store.dispatch('cart/applyCoupon', {couponCode: this.coupon})
+				await this.applyCoupon(this.coupon);
 			}
 		}
 	};
@@ -41,12 +45,10 @@
 			/>
 			<button
 				class="bg-gray-200 text-sm font-medium text-gray-600 rounded-md px-4 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
-				@click.prevent="applyCoupon"
+				@click.prevent="applyCouponCode"
 			>
 				Apply
 			</button>
 		</div>
-		<span v-if="error !== null" class="text-red-500 text-sm mt-2 ">{{error}}</span>
-		<!-- <span class="text-red-500 text-sm py-2 ">{{"Coupon removed: Coupon not valid."}}</span> -->
 	</form>
 </template>
