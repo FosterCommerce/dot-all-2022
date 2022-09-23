@@ -416,11 +416,14 @@ export const actions = {
    *
    * @property {function} dispatch - Vuex dispatch method.
    * @property {function} commit   - Vuex commit method.
-   * @property {object}   item     - The object that contains the coupon code property.
+   * @property {string} couponCode - The coupon code to apply to the cart.
    */
-  async applyCoupon({ dispatch, commit }, item) {
+  async applyCoupon({ dispatch, commit }, couponCode) {
     try {
-      const { cart } = await this.$api.applyCoupon({ couponCode: item.couponCode });
+      const { cart } = await this.$api.postAction('/fc/cart/update-cart',{
+				couponCode
+			});
+
       const errorNotices = handleNotices({ commit, dispatch }, cart.notices);
 
       if (errorNotices.length < 1) {

@@ -18,11 +18,11 @@
 			}
 		},
 		methods:{
-			applyCoupon(){
+			async applyCoupon() {
 				if (this.coupon === '') {
-					return
+					return;
 				}
-				this.$store.dispatch('cart/applyCoupon', {couponCode: this.coupon})
+				await this.$store.dispatch('cart/applyCoupon', this.coupon);
 			}
 		}
 	};
@@ -46,7 +46,6 @@
 				Apply
 			</button>
 		</div>
-		<span v-if="error !== null" class="text-red-500 text-sm mt-2 ">{{error}}</span>
-		<!-- <span class="text-red-500 text-sm py-2 ">{{"Coupon removed: Coupon not valid."}}</span> -->
+		<span v-if="error !== null" class="text-red-500 text-sm mt-2">{{ error }}</span>
 	</form>
 </template>

@@ -87,17 +87,6 @@ const api = ({$axios}, $config, store) => {
 			return response.data;
 		},
 		/**
-		 * Apply a coupon to the cart.
-		 *
-		 * @property {object} item - The coupon object.
-		 */
-		applyCoupon: async (item) => {
-			const data = {
-				couponCode: item.couponCode,
-			};
-			return await postAction('/fc/cart/update-cart', data);
-		},
-		/**
 		 * Clears errors/notices from the Craft back end for the cart.
 		 */
 		clearNotices: async () => {
