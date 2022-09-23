@@ -125,19 +125,41 @@ We are going to use Vercel to get your new Headless Commerce site online. The Fr
 
 _If you already have a Vercel account then you can skip this part._
 
-Vercel offers a free tier which will be great for what we are doing.
+Vercel offers a free "Hobby" tier which will be great for what we are doing.
 
 First off, head over to https://vercel.com/signup
 
-Vercel will be pulling code from your repository. It works with GitHub, GitLab, and Bitbucket. So sign in using one of those options or alternatively, sign up using an email address.
+Vercel will be pulling code from your repository. It works with GitHub, GitLab, and Bitbucket. So sign in using one of those options or alternatively, sign up using an email address. We recommend using GitHub.
 
-For our purposes, we are going to assume you already have an account with one of the providers listed and have logged in using that.
+For our purposes, we are going to assume you have logged in using GitHub. If you haven't then please head into your Vercel settings and add GitHub as a Repository provider.
 
-You should now see a list of your repositories and you can select the project to import into Vercel. Choose the DotAll Foster Commerce repo and click "Import".
+1. You should now see a list of your repositories and you can select the project to import into Vercel. Choose your DotAll repo and click "Import".
 
+2. Give your Vercel project a name (or just keep the default)
 
+3. The Framework Preset should be Nuxt.js
+
+4. Root directory should be ./
+
+5. Open the Build and Output Settings
+
+6. Flick the Override switch for the Build Command and set it to `yarn run build`
+
+7. Flick the Override switch for the Output Directory and set it to `.nuxt`
+
+8. Open the Environment Variables tab and the following
+
+   - CRAFT_BASE_URL = https://dot-all-2022.fosterstaging.com
+   - CRAFT_ENVIRONMENT = staging (or production is fine too)
+   - ASSET_BASE_URL = https://dot-all-2022.fosterstaging.com/assets
+   - STRIPE_PUB_KEY = pk_test_51LlDeCIQuBaBLwXUlhgSLcxeO57AtPojwBAKcK32OiXmNLkJ75zbFfAqQRBOzcryuHXt8CPhXWcsca6tha7JpM5Z00FEZRVfNm
+   -  STRIPE_SECRET_KEY = sk_test_51LlDeCIQuBaBLwXUob6773EXG9IYxrHtYohdTnjLGPsBWU1kRMXN7BaCVsTIVtRYWzgkRzm5slB3ksIJhqm7SRaL00KG1q9VBe
+
+9. Then click "Deploy"
 
 # Testing the site
+
+Access the Front-end of the site with your own Vercel App url
 
 If you have used the example .env file then you will already be hooked up to our test Stripe and Paypal accounts. Feel free to change the keys to use your own test accounts.
 ## Checking out with Stripe

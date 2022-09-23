@@ -54,7 +54,7 @@
 				const gateway = this.getGateways.filter((gateway) => gateway.handle === this.paymentGateway);
 				const gatewayId = gateway[0].id;
 
-				await this.$api.postAction('/fc/cart/update-cart', { gatewayId, });
+				await this.$api.postAction('/fc/cart/update-cart', { gatewayId });
 
 				if (this.paymentGateway === 'paypal' && !this.paypalLoaded) {
 					const cart = this.getCurrentCart;
@@ -73,8 +73,14 @@
 								},
 
 								// set up the transaction
+								// we need to hash the 'cancelUrl' (and 'return'?) params like what happens in Twig
+								// TODO: Create a custom controller that adds the hmac hash like the Twig filter does.
+								// Then load it before we post here
 								createOrder: () => {
-									return this.$api.postAction('/commerce/payments/pay').then((res) => {
+									return this.$api.postAction('/commerce/payments/pay', {
+										// redirect: 'https://www.fostercommerce.com/checkout',
+										// cancelUrl: `https://www.fostercommerce.com/order?number=${this.getCurrentCart.number}`
+									}).then((res) => {
 										return res;
 									}).then((data) => {
 										this.transactionHash = data.transactionHash;
