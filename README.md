@@ -83,11 +83,29 @@ run the following command :
 # Add the site to your own repository
 For the next steps we are going to be deploying the site to The Cloud using Vercel. In order to do this, you will need to host the code in your own repository using GitHub, GitLab, or Bitbucket.
 
+We recommend using GitHub as it's just going to make things simpler to explain!
 
-## Changing the origin
-Fire up a terminal and navigate to the root directory of the project. Type the following;
+### Importing with GitHub
+If you have a GitHub account you can simply import the project into a new repo.
 
+1. Log in to your GitHub account and go to your Repositories tab.
+2. Click "New", give the repository a name, and click "Create"
+3. On the next screen click the "Import Code" button and enter the url https://github.com/FosterCommerce/dot-all-2022.git. It may take a few minutes to import the code.
+4. Once that is done, you can check the repository out to your local machine as normal
+
+
+### Cloning the repository
+
+1. **Clone the project** to your local machine with
+- `git clone git@github.com:FosterCommerce/dot-all-2022.git`
+- or; `git clone https://github.com/FosterCommerce/dot-all-2022.git`
+- or; download the project as a .zip file from https://github.com/FosterCommerce/dot-all-2022/archive/refs/heads/develop.zip
+
+2. **Change the origin**
+To make this your own, fire up a terminal and navigate to the root directory of the project. Type the following; 
 `git remote set-url <url of your repo>`
+
+3. You'll then need to push the code up to your own repo ready for deployment with Vercel
 
 ---
 
@@ -101,7 +119,7 @@ According to a quick Google search&hellip;
 
 Basically, it's a quick and easy way to get a site up and running in the cloud for showing to your friends, family, and clients.
 
-We are going to use Vercel to get your new Headless Commerce site online.
+We are going to use Vercel to get your new Headless Commerce site online. The Front-end of the site will be hosted on your own Vercel account and the Back-end, Craft installation, and database, will be on Foster Commerce's Forge server. Everyone will share the same Back-end.
 
 ### Create a Vercel account
 
@@ -115,9 +133,8 @@ Vercel will be pulling code from your repository. It works with GitHub, GitLab, 
 
 For our purposes, we are going to assume you already have an account with one of the providers listed and have logged in using that.
 
-You should now see a list of your repositories and you can select the project to deploy to Vercel.
+You should now see a list of your repositories and you can select the project to import into Vercel. Choose the DotAll Foster Commerce repo and click "Import".
 
-Vercel is only hosting the Front-end of the site, the pages that your users will interact with. The Back-end, the Craft installation itself and the database, is running on Foster Commerce's server hosted on Forge.
 
 
 # Testing the site
@@ -138,4 +155,9 @@ We have hooked the site up to our Paypal Sandbox account so to checkout using Pa
 - Paypal test card number: 4111111111111111
 - Expiry: any future date
 - CVV: 123
+
+## Discount codes
+There is a test discount code already set up. 
+
+Use code **GIVEME10** for a sweet 10% off an imaginary product in the imaginary store! Thank us later.
 
