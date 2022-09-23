@@ -78,3 +78,63 @@ run the following command :
     * **Front End** (on port 3000)
     
             https://dot-all-2022.fostercommerce.test:3000
+
+---
+# Add the site to your own repository
+For the next steps we are going to be deploying the site to The Cloud using Vercel. In order to do this, you will need to host the code in your own repository using GitHub, GitLab, or Bitbucket.
+
+
+## Changing the origin
+Fire up a terminal and navigate to the root directory of the project. Type the following;
+
+`git remote set-url <url of your repo>`
+
+---
+
+
+# Deploying the site to Vercel
+
+## What is Vercel?
+According to a quick Google search&hellip;
+
+>"Vercel is a cloud platform that enables developers to host websites and web services that deploy instantly, scale automatically, and require no supervision"
+
+Basically, it's a quick and easy way to get a site up and running in the cloud for showing to your friends, family, and clients.
+
+We are going to use Vercel to get your new Headless Commerce site online.
+
+### Create a Vercel account
+
+_If you already have a Vercel account then you can skip this part._
+
+Vercel offers a free tier which will be great for what we are doing.
+
+First off, head over to https://vercel.com/signup
+
+Vercel will be pulling code from your repository. It works with GitHub, GitLab, and Bitbucket. So sign in using one of those options or alternatively, sign up using an email address.
+
+For our purposes, we are going to assume you already have an account with one of the providers listed and have logged in using that.
+
+You should now see a list of your repositories and you can select the project to deploy to Vercel.
+
+Vercel is only hosting the Front-end of the site, the pages that your users will interact with. The Back-end, the Craft installation itself and the database, is running on Foster Commerce's server hosted on Forge.
+
+
+# Testing the site
+
+If you have used the example .env file then you will already be hooked up to our test Stripe and Paypal accounts. Feel free to change the keys to use your own test accounts.
+## Checking out with Stripe
+We have hooked the site up to a Stripe Test account. 
+Stripe test card: 4242424242424242
+Expiry: any future date
+CVV: 123
+
+## Checking out with Paypal
+We have hooked the site up to our Paypal Sandbox account so to checkout using Paypal you will need to use the following credentials
+Email: sb-rqy43z21028865@personal.example.com
+Password: fcdotall
+Paypal test card number: 4111111111111111
+Expiry: any future date
+CVV: 123
+
+
