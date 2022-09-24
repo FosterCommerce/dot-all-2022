@@ -25,7 +25,6 @@
 				paypalForm: null,
 				paypalLoaded: false,
 				transactionHash: null,
-				// paypalOrderId: null,
 				paymentGateway: 'stripe',
 				isSaving: false,
 				cardError: null,
@@ -69,6 +68,7 @@
 						const paypal = typeof window.paypal !== "undefined" ? window.paypal : null;
 
 						if (paypal) {
+							const gateway = this.getGateways.filter((gateway) => gateway.handle === 'paypal');
 							const paypalButtonsComponent = paypal.Buttons({
 								fundingSource: paypal.FUNDING.PAYPAL,
 
@@ -79,7 +79,10 @@
 
 								// set up the transaction
 								createOrder: () => {
-									return this.$api.postAction('/commerce/payments/pay').then((res) => {
+									return this.$api.postAction('/commerce/payments/pay', {
+										redirect: gateway[0].redirect,
+										cancelUrl: gateway[0].cancelUrl,
+									}).then((res) => {
 										return res;
 									}).then((data) => {
 										this.transactionHash = data.transactionHash;
@@ -183,8 +186,6 @@
 								if (response.message) {
 									this.cardError = response.message;
 								} else {
-									// TODO Handle success
-									console.log('Order Done', response);
 									await this.$router.push(`/order?number=${this.getCurrentCart.number}`);
 									this.goToFirstStep();
 								}
