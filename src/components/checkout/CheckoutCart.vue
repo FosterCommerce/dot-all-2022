@@ -14,6 +14,13 @@
 			style() {
 				return this.isMobile ? 'divide-y divide-gray-200 border-b border-gray-200' : 'flex-auto overflow-y-auto divide-y divide-gray-200 px-6';
 			}
+		},
+		watch: {
+			async cartItems(items) {
+				if (items.length === 0) {
+					await this.$router.push('/cart');
+				}
+			}
 		}
 	};
 </script>
