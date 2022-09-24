@@ -4,7 +4,7 @@
 
 The project is hosted in a public GitHub repository at https://github.com/FosterCommerce/dot-all-2022.git
 
-Later on we will be deploying the site to The Cloud using Vercel. In order to do this, you will need to host the code in your own repository using GitHub, GitLab, or Bitbucket. We suggest using GitHub as it will make it easier to follow these instructions. 
+Later on we will be deploying the site to The Cloud using Vercel. In order to do this, you will need to host the code in your own repository using GitHub, GitLab, or Bitbucket. For simplicity, these instructions are assuming you are using GitHub. 
 
 ### Importing with GitHub
 If you have a GitHub account you can simply import the project into a new repo.
@@ -12,7 +12,7 @@ If you have a GitHub account you can simply import the project into a new repo.
 1. Log in to your GitHub account and go to your Repositories tab.
 2. Click "New", give the repository a name, and click "Create"
 3. On the next screen click the "Import Code" button and enter the url https://github.com/FosterCommerce/dot-all-2022.git. It may take a few minutes to import the code.
-4. Once that is done, you can check the repository out to your local machine as normal
+4. Once that is done, you can check the repository out to your local machine as normal.
 
 If you do it this way, then skip to the Installation section below.
 
@@ -31,17 +31,19 @@ To make this your own, fire up a terminal and navigate to the root directory of 
 3. You'll then need to push the code up to your own repository
 
 ---
-## Installing for local development
+## Installing the dev environment
 
 ### Docker and Docker Desktop
 
 You will need Docker Desktop and DDEV in order to run this project.
 
-Take a look at this blog post for a quick guide for installing Docker and DDEV. https://blog.fortrabbit.com/local-craft-dev-site-ddev-development-tool. You only need follow the part titled "Install DDEV to power your local Craft CMS dev sites".
+Docker is free for small businesses (fewer than 250 employees AND less than $10 million in annual revenue), personal use, education, and non-commercial open source projects.
+
+Take a look at [this blog post](https://blog.fortrabbit.com/local-craft-dev-site-ddev-development-tool) from Fortrabbit for a quick guide for installing Docker and DDEV. You only need follow the part titled "Install DDEV to power your local Craft CMS dev sites".
 
 ### Installation with DDEV
 
-This workshop repo includes DDEV config files so if you have Docker Desktop and DDEV installed on your machine, you can get this project up and running quickly by doing the following:
+This workshop repo includes DDEV config files so if you have Docker Desktop and DDEV installed on your machine, you can get the project up and running quickly by doing the following:
 
 1. Save the .env.example file as .env, and add values for CRAFT_APP_ID and CRAFT_SECURITY_KEY :
 
@@ -148,9 +150,9 @@ For our purposes, we are going to assume you have logged in using GitHub. If you
 
 5. Open the Build and Output Settings
 
-6. Flick the Override switch for the Build Command and set it to `yarn run build`
+6. Set the Build Command to `yarn run build`
 
-7. Flick the Override switch for the Output Directory and set it to `.nuxt`
+7. Set the Output Directory to `.nuxt`
 
 8. Open the Environment Variables tab and set the following
    
@@ -164,7 +166,7 @@ For our purposes, we are going to assume you have logged in using GitHub. If you
 
 9. Then click "Deploy"
 
-From this point on, Vercel will create a deployment whenever you push changes to your repo. The deployments are based on the branch you push to so you can have separate "sites" for your development and production. By default, the production site will deploy from `main` or `master`.
+From this point on, Vercel will create a deployment whenever you push changes to your repo. The deployments are based on the branch you push to so you can have separate "sites" for your development, preview, and production. By default, the production site will deploy from `main` or `master`.
 
 # Testing the site
 
