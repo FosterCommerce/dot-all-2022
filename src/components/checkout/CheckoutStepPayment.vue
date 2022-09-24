@@ -94,9 +94,12 @@
 								onApprove: async () => {
 									await this.saveBilling();
 
-									return await this.$api.get(
+									const completed = await this.$api.get(
 										`/actions/commerce/payments/complete-payment?commerceTransactionHash=${this.transactionHash}`
 									);
+
+									await this.$router.push(completed.url);
+									this.goToFirstStep();
 								},
 
 								// handle unrecoverable errors
