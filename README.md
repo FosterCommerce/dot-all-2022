@@ -147,15 +147,19 @@ For our purposes, we are going to assume you have logged in using GitHub. If you
 
 7. Flick the Override switch for the Output Directory and set it to `.nuxt`
 
-8. Open the Environment Variables tab and the following
-
-   - CRAFT_BASE_URL = https://dot-all-2022.fosterstaging.com
-   - CRAFT_ENVIRONMENT = staging (or production is fine too)
-   - ASSET_BASE_URL = https://dot-all-2022.fosterstaging.com/assets
-   - STRIPE_PUB_KEY = pk_test_51LlDeCIQuBaBLwXUlhgSLcxeO57AtPojwBAKcK32OiXmNLkJ75zbFfAqQRBOzcryuHXt8CPhXWcsca6tha7JpM5Z00FEZRVfNm
-   -  STRIPE_SECRET_KEY = sk_test_51LlDeCIQuBaBLwXUob6773EXG9IYxrHtYohdTnjLGPsBWU1kRMXN7BaCVsTIVtRYWzgkRzm5slB3ksIJhqm7SRaL00KG1q9VBe
+8. Open the Environment Variables tab and set the following
+   
+| Variable name | Value |
+| --- | --- |
+| CRAFT_BASE_URL | https://dot-all-2022.fosterstaging.com |
+| CRAFT_ENVIRONMENT | staging (or production is fine too) |
+| ASSET_BASE_URL | https://dot-all-2022.fosterstaging.com/assets |
+| STRIPE_PUB_KEY |  pk_test_51LlDeCIQuBaBLwXUlhgSLcxeO57AtPojwBAKcK32OiXmNLkJ75zbFfAqQRBOzcryuHXt8CPhXWcsca6tha7JpM5Z00FEZRVfNm |
+| PAYPAL_CLIENT_ID |AXP96ibcJy88Xp0cthYMmO8_B0Mzln8TMy7D1LiuUMbXQG89ghRTJQLvbY8oS4AiQuNn2qbnKvn3yFy0 |
 
 9. Then click "Deploy"
+
+From this point on, Vercel will create a deployment whenever you push changes to your repo. The deployments are based on the branch you push to so you can have separate "sites" for your development and production. By default, the production site will deploy from `main` or `master`.
 
 # Testing the site
 
