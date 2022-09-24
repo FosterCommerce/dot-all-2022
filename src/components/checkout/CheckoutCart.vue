@@ -21,6 +21,11 @@
 					await this.$router.push('/cart');
 				}
 			}
+		},
+		async mounted() {
+			if (this.cartItems.length === 0) {
+				await this.$router.push('/cart');
+			}
 		}
 	};
 </script>
