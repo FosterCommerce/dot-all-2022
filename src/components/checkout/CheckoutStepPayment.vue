@@ -300,7 +300,17 @@
 
 				<div v-show="paymentGateway === 'manual'">
 					<div class="w-full px-4 py-2 border border-gray-300 rounded-md">
-						<div>Manual Payment Info Here</div>
+						<div>
+							<p class="text-gray-900">
+								Please send us your check or money order to the following address so we may continue to process the order:
+							</p>
+							<address class="mt-2 not-italic text-gray-500">
+								<span class="block">Foster Clothing Inc.</span>
+								<span class="block">1234 Test Street</span>
+								<span class="block">Los Angeles, CA, 93277</span>
+								<span class="block">US</span>
+							</address>
+						</div>
 						<div v-if="manualError" class="text-red-500 text-sm mt-2">{{ manualError }}</div>
 					</div>
 				</div>
