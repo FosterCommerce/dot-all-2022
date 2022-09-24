@@ -11,25 +11,8 @@ use modules\fc\Fc;
 
 class CriticalDataController extends Controller
 {
-    protected array|bool|int $allowAnonymous = [ 'get-csrf-token', 'get-store-countries', 'get-store-regions', 'get-store-payment-gateways' ];
+    protected array|bool|int $allowAnonymous = [ 'get-store-countries', 'get-store-regions', 'get-store-payment-gateways' ];
 
-    /**
-     * Get the CSRF token from the Critical Data service
-     *
-     * @return Response
-     */
-    public function actionGetCsrfToken() : Response {
-        $response = [
-            'success'   => true,
-            'csrfToken' => ''
-        ];
-
-        if (Craft::$app->getConfig()->getGeneral()->enableCsrfProtection) {
-            $response['csrfToken'] = Fc::getInstance()->critical->getCsrfToken();
-        }
-
-        return $this->asJson($response);
-    }
 	/**
 	 * Get the countries enabled in Commerce
 	 *
@@ -47,6 +30,7 @@ class CriticalDataController extends Controller
 
         return $this->asJson($response);
     }
+
 	/**
 	 * Get the country regions enabled in Commerce
 	 *
@@ -64,6 +48,7 @@ class CriticalDataController extends Controller
 
         return $this->asJson($response);
     }
+
 	/**
 	 * Get the enabled payment gateways in Commerce
 	 *
