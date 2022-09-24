@@ -5,6 +5,7 @@ namespace modules\fc\services;
 use Craft;
 use craft\base\Component;
 use craft\commerce\Plugin;
+use craft\services\Security;
 
 class CriticalDataService extends Component {
     /**
@@ -49,6 +50,11 @@ class CriticalDataService extends Component {
             foreach ($gateway as $k => $v) {
                 if (preg_match('/^\$[A-Z0-9_]/', $v)) {
                     $v = getenv(str_replace('$', '', $v));
+                }
+
+                if ($k === 'handle' && $v === 'paypal') {
+                    $newGateway['redirect']  = Craft::$app->getSecurity()->hashData('/order?number={number}');
+                    $newGateway['cancelUrl'] = Craft::$app->getSecurity()->hashData('/checkout');
                 }
 
                 $newGateway[$k] = $v;
