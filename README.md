@@ -1,6 +1,39 @@
 # Launching a Headless Craft Commerce Site Workshop
 
-## Installation
+## Get a copy of the project
+
+The project is hosted in a public GitHub repository at https://github.com/FosterCommerce/dot-all-2022.git
+
+Later on we will be deploying the site to The Cloud using Vercel. In order to do this, you will need to host the code in your own repository using GitHub, GitLab, or Bitbucket. We suggest using GitHub as it will make it easier to follow these instructions. 
+
+### Importing with GitHub
+If you have a GitHub account you can simply import the project into a new repo.
+
+1. Log in to your GitHub account and go to your Repositories tab.
+2. Click "New", give the repository a name, and click "Create"
+3. On the next screen click the "Import Code" button and enter the url https://github.com/FosterCommerce/dot-all-2022.git. It may take a few minutes to import the code.
+4. Once that is done, you can check the repository out to your local machine as normal
+
+If you do it this way, then skip to the Installation section below.
+
+### Cloning the repository and changing remote
+Alternatively you can clone the project to your local machine and change its remote origin to your own repository.
+
+1. **Clone the project** to your local machine with
+- `git clone git@github.com:FosterCommerce/dot-all-2022.git`
+- or; `git clone https://github.com/FosterCommerce/dot-all-2022.git`
+- or; download the project as a .zip file from https://github.com/FosterCommerce/dot-all-2022/archive/refs/heads/develop.zip
+
+2. **Change the origin**
+To make this your own, fire up a terminal and navigate to the root directory of the project. Type the following; 
+`git remote set-url <url of your repo>`
+
+3. You'll then need to push the code up to your own repository
+
+---
+## Installing for local development
+
+### Docker and Docker Desktop
 
 You will need Docker Desktop and DDEV in order to run this project.
 
@@ -8,8 +41,7 @@ Take a look at this blog post for a quick guide for installing Docker and DDEV. 
 
 ### Installation with DDEV
 
-This workshop repo includes DDEV config files so if you have Docker Desktop and DDEV installed on your machine, you can
-get this project up and running quickly by doing the following:
+This workshop repo includes DDEV config files so if you have Docker Desktop and DDEV installed on your machine, you can get this project up and running quickly by doing the following:
 
 1. Save the .env.example file as .env, and add values for CRAFT_APP_ID and CRAFT_SECURITY_KEY :
 
@@ -55,7 +87,7 @@ get this project up and running quickly by doing the following:
         
 *Note You should run the above command whenever you pull down an update from the repository in order to apply any config changes that have been made since you last pulled down the repo.*
     
-8. Next we need to install Nuxt and the other dependencies for the front end build. In your terminal
+7. Next we need to install Nuxt and the other dependencies for the front end build. In your terminal
 run the following command :
 
         ddev yarn install
@@ -79,33 +111,6 @@ run the following command :
     
             https://dot-all-2022.fostercommerce.test:3000
 
----
-# Add the site to your own repository
-For the next steps we are going to be deploying the site to The Cloud using Vercel. In order to do this, you will need to host the code in your own repository using GitHub, GitLab, or Bitbucket.
-
-We recommend using GitHub as it's just going to make things simpler to explain!
-
-### Importing with GitHub
-If you have a GitHub account you can simply import the project into a new repo.
-
-1. Log in to your GitHub account and go to your Repositories tab.
-2. Click "New", give the repository a name, and click "Create"
-3. On the next screen click the "Import Code" button and enter the url https://github.com/FosterCommerce/dot-all-2022.git. It may take a few minutes to import the code.
-4. Once that is done, you can check the repository out to your local machine as normal
-
-
-### Cloning the repository
-
-1. **Clone the project** to your local machine with
-- `git clone git@github.com:FosterCommerce/dot-all-2022.git`
-- or; `git clone https://github.com/FosterCommerce/dot-all-2022.git`
-- or; download the project as a .zip file from https://github.com/FosterCommerce/dot-all-2022/archive/refs/heads/develop.zip
-
-2. **Change the origin**
-To make this your own, fire up a terminal and navigate to the root directory of the project. Type the following; 
-`git remote set-url <url of your repo>`
-
-3. You'll then need to push the code up to your own repo ready for deployment with Vercel
 
 ---
 
