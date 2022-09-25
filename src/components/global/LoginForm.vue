@@ -3,14 +3,32 @@
 		name: "LoginForm",
 		data() {
 			return {
+				email: '',
+				password: '',
+				rememberMe: '',
 				error: ''
 			};
-		}
+		},
+		methods: {
+			async login() {
+				try {
+					const result = await this.$api.postAction('/users/login', {
+						loginName: this.email,
+						password: this.password,
+						rememberMe: this.rememberMe,
+					});
+
+					await this.$store.dispatch('user/fetchSessionData')
+				} catch (error) {
+					this.error = error.response?.data?.message;
+				}
+			},
+		},
 	}
 </script>
 
 <template>
-	<form class="mt-6 space-y-6">
+	<form class="mt-6 space-y-6" @submit.prevent="login">
 
 		<div>
 			<label for="login-email" class="block text-sm font-medium text-gray-700"> Email address </label>
@@ -22,6 +40,7 @@
 					autocomplete="email"
 					class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					required
+					v-model="email"
 				>
 			</div>
 		</div>
@@ -36,6 +55,7 @@
 					autocomplete="current-password"
 					class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 					required
+					v-model="password"
 				>
 			</div>
 		</div>
@@ -57,6 +77,9 @@
 
 			<div class="flex items-center">
 				<input
+					v-model="rememberMe"
+					true-value="y"
+					false-value=""
 					id="login-remember-me"
 					name="login-remember-me"
 					type="checkbox"
