@@ -69,7 +69,7 @@ This workshop repo includes DDEV config files so if you have Docker Desktop and 
             
 5. Import the projects seed database into DDEV :
 
-        ddev import-db --src=project_db.sql.tar.gz
+        ddev import-db --src=project_db.sql.gz
         
    Alternatively if you are on a Mac and have TablePlus, SequelPro or SequelAce installed, you can open these
    apps directly from DDEV and import the same database SQL dump seed file (project_db.sql.tar.gz):
