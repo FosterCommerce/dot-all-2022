@@ -1,5 +1,23 @@
-dateModified: 1663985705
+dateModified: 1664227670
 elementSources:
+  craft\commerce\elements\Product:
+    -
+      disabled: false
+      key: '*'
+      tableAttributes:
+        - type
+        - postDate
+        - expiryDate
+        - defaultPrice
+        - defaultSku
+        - link
+      type: native
+    -
+      heading: 'Product Types'
+      type: heading
+    -
+      key: 'productType:8f9a9f81-cbc4-41eb-a70b-5eaeadea8840' # Catalog
+      type: native
   craft\elements\Entry:
     -
       key: '*'
