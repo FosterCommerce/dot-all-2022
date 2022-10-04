@@ -2,6 +2,8 @@
 
 namespace modules\fc;
 
+use craft\commerce\elements\Variant;
+use craft\commerce\events\CustomizeVariantSnapshotDataEvent;
 use craft\events\ElementEvent;
 use craft\helpers\ElementHelper;
 use craft\services\Elements;
@@ -77,5 +79,33 @@ class Fc extends Module
 				}
 			}
 		);
+
+        // Update the snapshot instead of overriding the cart and order methods
+        Event::on(
+            Variant::class,
+            Variant::EVENT_AFTER_CAPTURE_VARIANT_SNAPSHOT,
+            function(CustomizeVariantSnapshotDataEvent $event) {
+                $variant = $event->variant;
+                $data = $event->fieldData;
+
+                // Update data with custom fields...
+                $image = $variant->image->one();
+                $data['image'] = [
+                    'alt'           => $image->alt,
+                    'extension'     => $image->extension,
+                    'filename'      => $image->filename,
+                    'focalPoint'    => $image->focalPoint,
+                    'hasFocalPoint' => $image->hasFocalPoint,
+                    'height'        => $image->height,
+                    'uri'           => $image->uri,
+                    'url'           => $image->url,
+                    'width'         => $image->width
+                ];
+                $data['color'] = $variant->color->value;
+                $data['size']  = $variant->size->value;
+
+                $event->fieldData = $data;
+            }
+        );
     }
 }
