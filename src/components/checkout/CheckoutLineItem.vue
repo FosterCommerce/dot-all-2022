@@ -5,24 +5,27 @@
 			/** The line item data from Craft */
 			item: {
 				type: Object,
-				required: true
-			}
+				required: true,
+			},
 		},
 		data() {
 			return {
-				quantity: this.item.qty
-			}
+				quantity: this.item.qty,
+			};
 		},
 		methods: {
 			removeItem(){
-				this.$store.dispatch('cart/removeItem', this.item)
+				this.$store.dispatch('cart/removeItem', this.item);
 			},
-			async updateQuantity(e){
-				const successfull = await this.$store.dispatch('cart/setItemQty', {...this.item, qty: Number(e.target.value)})
-				if (!successfull) {
-					this.quantity = this.item.qty
+			async updateQuantity(e) {
+				const successful = await this.$store.dispatch('cart/setItemQty', {
+					...this.item, qty: Number(e.target.value),
+				});
+
+				if (!successful) {
+					this.quantity = this.item.qty;
 				}
-			}
+			},
 		},
 	};
 </script>
@@ -30,24 +33,28 @@
 <template>
 	<div class="flex py-6 space-x-6">
 		<nuxt-img
-			v-if="item.image.url"
-			:src="item.image.url"
-			:alt="item.image.alt"
+			v-if="item.snapshot.image.url"
+			:src="item.snapshot.image.url"
+			:alt="item.snapshot.image.alt"
 			class="flex-none w-40 h-40 object-center object-cover bg-gray-200 rounded-md"
 			loading="lazy"
 		/>
 		<div class="flex flex-col justify-between space-y-4">
 			<div class="text-sm font-medium space-y-1">
-				<h3 class="text-gray-900 sm:text-base">{{ item.title }}</h3>
+				<h3 class="text-gray-900 sm:text-base">{{ item.snapshot.product.title }}</h3>
 				<div class="mt-1 flex text-sm">
-					<p class="text-gray-500">{{ item.color.charAt(0).toUpperCase() + item.color.slice(1) }}</p>
-					<p class="ml-4 pl-4 border-l border-gray-200 text-gray-500 uppercase">{{ item.size }}</p>
+					<p class="text-gray-500">
+						{{ item.snapshot.color.charAt(0).toUpperCase() + item.snapshot.color.slice(1) }}
+					</p>
+					<p class="ml-4 pl-4 border-l border-gray-200 text-gray-500 uppercase">
+						{{ item.snapshot.size }}
+					</p>
 				</div>
-				<p class="text-gray-900">{{ item.priceAsCurrency }}</p>
+				<p class="text-gray-900">{{ item.snapshot.priceAsCurrency }}</p>
 			</div>
 			<div class="space-y-4 sm:flex sm:space-x-4 sm:space-y-0">
 				<div>
-					<label for="quantity_5" class="sr-only">Quantity, {{ item.title }}</label>
+					<label for="quantity_5" class="sr-only">Quantity, {{ item.snapshot.product.title }}</label>
 					<input
 						id="quantity_5"
 						v-model="quantity"

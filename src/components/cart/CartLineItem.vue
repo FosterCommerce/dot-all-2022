@@ -1,27 +1,30 @@
 <script>
 	export default {
 		name: 'CartLineItem',
-		props:{
-			item:{
+		props: {
+			item: {
 				type: Object,
-				default: () => ({})
-			}
+				default: () => ({}),
+			},
 		},
 		data() {
 			return {
-				quantity: this.item.qty
-			}
+				quantity: this.item.qty,
+			};
 		},
 		methods: {
-			removeItem(){
-				this.$store.dispatch('cart/removeItem', this.item)
+			removeItem() {
+				this.$store.dispatch('cart/removeItem', this.item);
 			},
-			async updateQuantity(e){
-				const successfull = await this.$store.dispatch('cart/setItemQty', {...this.item, qty: Number(e.target.value)})
-				if (!successfull) {
-					this.quantity = this.item.qty
+			async updateQuantity(e) {
+				const successful = await this.$store.dispatch('cart/setItemQty', {
+					...this.item, qty: Number(e.target.value),
+				});
+
+				if (!successful) {
+					this.quantity = this.item.qty;
 				}
-			}
+			},
 		},
 	};
 </script>
@@ -30,9 +33,9 @@
 	<div class="flex py-6 sm:py-10">
 		<div class="flex-shrink-0">
 			<nuxt-img
-				v-if="item.image.url"
-				:src="item.image.url"
-				:alt="item.image.alt"
+				v-if="item.snapshot.image.url"
+				:src="item.snapshot.image.url"
+				:alt="item.snapshot.image.alt"
 				class="w-24 h-24 rounded-md object-center object-cover sm:w-48 sm:h-48"
 				loading="lazy"
 			/>
@@ -43,19 +46,28 @@
 				<div>
 					<div class="flex justify-between">
 						<h3 class="text-sm">
-							<nuxt-link :to="item.uri" class="font-medium text-gray-700 hover:text-gray-800">{{ item.title }}</nuxt-link>
+							<nuxt-link
+								:to="item.snapshot.product.uri"
+								class="font-medium text-gray-700 hover:text-gray-800"
+							>
+								{{ item.snapshot.product.title }}
+							</nuxt-link>
 						</h3>
 					</div>
 					<div class="mt-1 flex text-sm">
-						<p class="text-gray-500">{{ item.color.charAt(0).toUpperCase() + item.color.slice(1) }}</p>
-						<p class="ml-4 pl-4 border-l border-gray-200 text-gray-500 uppercase">{{ item.size }}</p>
+						<p class="text-gray-500">
+							{{ item.snapshot.color.charAt(0).toUpperCase() + item.snapshot.color.slice(1) }}
+						</p>
+						<p class="ml-4 pl-4 border-l border-gray-200 text-gray-500 uppercase">
+							{{ item.snapshot.size }}
+						</p>
 					</div>
-					<p class="mt-1 text-sm font-medium text-gray-900">{{ item.priceAsCurrency }}</p>
+					<p class="mt-1 text-sm font-medium text-gray-900">{{ item.snapshot.priceAsCurrency }}</p>
 				</div>
 
 				<div class="mt-4 sm:mt-0 sm:pr-9">
 					<div>
-						<label for="quantity_6" class="sr-only">Quantity, {{ item.title }}</label>
+						<label for="quantity_6" class="sr-only">Quantity, {{ item.snapshot.product.title }}</label>
 						<input
 							id="quantity_6"
 							v-model="quantity"
