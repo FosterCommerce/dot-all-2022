@@ -1,0 +1,13 @@
+#import "./fragments/FieldContentBlocks.gql"
+
+query FourOhFour {
+  entry(section: "fourOhFour") {
+    ... on fourOhFour_fourOhFour_Entry {
+      id
+      heading
+      contentBlocks {
+        ...FieldContentBlocks
+      }
+    }
+  }
+}

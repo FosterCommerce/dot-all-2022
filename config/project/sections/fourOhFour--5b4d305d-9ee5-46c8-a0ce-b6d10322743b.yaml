@@ -1,0 +1,24 @@
+defaultPlacement: end
+enableVersioning: true
+handle: fourOhFour
+name: '404'
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  f8a2a825-4c38-46e8-853b-b3ee5d46969b: # Foster Commerce Dot All 2022
+    enabledByDefault: true
+    hasUrls: true
+    template: '404'
+    uriFormat: '404'
+type: single

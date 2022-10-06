@@ -1,121 +1,121 @@
 <script>
-import ProductsCatalog from '@/queries/ProductsCatalog.gql';
-import Pages404 from '@/components/views/Pages404';
+	import ProductsCatalog from '@/queries/ProductsCatalog.gql';
+	import FourOhFourViewComponent from '@/components/views/404ViewComponent';
 
-export default {
-  async asyncData({ $api, route }) {
-    let previewParams = null;
+	export default {
+		components: {
+			FourOhFourViewComponent,
+		},
+		async asyncData({ $api, route }) {
+			let previewParams = null;
 
-    const { data } = await $api.graphqlQuery(
-        ProductsCatalog,
-        {
-          limit: 1,
-          slug: route.params.slug,
-        },
-        previewParams
-    );
+			const { data } = await $api.graphqlQuery(
+				ProductsCatalog,
+				{
+					limit: 1,
+					slug: route.params.slug,
+				},
+				previewParams
+			);
 
-    const product = data.products[0] ?? null;
+			const product = data.products[0] ?? null;
 
-    if (product !== null) {
-      // Check for Craft Live Preview params
-      if (route.query.token) {
-        previewParams = {
-          token: route.query.token,
-          'x-craft-live-preview': route.query['x-craft-live-preview'],
-        };
-      }
+			if (product !== null) {
+				// Check for Craft Live Preview params
+				if (route.query.token) {
+					previewParams = {
+						token: route.query.token,
+						'x-craft-live-preview': route.query['x-craft-live-preview'],
+					};
+				}
 
-      // Break out the result of the query into product, variants,
-      // and the default variant as the initially selected one
+				// Break out the result of the query into product, variants,
+				// and the default variant as the initially selected one
 
-      const variants = product.variants ?? [];
-      const selectedVariant = variants.find(variant => variant.isDefault === true) ?? null;
+				const variants = product.variants ?? [];
+				const selectedVariant = variants.find(variant => variant.isDefault === true) ?? null;
 
-      return {
-        product,
-        variants,
-        selectedVariant,
-      }
-    }
-  },
-  data() {
-    return {
-      product: null,
-      variants: [],
-      selectedVariant: null,
-    }
-  },
-  components: {
-    Pages404
-  },
-  computed: {
-    /** Gets the currently selected variants primary image data */
-    variantImage() {
-      return this.selectedVariant.image[0] ?? null
-    },
-    allColors() {
-      return [...new Set(
-          this.variants.map((variant) => {
-            return variant.color;
-          })
-      )];
-    },
-    allSizes() {
-      return [...new Set(
-          this.variants.map((variant) => {
-            return variant.size;
-          })
-      )];
-    },
-    /** Returns a relational matrix for sizes to available colors */
-    sizeToColorMatrix() {
-      const matrix = {};
-      this.variants.forEach((sizeVariant) => {
-        matrix[sizeVariant.size] = this.variants.filter((variant) => {
-          return variant.size === sizeVariant.size;
-        }).map(colorVariant => colorVariant.color);
-      });
-      return matrix;
-    },
-    /** Returns a relational matrix for colors to available sizes */
-    colorToSizeMatrix() {
-      const matrix = {};
-      this.variants.forEach((colorVariant) => {
-        matrix[colorVariant.color] = this.variants.filter((variant) => {
-          return variant.color === colorVariant.color;
-        }).map(sizeVariant => sizeVariant.size);
-      });
-      return matrix;
-    },
-    availableSizes() {
-      return this.colorToSizeMatrix[this.selectedVariant.color];
-    },
-    availableColors() {
-      return this.sizeToColorMatrix[this.selectedVariant.size];
-    },
-  },
-  methods: {
-    /** Selects the variant based on the options set (size and color) */
-    selectVariant(option) {
-      let colorOption = this.selectedVariant.color;
-      let sizeOption = this.selectedVariant.size;
+				return {
+					product,
+					variants,
+					selectedVariant,
+				}
+			}
+		},
+		data() {
+			return {
+				product: null,
+				variants: [],
+				selectedVariant: null,
+			}
+		},
+		computed: {
+			/** Gets the currently selected variants primary image data */
+			variantImage() {
+				return this.selectedVariant.image[0] ?? null
+			},
+			allColors() {
+				return [...new Set(
+					this.variants.map((variant) => {
+						return variant.color;
+					})
+				)];
+			},
+			allSizes() {
+				return [...new Set(
+					this.variants.map((variant) => {
+						return variant.size;
+					})
+				)];
+			},
+			/** Returns a relational matrix for sizes to available colors */
+			sizeToColorMatrix() {
+				const matrix = {};
+				this.variants.forEach((sizeVariant) => {
+					matrix[sizeVariant.size] = this.variants.filter((variant) => {
+						return variant.size === sizeVariant.size;
+					}).map(colorVariant => colorVariant.color);
+				});
+				return matrix;
+			},
+			/** Returns a relational matrix for colors to available sizes */
+			colorToSizeMatrix() {
+				const matrix = {};
+				this.variants.forEach((colorVariant) => {
+					matrix[colorVariant.color] = this.variants.filter((variant) => {
+						return variant.color === colorVariant.color;
+					}).map(sizeVariant => sizeVariant.size);
+				});
+				return matrix;
+			},
+			availableSizes() {
+				return this.colorToSizeMatrix[this.selectedVariant.color];
+			},
+			availableColors() {
+				return this.sizeToColorMatrix[this.selectedVariant.size];
+			},
+		},
+		methods: {
+			/** Selects the variant based on the options set (size and color) */
+			selectVariant(option) {
+				let colorOption = this.selectedVariant.color;
+				let sizeOption = this.selectedVariant.size;
 
-      if (option.type === 'color') {
-        colorOption = option.value;
-        sizeOption = this.selectedVariant.size;
-      } else if (option.type === 'size') {
-        colorOption = this.selectedVariant.color;
-        sizeOption = option.value;
-      }
+				if (option.type === 'color') {
+					colorOption = option.value;
+					sizeOption = this.selectedVariant.size;
+				} else if (option.type === 'size') {
+					colorOption = this.selectedVariant.color;
+					sizeOption = option.value;
+				}
 
-      this.selectedVariant = this.variants.find(
-          variant =>
-              variant.color === colorOption && variant.size === sizeOption
-      );
-    },
-  },
-};
+				this.selectedVariant = this.variants.find(
+					variant =>
+						variant.color === colorOption && variant.size === sizeOption
+				);
+			},
+		},
+	};
 </script>
 
 <template>
@@ -210,6 +210,6 @@ export default {
         </div>
       </div>
     </div>
-    <Pages404 v-else />
+    <FourOhFourViewComponent v-else />
   </div>
 </template>
