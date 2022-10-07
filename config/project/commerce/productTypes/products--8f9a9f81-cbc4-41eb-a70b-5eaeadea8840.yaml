@@ -1,10 +1,10 @@
 descriptionFormat: '{product.title} - {color|capitalize} - {size|upper}'
-handle: catalog
+handle: products
 hasDimensions: true
 hasProductTitleField: true
 hasVariantTitleField: false
 hasVariants: true
-name: Catalog
+name: Products
 productFieldLayouts:
   1a024e00-ff0e-4a6c-b2d5-e79329391f82:
     tabs:
@@ -127,7 +127,7 @@ siteSettings:
   f8a2a825-4c38-46e8-853b-b3ee5d46969b: # Foster Commerce Dot All 2022
     hasUrls: true
     template: product.twig
-    uriFormat: 'catalog/{slug}'
+    uriFormat: 'product/{slug}'
 skuFormat: 'CAT-{product.slug|upper}-{color|upper}-{size|upper}'
 variantFieldLayouts:
   0ee86279-568d-443a-af9d-f1e1a8cb86e9:

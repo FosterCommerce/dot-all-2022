@@ -37,7 +37,7 @@ query ProductsCatalog (
 }
 
 fragment TypeProductsCatalog on ProductInterface {
-    ... on catalog_Product {
+    ... on products_Product {
         contentBlocks {
             ...FieldContentBlocks
         }
@@ -75,7 +75,7 @@ fragment VariantCatalog on VariantInterface {
     weight
     width
     height
-    ... on catalog_Variant {
+    ... on products_Variant {
         title
         image {
             ...Images
