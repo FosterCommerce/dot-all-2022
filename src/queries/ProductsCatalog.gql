@@ -7,6 +7,8 @@ query ProductsCatalog (
     $uri: [String] = ["*", null]
     $limit: Int = 100
     $offset: Int = 0
+    $categories: [QueryArgument]
+    $orderBy: String
 ) {
     products (
         id: $id
@@ -14,6 +16,8 @@ query ProductsCatalog (
         uri: $uri
         limit: $limit
         offset: $offset
+        relatedToCategories: {id: $categories}
+        orderBy: $orderBy
     ) {
         id
         title
@@ -33,7 +37,7 @@ query ProductsCatalog (
 }
 
 fragment TypeProductsCatalog on ProductInterface {
-    ... on catalog_Product {
+    ... on products_Product {
         contentBlocks {
             ...FieldContentBlocks
         }
@@ -58,7 +62,9 @@ fragment TypeProductsCatalog on ProductInterface {
 fragment VariantCatalog on VariantInterface {
     id
     price
+    priceAsCurrency
     salePrice
+    salePriceAsCurrency
     sku
     isDefault
     isAvailable
@@ -69,7 +75,7 @@ fragment VariantCatalog on VariantInterface {
     weight
     width
     height
-    ... on catalog_Variant {
+    ... on products_Variant {
         title
         image {
             ...Images
@@ -79,5 +85,10 @@ fragment VariantCatalog on VariantInterface {
         }
         size
         color
+    }
+    product {
+        id
+        uri
+        slug
     }
 }

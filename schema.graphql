@@ -335,6 +335,89 @@ interface AssetInterface {
     trashed: Boolean
     "The UID of the entity"
     uid: String
+    "The user who first added this asset (if known)."
+    uploader(
+        "Narrows the query results to only elements that have been archived."
+        archived: Boolean,
+        "Narrows the query results based on whether the users have uploaded any assets."
+        assetUploaders: Boolean,
+        "Narrows the query results based on whether the users are listed as the author of any entries."
+        authors: Boolean,
+        "Narrows the query results based on the elements’ creation dates."
+        dateCreated: [String],
+        "Narrows the query results based on the elements’ last-updated dates."
+        dateUpdated: [String],
+        "Narrows the query results based on the users’ email addresses."
+        email: [String],
+        "Narrows the query results based on the users’ first names."
+        firstName: [String],
+        "Causes the query results to be returned in the order specified by the `id` argument."
+        fixedOrder: Boolean,
+        "Narrows the query results based on the users’ full names."
+        fullName: [String],
+        "Narrows the query results based on the user group the users belong to."
+        group: [QueryArgument],
+        "Narrows the query results based on the user group the users belong to, per the groups’ IDs."
+        groupId: [QueryArgument],
+        "Narrows the query results to only users that have (or don’t have) a user photo."
+        hasPhoto: Boolean,
+        "Narrows the query results based on the elements’ IDs."
+        id: [QueryArgument],
+        "Causes the query results to be returned in reverse order."
+        inReverse: Boolean,
+        "Narrows the query results based on the users’ last names."
+        lastName: [String],
+        "Sets the limit for paginated results."
+        limit: Int,
+        "Sets the offset for paginated results."
+        offset: Int,
+        "Sets the field the returned elements should be ordered by."
+        orderBy: String,
+        "Determines which site should be selected when querying multi-site elements."
+        preferSites: [QueryArgument],
+        "Narrows the query results based on a reference string."
+        ref: [String],
+        "Narrows the query results to elements that relate to the provided element IDs. This argument is ignored, if `relatedToAll` is also used."
+        relatedTo: [QueryArgument],
+        "Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored. **This argument is deprecated.** `relatedTo: [\"and\", ...ids]` should be used instead."
+        relatedToAll: [QueryArgument],
+        "Narrows the query results to elements that relate to an asset list defined with this argument."
+        relatedToAssets: [AssetCriteriaInput],
+        "Narrows the query results to elements that relate to a category list defined with this argument."
+        relatedToCategories: [CategoryCriteriaInput],
+        "Narrows the query results to elements that relate to an entry list defined with this argument."
+        relatedToEntries: [EntryCriteriaInput],
+        "Narrows the query results to elements that relate to a tag list defined with this argument."
+        relatedToTags: [TagCriteriaInput],
+        "Narrows the query results to elements that relate to a use list defined with this argument."
+        relatedToUsers: [UserCriteriaInput],
+        "Narrows the query results to only elements that match a search query."
+        search: String,
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        site: [String],
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        siteId: [QueryArgument],
+        "Narrows the query results based on the unique identifier for an element-site relation."
+        siteSettingsId: [QueryArgument],
+        "Narrows the query results based on the elements’ slugs."
+        slug: [String],
+        "Narrows the query results based on the elements’ statuses."
+        status: [String],
+        "Narrows the query results based on the elements’ titles."
+        title: [String],
+        "Narrows the query results to only elements that have been soft-deleted."
+        trashed: Boolean,
+        "Narrows the query results based on the elements’ UIDs."
+        uid: [String],
+        "Determines whether only elements with unique IDs should be returned by the query."
+        unique: Boolean,
+        "Narrows the query results based on the elements’ URIs."
+        uri: [String],
+        "Narrows the query results based on the users’ usernames."
+        username: [String]
+    ): UserInterface
+    "The ID of the user who first added this asset (if known)."
+    uploaderId: Int
     "The element’s URI."
     uri: String
     "The full URL of the asset. This field accepts the same fields as the `transform` directive."
@@ -1084,6 +1167,7 @@ interface EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -1103,6 +1187,10 @@ interface EntryInterface {
     ): [EntryInterface!]!
     "Whether the element is archived or not."
     archived: Boolean
+    "The entry’s author."
+    author: UserInterface
+    "The ID of the author of this entry."
+    authorId: Int
     "Returns the entry’s canonical ID."
     canonicalId: Int
     "Returns the entry’s canonical UUID."
@@ -1226,6 +1314,7 @@ interface EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -1368,6 +1457,7 @@ interface EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -1512,6 +1602,7 @@ interface EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -1666,6 +1757,7 @@ interface EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -1802,6 +1894,7 @@ interface EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -1938,6 +2031,7 @@ interface EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -2076,6 +2170,7 @@ interface EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -2216,6 +2311,7 @@ interface EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -2485,6 +2581,7 @@ interface UserInterface {
         orderBy: String,
         "Narrows the query results based on the addresses’ owners."
         ownerId: [QueryArgument],
+        phone: [QueryArgument],
         "Determines which site should be selected when querying multi-site elements."
         preferSites: [QueryArgument],
         "Whether provisional drafts should be returned."
@@ -2713,6 +2810,7 @@ type Address implements AddressInterface & ElementInterface {
     organization: String
     "Organization tax ID"
     organizationTaxId: String
+    phone: String
     "Postal code"
     postalCode: String
     "The element’s search score, if the `search` parameter was used when querying for the element."
@@ -2786,6 +2884,240 @@ type Mutation {
 }
 
 type Query {
+    "This query is used to query for a single address."
+    address(
+        "Narrows the query results based on the addresses’ administrative areas."
+        administrativeArea: [String],
+        "Narrows the query results to only elements that have been archived."
+        archived: Boolean,
+        "Narrows the query results based on the addresses’ country codes."
+        countryCode: [String],
+        "Narrows the query results based on the elements’ creation dates."
+        dateCreated: [String],
+        "Narrows the query results based on the elements’ last-updated dates."
+        dateUpdated: [String],
+        "The drafts’ creator ID"
+        draftCreator: Int,
+        "The ID of the draft to return (from the `drafts` table)"
+        draftId: Int,
+        "Narrows the query results to only drafts of a given element.  Set to `false` to fetch unpublished drafts."
+        draftOf: QueryArgument,
+        "Whether draft elements should be returned."
+        drafts: Boolean,
+        "Causes the query results to be returned in the order specified by the `id` argument."
+        fixedOrder: Boolean,
+        "Narrows the query results based on the elements’ IDs."
+        id: [QueryArgument],
+        "Causes the query results to be returned in reverse order."
+        inReverse: Boolean,
+        "Sets the limit for paginated results."
+        limit: Int,
+        "Sets the offset for paginated results."
+        offset: Int,
+        "Sets the field the returned elements should be ordered by."
+        orderBy: String,
+        "Narrows the query results based on the addresses’ owners."
+        ownerId: [QueryArgument],
+        phone: [QueryArgument],
+        "Determines which site should be selected when querying multi-site elements."
+        preferSites: [QueryArgument],
+        "Whether provisional drafts should be returned."
+        provisionalDrafts: Boolean,
+        "Narrows the query results based on a reference string."
+        ref: [String],
+        "Narrows the query results to elements that relate to the provided element IDs. This argument is ignored, if `relatedToAll` is also used."
+        relatedTo: [QueryArgument],
+        "Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored. **This argument is deprecated.** `relatedTo: [\"and\", ...ids]` should be used instead."
+        relatedToAll: [QueryArgument],
+        "Narrows the query results to elements that relate to an asset list defined with this argument."
+        relatedToAssets: [AssetCriteriaInput],
+        "Narrows the query results to elements that relate to a category list defined with this argument."
+        relatedToCategories: [CategoryCriteriaInput],
+        "Narrows the query results to elements that relate to an entry list defined with this argument."
+        relatedToEntries: [EntryCriteriaInput],
+        "Narrows the query results to elements that relate to a tag list defined with this argument."
+        relatedToTags: [TagCriteriaInput],
+        "Narrows the query results to elements that relate to a use list defined with this argument."
+        relatedToUsers: [UserCriteriaInput],
+        "Narrows the query results to only elements that match a search query."
+        search: String,
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        site: [String],
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        siteId: [QueryArgument],
+        "Narrows the query results based on the unique identifier for an element-site relation."
+        siteSettingsId: [QueryArgument],
+        "Narrows the query results based on the elements’ slugs."
+        slug: [String],
+        "Narrows the query results based on the elements’ statuses."
+        status: [String],
+        "Narrows the query results based on the elements’ titles."
+        title: [String],
+        "Narrows the query results to only elements that have been soft-deleted."
+        trashed: Boolean,
+        "Narrows the query results based on the elements’ UIDs."
+        uid: [String],
+        "Determines whether only elements with unique IDs should be returned by the query."
+        unique: Boolean,
+        "Narrows the query results based on the elements’ URIs."
+        uri: [String]
+    ): AddressInterface
+    "This query is used to return the number of addresses."
+    addressCount(
+        "Narrows the query results based on the addresses’ administrative areas."
+        administrativeArea: [String],
+        "Narrows the query results to only elements that have been archived."
+        archived: Boolean,
+        "Narrows the query results based on the addresses’ country codes."
+        countryCode: [String],
+        "Narrows the query results based on the elements’ creation dates."
+        dateCreated: [String],
+        "Narrows the query results based on the elements’ last-updated dates."
+        dateUpdated: [String],
+        "The drafts’ creator ID"
+        draftCreator: Int,
+        "The ID of the draft to return (from the `drafts` table)"
+        draftId: Int,
+        "Narrows the query results to only drafts of a given element.  Set to `false` to fetch unpublished drafts."
+        draftOf: QueryArgument,
+        "Whether draft elements should be returned."
+        drafts: Boolean,
+        "Causes the query results to be returned in the order specified by the `id` argument."
+        fixedOrder: Boolean,
+        "Narrows the query results based on the elements’ IDs."
+        id: [QueryArgument],
+        "Causes the query results to be returned in reverse order."
+        inReverse: Boolean,
+        "Sets the limit for paginated results."
+        limit: Int,
+        "Sets the offset for paginated results."
+        offset: Int,
+        "Sets the field the returned elements should be ordered by."
+        orderBy: String,
+        "Narrows the query results based on the addresses’ owners."
+        ownerId: [QueryArgument],
+        phone: [QueryArgument],
+        "Determines which site should be selected when querying multi-site elements."
+        preferSites: [QueryArgument],
+        "Whether provisional drafts should be returned."
+        provisionalDrafts: Boolean,
+        "Narrows the query results based on a reference string."
+        ref: [String],
+        "Narrows the query results to elements that relate to the provided element IDs. This argument is ignored, if `relatedToAll` is also used."
+        relatedTo: [QueryArgument],
+        "Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored. **This argument is deprecated.** `relatedTo: [\"and\", ...ids]` should be used instead."
+        relatedToAll: [QueryArgument],
+        "Narrows the query results to elements that relate to an asset list defined with this argument."
+        relatedToAssets: [AssetCriteriaInput],
+        "Narrows the query results to elements that relate to a category list defined with this argument."
+        relatedToCategories: [CategoryCriteriaInput],
+        "Narrows the query results to elements that relate to an entry list defined with this argument."
+        relatedToEntries: [EntryCriteriaInput],
+        "Narrows the query results to elements that relate to a tag list defined with this argument."
+        relatedToTags: [TagCriteriaInput],
+        "Narrows the query results to elements that relate to a use list defined with this argument."
+        relatedToUsers: [UserCriteriaInput],
+        "Narrows the query results to only elements that match a search query."
+        search: String,
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        site: [String],
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        siteId: [QueryArgument],
+        "Narrows the query results based on the unique identifier for an element-site relation."
+        siteSettingsId: [QueryArgument],
+        "Narrows the query results based on the elements’ slugs."
+        slug: [String],
+        "Narrows the query results based on the elements’ statuses."
+        status: [String],
+        "Narrows the query results based on the elements’ titles."
+        title: [String],
+        "Narrows the query results to only elements that have been soft-deleted."
+        trashed: Boolean,
+        "Narrows the query results based on the elements’ UIDs."
+        uid: [String],
+        "Determines whether only elements with unique IDs should be returned by the query."
+        unique: Boolean,
+        "Narrows the query results based on the elements’ URIs."
+        uri: [String]
+    ): Int!
+    "This query is used to query for addresses."
+    addresses(
+        "Narrows the query results based on the addresses’ administrative areas."
+        administrativeArea: [String],
+        "Narrows the query results to only elements that have been archived."
+        archived: Boolean,
+        "Narrows the query results based on the addresses’ country codes."
+        countryCode: [String],
+        "Narrows the query results based on the elements’ creation dates."
+        dateCreated: [String],
+        "Narrows the query results based on the elements’ last-updated dates."
+        dateUpdated: [String],
+        "The drafts’ creator ID"
+        draftCreator: Int,
+        "The ID of the draft to return (from the `drafts` table)"
+        draftId: Int,
+        "Narrows the query results to only drafts of a given element.  Set to `false` to fetch unpublished drafts."
+        draftOf: QueryArgument,
+        "Whether draft elements should be returned."
+        drafts: Boolean,
+        "Causes the query results to be returned in the order specified by the `id` argument."
+        fixedOrder: Boolean,
+        "Narrows the query results based on the elements’ IDs."
+        id: [QueryArgument],
+        "Causes the query results to be returned in reverse order."
+        inReverse: Boolean,
+        "Sets the limit for paginated results."
+        limit: Int,
+        "Sets the offset for paginated results."
+        offset: Int,
+        "Sets the field the returned elements should be ordered by."
+        orderBy: String,
+        "Narrows the query results based on the addresses’ owners."
+        ownerId: [QueryArgument],
+        phone: [QueryArgument],
+        "Determines which site should be selected when querying multi-site elements."
+        preferSites: [QueryArgument],
+        "Whether provisional drafts should be returned."
+        provisionalDrafts: Boolean,
+        "Narrows the query results based on a reference string."
+        ref: [String],
+        "Narrows the query results to elements that relate to the provided element IDs. This argument is ignored, if `relatedToAll` is also used."
+        relatedTo: [QueryArgument],
+        "Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored. **This argument is deprecated.** `relatedTo: [\"and\", ...ids]` should be used instead."
+        relatedToAll: [QueryArgument],
+        "Narrows the query results to elements that relate to an asset list defined with this argument."
+        relatedToAssets: [AssetCriteriaInput],
+        "Narrows the query results to elements that relate to a category list defined with this argument."
+        relatedToCategories: [CategoryCriteriaInput],
+        "Narrows the query results to elements that relate to an entry list defined with this argument."
+        relatedToEntries: [EntryCriteriaInput],
+        "Narrows the query results to elements that relate to a tag list defined with this argument."
+        relatedToTags: [TagCriteriaInput],
+        "Narrows the query results to elements that relate to a use list defined with this argument."
+        relatedToUsers: [UserCriteriaInput],
+        "Narrows the query results to only elements that match a search query."
+        search: String,
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        site: [String],
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        siteId: [QueryArgument],
+        "Narrows the query results based on the unique identifier for an element-site relation."
+        siteSettingsId: [QueryArgument],
+        "Narrows the query results based on the elements’ slugs."
+        slug: [String],
+        "Narrows the query results based on the elements’ statuses."
+        status: [String],
+        "Narrows the query results based on the elements’ titles."
+        title: [String],
+        "Narrows the query results to only elements that have been soft-deleted."
+        trashed: Boolean,
+        "Narrows the query results based on the elements’ UIDs."
+        uid: [String],
+        "Determines whether only elements with unique IDs should be returned by the query."
+        unique: Boolean,
+        "Narrows the query results based on the elements’ URIs."
+        uri: [String]
+    ): [AddressInterface]
     "This query is used to query for a single asset."
     asset(
         "Narrows the query results to only elements that have been archived."
@@ -3445,6 +3777,7 @@ type Query {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -3581,6 +3914,7 @@ type Query {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -3717,6 +4051,7 @@ type Query {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -3849,6 +4184,7 @@ type Query {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -3981,6 +4317,7 @@ type Query {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -4411,6 +4748,7 @@ type Query {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -4428,6 +4766,249 @@ type Query {
         "Explicitly determines whether the query should join in the structure data."
         withStructure: Boolean
     ): [settingsSectionEntryUnion]
+    "This query is used to query for a single user."
+    user(
+        "Narrows the query results to only elements that have been archived."
+        archived: Boolean,
+        "Narrows the query results based on whether the users have uploaded any assets."
+        assetUploaders: Boolean,
+        "Narrows the query results based on whether the users are listed as the author of any entries."
+        authors: Boolean,
+        "Narrows the query results based on the elements’ creation dates."
+        dateCreated: [String],
+        "Narrows the query results based on the elements’ last-updated dates."
+        dateUpdated: [String],
+        "Narrows the query results based on the users’ email addresses."
+        email: [String],
+        "Narrows the query results based on the users’ first names."
+        firstName: [String],
+        "Causes the query results to be returned in the order specified by the `id` argument."
+        fixedOrder: Boolean,
+        "Narrows the query results based on the users’ full names."
+        fullName: [String],
+        "Narrows the query results based on the user group the users belong to."
+        group: [QueryArgument],
+        "Narrows the query results based on the user group the users belong to, per the groups’ IDs."
+        groupId: [QueryArgument],
+        "Narrows the query results to only users that have (or don’t have) a user photo."
+        hasPhoto: Boolean,
+        "Narrows the query results based on the elements’ IDs."
+        id: [QueryArgument],
+        "Causes the query results to be returned in reverse order."
+        inReverse: Boolean,
+        "Narrows the query results based on the users’ last names."
+        lastName: [String],
+        "Sets the limit for paginated results."
+        limit: Int,
+        "Sets the offset for paginated results."
+        offset: Int,
+        "Sets the field the returned elements should be ordered by."
+        orderBy: String,
+        "Determines which site should be selected when querying multi-site elements."
+        preferSites: [QueryArgument],
+        "Narrows the query results based on a reference string."
+        ref: [String],
+        "Narrows the query results to elements that relate to the provided element IDs. This argument is ignored, if `relatedToAll` is also used."
+        relatedTo: [QueryArgument],
+        "Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored. **This argument is deprecated.** `relatedTo: [\"and\", ...ids]` should be used instead."
+        relatedToAll: [QueryArgument],
+        "Narrows the query results to elements that relate to an asset list defined with this argument."
+        relatedToAssets: [AssetCriteriaInput],
+        "Narrows the query results to elements that relate to a category list defined with this argument."
+        relatedToCategories: [CategoryCriteriaInput],
+        "Narrows the query results to elements that relate to an entry list defined with this argument."
+        relatedToEntries: [EntryCriteriaInput],
+        "Narrows the query results to elements that relate to a tag list defined with this argument."
+        relatedToTags: [TagCriteriaInput],
+        "Narrows the query results to elements that relate to a use list defined with this argument."
+        relatedToUsers: [UserCriteriaInput],
+        "Narrows the query results to only elements that match a search query."
+        search: String,
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        site: [String],
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        siteId: [QueryArgument],
+        "Narrows the query results based on the unique identifier for an element-site relation."
+        siteSettingsId: [QueryArgument],
+        "Narrows the query results based on the elements’ slugs."
+        slug: [String],
+        "Narrows the query results based on the elements’ statuses."
+        status: [String],
+        "Narrows the query results based on the elements’ titles."
+        title: [String],
+        "Narrows the query results to only elements that have been soft-deleted."
+        trashed: Boolean,
+        "Narrows the query results based on the elements’ UIDs."
+        uid: [String],
+        "Determines whether only elements with unique IDs should be returned by the query."
+        unique: Boolean,
+        "Narrows the query results based on the elements’ URIs."
+        uri: [String],
+        "Narrows the query results based on the users’ usernames."
+        username: [String]
+    ): UserInterface
+    "This query is used to return the number of users."
+    userCount(
+        "Narrows the query results to only elements that have been archived."
+        archived: Boolean,
+        "Narrows the query results based on whether the users have uploaded any assets."
+        assetUploaders: Boolean,
+        "Narrows the query results based on whether the users are listed as the author of any entries."
+        authors: Boolean,
+        "Narrows the query results based on the elements’ creation dates."
+        dateCreated: [String],
+        "Narrows the query results based on the elements’ last-updated dates."
+        dateUpdated: [String],
+        "Narrows the query results based on the users’ email addresses."
+        email: [String],
+        "Narrows the query results based on the users’ first names."
+        firstName: [String],
+        "Causes the query results to be returned in the order specified by the `id` argument."
+        fixedOrder: Boolean,
+        "Narrows the query results based on the users’ full names."
+        fullName: [String],
+        "Narrows the query results based on the user group the users belong to."
+        group: [QueryArgument],
+        "Narrows the query results based on the user group the users belong to, per the groups’ IDs."
+        groupId: [QueryArgument],
+        "Narrows the query results to only users that have (or don’t have) a user photo."
+        hasPhoto: Boolean,
+        "Narrows the query results based on the elements’ IDs."
+        id: [QueryArgument],
+        "Causes the query results to be returned in reverse order."
+        inReverse: Boolean,
+        "Narrows the query results based on the users’ last names."
+        lastName: [String],
+        "Sets the limit for paginated results."
+        limit: Int,
+        "Sets the offset for paginated results."
+        offset: Int,
+        "Sets the field the returned elements should be ordered by."
+        orderBy: String,
+        "Determines which site should be selected when querying multi-site elements."
+        preferSites: [QueryArgument],
+        "Narrows the query results based on a reference string."
+        ref: [String],
+        "Narrows the query results to elements that relate to the provided element IDs. This argument is ignored, if `relatedToAll` is also used."
+        relatedTo: [QueryArgument],
+        "Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored. **This argument is deprecated.** `relatedTo: [\"and\", ...ids]` should be used instead."
+        relatedToAll: [QueryArgument],
+        "Narrows the query results to elements that relate to an asset list defined with this argument."
+        relatedToAssets: [AssetCriteriaInput],
+        "Narrows the query results to elements that relate to a category list defined with this argument."
+        relatedToCategories: [CategoryCriteriaInput],
+        "Narrows the query results to elements that relate to an entry list defined with this argument."
+        relatedToEntries: [EntryCriteriaInput],
+        "Narrows the query results to elements that relate to a tag list defined with this argument."
+        relatedToTags: [TagCriteriaInput],
+        "Narrows the query results to elements that relate to a use list defined with this argument."
+        relatedToUsers: [UserCriteriaInput],
+        "Narrows the query results to only elements that match a search query."
+        search: String,
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        site: [String],
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        siteId: [QueryArgument],
+        "Narrows the query results based on the unique identifier for an element-site relation."
+        siteSettingsId: [QueryArgument],
+        "Narrows the query results based on the elements’ slugs."
+        slug: [String],
+        "Narrows the query results based on the elements’ statuses."
+        status: [String],
+        "Narrows the query results based on the elements’ titles."
+        title: [String],
+        "Narrows the query results to only elements that have been soft-deleted."
+        trashed: Boolean,
+        "Narrows the query results based on the elements’ UIDs."
+        uid: [String],
+        "Determines whether only elements with unique IDs should be returned by the query."
+        unique: Boolean,
+        "Narrows the query results based on the elements’ URIs."
+        uri: [String],
+        "Narrows the query results based on the users’ usernames."
+        username: [String]
+    ): Int!
+    "This query is used to query for users."
+    users(
+        "Narrows the query results to only elements that have been archived."
+        archived: Boolean,
+        "Narrows the query results based on whether the users have uploaded any assets."
+        assetUploaders: Boolean,
+        "Narrows the query results based on whether the users are listed as the author of any entries."
+        authors: Boolean,
+        "Narrows the query results based on the elements’ creation dates."
+        dateCreated: [String],
+        "Narrows the query results based on the elements’ last-updated dates."
+        dateUpdated: [String],
+        "Narrows the query results based on the users’ email addresses."
+        email: [String],
+        "Narrows the query results based on the users’ first names."
+        firstName: [String],
+        "Causes the query results to be returned in the order specified by the `id` argument."
+        fixedOrder: Boolean,
+        "Narrows the query results based on the users’ full names."
+        fullName: [String],
+        "Narrows the query results based on the user group the users belong to."
+        group: [QueryArgument],
+        "Narrows the query results based on the user group the users belong to, per the groups’ IDs."
+        groupId: [QueryArgument],
+        "Narrows the query results to only users that have (or don’t have) a user photo."
+        hasPhoto: Boolean,
+        "Narrows the query results based on the elements’ IDs."
+        id: [QueryArgument],
+        "Causes the query results to be returned in reverse order."
+        inReverse: Boolean,
+        "Narrows the query results based on the users’ last names."
+        lastName: [String],
+        "Sets the limit for paginated results."
+        limit: Int,
+        "Sets the offset for paginated results."
+        offset: Int,
+        "Sets the field the returned elements should be ordered by."
+        orderBy: String,
+        "Determines which site should be selected when querying multi-site elements."
+        preferSites: [QueryArgument],
+        "Narrows the query results based on a reference string."
+        ref: [String],
+        "Narrows the query results to elements that relate to the provided element IDs. This argument is ignored, if `relatedToAll` is also used."
+        relatedTo: [QueryArgument],
+        "Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored. **This argument is deprecated.** `relatedTo: [\"and\", ...ids]` should be used instead."
+        relatedToAll: [QueryArgument],
+        "Narrows the query results to elements that relate to an asset list defined with this argument."
+        relatedToAssets: [AssetCriteriaInput],
+        "Narrows the query results to elements that relate to a category list defined with this argument."
+        relatedToCategories: [CategoryCriteriaInput],
+        "Narrows the query results to elements that relate to an entry list defined with this argument."
+        relatedToEntries: [EntryCriteriaInput],
+        "Narrows the query results to elements that relate to a tag list defined with this argument."
+        relatedToTags: [TagCriteriaInput],
+        "Narrows the query results to elements that relate to a use list defined with this argument."
+        relatedToUsers: [UserCriteriaInput],
+        "Narrows the query results to only elements that match a search query."
+        search: String,
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        site: [String],
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        siteId: [QueryArgument],
+        "Narrows the query results based on the unique identifier for an element-site relation."
+        siteSettingsId: [QueryArgument],
+        "Narrows the query results based on the elements’ slugs."
+        slug: [String],
+        "Narrows the query results based on the elements’ statuses."
+        status: [String],
+        "Narrows the query results based on the elements’ titles."
+        title: [String],
+        "Narrows the query results to only elements that have been soft-deleted."
+        trashed: Boolean,
+        "Narrows the query results based on the elements’ UIDs."
+        uid: [String],
+        "Determines whether only elements with unique IDs should be returned by the query."
+        unique: Boolean,
+        "Narrows the query results based on the elements’ URIs."
+        uri: [String],
+        "Narrows the query results based on the users’ usernames."
+        username: [String]
+    ): [UserInterface]
     "This query is used to query for a variant."
     variant(
         "Narrows the query results to only elements that have been archived."
@@ -4873,6 +5454,7 @@ type User implements ElementInterface & UserInterface {
         orderBy: String,
         "Narrows the query results based on the addresses’ owners."
         ownerId: [QueryArgument],
+        phone: [QueryArgument],
         "Determines which site should be selected when querying multi-site elements."
         preferSites: [QueryArgument],
         "Whether provisional drafts should be returned."
@@ -5947,6 +6529,7 @@ type home_home_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -5966,6 +6549,10 @@ type home_home_Entry implements ElementInterface & EntryInterface {
     ): [EntryInterface!]!
     "Whether the element is archived or not."
     archived: Boolean
+    "The entry’s author."
+    author: UserInterface
+    "The ID of the author of this entry."
+    authorId: Int
     "Returns the entry’s canonical ID."
     canonicalId: Int
     "Returns the entry’s canonical UUID."
@@ -6089,6 +6676,7 @@ type home_home_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -6298,6 +6886,7 @@ type home_home_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -6442,6 +7031,7 @@ type home_home_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -6684,6 +7274,7 @@ type home_home_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -6820,6 +7411,7 @@ type home_home_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -6956,6 +7548,7 @@ type home_home_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -7094,6 +7687,7 @@ type home_home_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -7321,6 +7915,7 @@ type home_home_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -7374,6 +7969,7 @@ type home_home_Entry implements ElementInterface & EntryInterface {
     status: String
     "The element’s structure ID."
     structureId: Int
+    summary: String
     "The element’s title."
     title: String
     "Whether the element has been soft-deleted or not."
@@ -7650,6 +8246,89 @@ type images_Asset implements AssetInterface & ElementInterface {
     trashed: Boolean
     "The UID of the entity"
     uid: String
+    "The user who first added this asset (if known)."
+    uploader(
+        "Narrows the query results to only elements that have been archived."
+        archived: Boolean,
+        "Narrows the query results based on whether the users have uploaded any assets."
+        assetUploaders: Boolean,
+        "Narrows the query results based on whether the users are listed as the author of any entries."
+        authors: Boolean,
+        "Narrows the query results based on the elements’ creation dates."
+        dateCreated: [String],
+        "Narrows the query results based on the elements’ last-updated dates."
+        dateUpdated: [String],
+        "Narrows the query results based on the users’ email addresses."
+        email: [String],
+        "Narrows the query results based on the users’ first names."
+        firstName: [String],
+        "Causes the query results to be returned in the order specified by the `id` argument."
+        fixedOrder: Boolean,
+        "Narrows the query results based on the users’ full names."
+        fullName: [String],
+        "Narrows the query results based on the user group the users belong to."
+        group: [QueryArgument],
+        "Narrows the query results based on the user group the users belong to, per the groups’ IDs."
+        groupId: [QueryArgument],
+        "Narrows the query results to only users that have (or don’t have) a user photo."
+        hasPhoto: Boolean,
+        "Narrows the query results based on the elements’ IDs."
+        id: [QueryArgument],
+        "Causes the query results to be returned in reverse order."
+        inReverse: Boolean,
+        "Narrows the query results based on the users’ last names."
+        lastName: [String],
+        "Sets the limit for paginated results."
+        limit: Int,
+        "Sets the offset for paginated results."
+        offset: Int,
+        "Sets the field the returned elements should be ordered by."
+        orderBy: String,
+        "Determines which site should be selected when querying multi-site elements."
+        preferSites: [QueryArgument],
+        "Narrows the query results based on a reference string."
+        ref: [String],
+        "Narrows the query results to elements that relate to the provided element IDs. This argument is ignored, if `relatedToAll` is also used."
+        relatedTo: [QueryArgument],
+        "Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored. **This argument is deprecated.** `relatedTo: [\"and\", ...ids]` should be used instead."
+        relatedToAll: [QueryArgument],
+        "Narrows the query results to elements that relate to an asset list defined with this argument."
+        relatedToAssets: [AssetCriteriaInput],
+        "Narrows the query results to elements that relate to a category list defined with this argument."
+        relatedToCategories: [CategoryCriteriaInput],
+        "Narrows the query results to elements that relate to an entry list defined with this argument."
+        relatedToEntries: [EntryCriteriaInput],
+        "Narrows the query results to elements that relate to a tag list defined with this argument."
+        relatedToTags: [TagCriteriaInput],
+        "Narrows the query results to elements that relate to a use list defined with this argument."
+        relatedToUsers: [UserCriteriaInput],
+        "Narrows the query results to only elements that match a search query."
+        search: String,
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        site: [String],
+        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
+        siteId: [QueryArgument],
+        "Narrows the query results based on the unique identifier for an element-site relation."
+        siteSettingsId: [QueryArgument],
+        "Narrows the query results based on the elements’ slugs."
+        slug: [String],
+        "Narrows the query results based on the elements’ statuses."
+        status: [String],
+        "Narrows the query results based on the elements’ titles."
+        title: [String],
+        "Narrows the query results to only elements that have been soft-deleted."
+        trashed: Boolean,
+        "Narrows the query results based on the elements’ UIDs."
+        uid: [String],
+        "Determines whether only elements with unique IDs should be returned by the query."
+        unique: Boolean,
+        "Narrows the query results based on the elements’ URIs."
+        uri: [String],
+        "Narrows the query results based on the users’ usernames."
+        username: [String]
+    ): UserInterface
+    "The ID of the user who first added this asset (if known)."
+    uploaderId: Int
     "The element’s URI."
     uri: String
     "The full URL of the asset. This field accepts the same fields as the `transform` directive."
@@ -7839,6 +8518,7 @@ type pages_collection_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -7858,6 +8538,10 @@ type pages_collection_Entry implements ElementInterface & EntryInterface {
     ): [EntryInterface!]!
     "Whether the element is archived or not."
     archived: Boolean
+    "The entry’s author."
+    author: UserInterface
+    "The ID of the author of this entry."
+    authorId: Int
     "Returns the entry’s canonical ID."
     canonicalId: Int
     "Returns the entry’s canonical UUID."
@@ -8073,6 +8757,7 @@ type pages_collection_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -8215,6 +8900,7 @@ type pages_collection_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -8359,6 +9045,7 @@ type pages_collection_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -8514,6 +9201,7 @@ type pages_collection_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -8650,6 +9338,7 @@ type pages_collection_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -8790,6 +9479,7 @@ type pages_collection_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -8928,6 +9618,7 @@ type pages_collection_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -9155,6 +9846,7 @@ type pages_collection_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -9349,6 +10041,7 @@ type pages_general_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -9368,6 +10061,10 @@ type pages_general_Entry implements ElementInterface & EntryInterface {
     ): [EntryInterface!]!
     "Whether the element is archived or not."
     archived: Boolean
+    "The entry’s author."
+    author: UserInterface
+    "The ID of the author of this entry."
+    authorId: Int
     "Returns the entry’s canonical ID."
     canonicalId: Int
     "Returns the entry’s canonical UUID."
@@ -9491,6 +10188,7 @@ type pages_general_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -9700,6 +10398,7 @@ type pages_general_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -9844,6 +10543,7 @@ type pages_general_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -9867,92 +10567,6 @@ type pages_general_Entry implements ElementInterface & EntryInterface {
     expiryDate: DateTime
     "The ID of the entity"
     id: ID
-    image(
-        "Narrows the query results to only elements that have been archived."
-        archived: Boolean,
-        "Narrows the query results based on the elements’ creation dates."
-        dateCreated: [String],
-        "Narrows the query results based on the assets’ files’ last-modified dates."
-        dateModified: String,
-        "Narrows the query results based on the elements’ last-updated dates."
-        dateUpdated: [String],
-        "Narrows the query results based on the assets’ filenames."
-        filename: [String],
-        "Causes the query results to be returned in the order specified by the `id` argument."
-        fixedOrder: Boolean,
-        "Narrows the query results based on the folders the assets belong to, per the folders’ IDs."
-        folderId: [QueryArgument],
-        "Narrows the query results based on whether the assets have alternative text."
-        hasAlt: Boolean,
-        "Narrows the query results based on the assets’ image heights."
-        height: [String],
-        "Narrows the query results based on the elements’ IDs."
-        id: [QueryArgument],
-        "Causes the query results to be returned in reverse order."
-        inReverse: Boolean,
-        "Broadens the query results to include assets from any of the subfolders of the folder specified by `folderId`."
-        includeSubfolders: Boolean,
-        "Narrows the query results based on the assets’ file kinds."
-        kind: [String],
-        "Sets the limit for paginated results."
-        limit: Int,
-        "Sets the offset for paginated results."
-        offset: Int,
-        "Sets the field the returned elements should be ordered by."
-        orderBy: String,
-        "Determines which site should be selected when querying multi-site elements."
-        preferSites: [QueryArgument],
-        "Narrows the query results based on a reference string."
-        ref: [String],
-        "Narrows the query results to elements that relate to the provided element IDs. This argument is ignored, if `relatedToAll` is also used."
-        relatedTo: [QueryArgument],
-        "Narrows the query results to elements that relate to *all* of the provided element IDs. Using this argument will cause `relatedTo` argument to be ignored. **This argument is deprecated.** `relatedTo: [\"and\", ...ids]` should be used instead."
-        relatedToAll: [QueryArgument],
-        "Narrows the query results to elements that relate to an asset list defined with this argument."
-        relatedToAssets: [AssetCriteriaInput],
-        "Narrows the query results to elements that relate to a category list defined with this argument."
-        relatedToCategories: [CategoryCriteriaInput],
-        "Narrows the query results to elements that relate to an entry list defined with this argument."
-        relatedToEntries: [EntryCriteriaInput],
-        "Narrows the query results to elements that relate to a tag list defined with this argument."
-        relatedToTags: [TagCriteriaInput],
-        "Narrows the query results to elements that relate to a use list defined with this argument."
-        relatedToUsers: [UserCriteriaInput],
-        "Narrows the query results to only elements that match a search query."
-        search: String,
-        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
-        site: [String],
-        "Determines which site(s) the elements should be queried in. Defaults to the current (requested) site."
-        siteId: [QueryArgument],
-        "Narrows the query results based on the unique identifier for an element-site relation."
-        siteSettingsId: [QueryArgument],
-        "Narrows the query results based on the assets’ file sizes (in bytes)."
-        size: [String],
-        "Narrows the query results based on the elements’ slugs."
-        slug: [String],
-        "Narrows the query results based on the elements’ statuses."
-        status: [String],
-        "Narrows the query results based on the elements’ titles."
-        title: [String],
-        "Narrows the query results to only elements that have been soft-deleted."
-        trashed: Boolean,
-        "Narrows the query results based on the elements’ UIDs."
-        uid: [String],
-        "Determines whether only elements with unique IDs should be returned by the query."
-        unique: Boolean,
-        "Narrows the query results based on the user the assets were uploaded by, per the user’s ID."
-        uploader: QueryArgument,
-        "Narrows the query results based on the elements’ URIs."
-        uri: [String],
-        "Narrows the query results based on the volumes the assets belong to, per the volumes’ handles."
-        volume: [String],
-        "Narrows the query results based on the volumes the assets belong to, per the volumes’ IDs."
-        volumeId: [QueryArgument],
-        "Narrows the query results based on the assets’ image widths."
-        width: [String],
-        "A list of transform handles to preload."
-        withTransforms: [String]
-    ): [AssetInterface]!
     "Returns whether this is a draft."
     isDraft: Boolean
     "Returns whether this is a revision."
@@ -10085,6 +10699,7 @@ type pages_general_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -10221,6 +10836,7 @@ type pages_general_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -10357,6 +10973,7 @@ type pages_general_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -10495,6 +11112,7 @@ type pages_general_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -10722,6 +11340,7 @@ type pages_general_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -11496,6 +12115,7 @@ type settings_settings_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -11515,6 +12135,10 @@ type settings_settings_Entry implements ElementInterface & EntryInterface {
     ): [EntryInterface!]!
     "Whether the element is archived or not."
     archived: Boolean
+    "The entry’s author."
+    author: UserInterface
+    "The ID of the author of this entry."
+    authorId: Int
     "Returns the entry’s canonical ID."
     canonicalId: Int
     "Returns the entry’s canonical UUID."
@@ -11638,6 +12262,7 @@ type settings_settings_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -11780,6 +12405,7 @@ type settings_settings_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -11924,6 +12550,7 @@ type settings_settings_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -12078,6 +12705,7 @@ type settings_settings_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -12214,6 +12842,7 @@ type settings_settings_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -12350,6 +12979,7 @@ type settings_settings_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -12488,6 +13118,7 @@ type settings_settings_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -12695,6 +13326,7 @@ type settings_settings_Entry implements ElementInterface & EntryInterface {
         status: [String],
         "Determines which structure data should be joined into the query."
         structureId: Int,
+        summary: [QueryArgument],
         "Narrows the query results based on the elements’ titles."
         title: [String],
         "Narrows the query results to only elements that have been soft-deleted."
@@ -13083,6 +13715,7 @@ input EntryCriteriaInput {
     status: [String]
     "Determines which structure data should be joined into the query."
     structureId: Int
+    summary: [QueryArgument]
     "Narrows the query results based on the elements’ titles."
     title: [String]
     "Narrows the query results to only elements that have been soft-deleted."

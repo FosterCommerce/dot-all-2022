@@ -1,7 +1,7 @@
 {
     "require": {
         "craftcms/cms": "4.1.4.1",
-        "craftcms/commerce": "^4.1",
+        "craftcms/commerce": "4.1.2",
         "craftcms/commerce-paypal-checkout": "2.1.0.1",
         "craftcms/commerce-stripe": "^3.0",
         "craftcms/redactor": "^3.0",
@@ -14,7 +14,8 @@
     },
     "autoload": {
         "psr-4": {
-            "modules\\": "modules/"
+            "modules\\": "modules/",
+            "modules\\fc\\": "modules/fc"
         }
     },
     "config": {

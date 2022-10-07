@@ -9,7 +9,7 @@ settings:
   landingPage: BILLING
   secret: $PAYPAL_SECRET
   sendCartInfo: $PAYPAL_SEND_CART_INFO
-  sendShippingInfo: $PAYPAL_SEND_SHIIPING_INFO
+  sendShippingInfo: $PAYPAL_SEND_SHIPPING_INFO
   testMode: $PAYPAL_TEST_MODE
 sortOrder: 2
 type: craft\commerce\paypalcheckout\gateways\Gateway

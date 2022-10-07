@@ -25,12 +25,13 @@ return [
 
     // Custom aliases for Nuxt Build, local assets, and the Live Preview with Nuxt
     'aliases' => [
+		'@webroot' => dirname(__DIR__) . '/web',
         '@distBasePath' => dirname(__DIR__) . '/web/dist',
         '@assetBasePath' => dirname(__DIR__) . '/web/assets',
         '@assetBaseUrl' => getenv('ASSET_BASE_URL'),
         '@nuxtBaseUrl' => getenv('NUXT_BASE_URL')
     ],
-    
+
     // The domain for the Craft control panel
     'baseCpUrl' => getenv('CRAFT_BASE_URL'),
 
@@ -42,4 +43,16 @@ return [
 
     // Whether crawlers should be allowed to index pages and following links
     'disallowRobots' => !$isProd,
+
+	// Gotta keep it locked down tight
+	'enableCsrfProtection' => true,
+
+	// Enables basic http auth from our front-end
+	'enableBasicHttpAuth' => true,
+
+	// The maximum number of revisions that should be stored for each element.
+	'maxRevisions' => 8,
+
+	// We're disabling auto-saving of drafts to improve entry saving performance
+	'autosaveDrafts' => false,
 ];

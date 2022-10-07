@@ -1,4 +1,4 @@
-#import "./FieldTypeLinkField.gql"
+#import "./fragments/FieldTypeLinkField.gql"
 
 query EntrySettings {
     entry(section: "settings") {
