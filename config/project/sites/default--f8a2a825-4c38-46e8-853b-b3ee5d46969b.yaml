@@ -1,4 +1,4 @@
-baseUrl: $CRAFT_BASE_URL
+baseUrl: $NUXT_BASE_URL
 enabled: true
 handle: default
 hasUrls: true
