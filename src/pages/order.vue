@@ -91,21 +91,23 @@
 
 						<div v-for="item in order.lineItems" :key="item.id" class="py-10 border-b border-gray-200 flex space-x-6">
 							<nuxt-img
-								v-if="item.image.url"
-								:src="item.image.url"
-								:alt="item.image.alt"
+								v-if="item.snapshot.image.url"
+								:src="item.snapshot.image.url"
+								:alt="item.snapshot.image.alt"
 								class="flex-none w-20 h-20 object-center object-cover bg-gray-100 rounded-lg sm:w-40 sm:h-40"
 								loading="lazy"
 							/>
 							<div class="flex-auto flex flex-col">
 								<div>
 									<h4 class="font-medium text-gray-900">
-										<nuxt-link :to="item.uri">{{ item.title }}</nuxt-link>
+										<nuxt-link :to="item.snapshot.product.uri">
+											{{ item.snapshot.product.title }}
+										</nuxt-link>
 									</h4>
 									<p v-if="item.previewText" class="mt-2 text-sm text-gray-600">{{ item.previewText }}</p>
 									<div class="mt-2 flex text-sm divide-x divide-gray-200 space-x-4 sm:space-x-6">
-										<p class="text-gray-500">{{ item.color.charAt(0).toUpperCase() + item.color.slice(1) }}</p>
-										<p class="pl-4 text-gray-500 uppercase sm:pl-6">{{ item.size }}</p>
+										<p class="text-gray-500">{{ item.snapshot.color.charAt(0).toUpperCase() + item.snapshot.color.slice(1) }}</p>
+										<p class="pl-4 text-gray-500 uppercase sm:pl-6">{{ item.snapshot.size }}</p>
 									</div>
 								</div>
 								<div class="mt-6 flex-1 flex items-end">
