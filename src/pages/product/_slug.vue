@@ -1,10 +1,10 @@
 <script>
 	import ProductsProducts from '@/queries/ProductsProducts.gql';
-	import FourOhFourViewComponent from '@/components/views/404ViewComponent';
+	import FourOhFour from '@/components/views/FourOhFour';
 
 	export default {
 		components: {
-			FourOhFourViewComponent,
+			FourOhFour,
 		},
 		async asyncData({ $api, route }) {
 			let previewParams = null;
@@ -210,6 +210,6 @@
         </div>
       </div>
     </div>
-    <FourOhFourViewComponent v-else />
+    <FourOhFour v-else />
   </div>
 </template>

@@ -1,6 +1,6 @@
 #import "./fragments/FieldContentBlocks.gql"
 
-query FourOhFour {
+query EntryFourOhFour {
   entry(section: "fourOhFour") {
     ... on fourOhFour_fourOhFour_Entry {
       id

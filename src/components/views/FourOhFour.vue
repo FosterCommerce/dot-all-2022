@@ -1,5 +1,5 @@
 <script>
-	import FourOhFour from '@/queries/FourOhFour.gql';
+	import EntryFourOhFour from '@/queries/EntryFourOhFour.gql';
 	export default {
 		data() {
 			return {
@@ -9,7 +9,7 @@
 
 		async created() {
 			// Call the query API method to get the data from Craft
-			const { data } = await this.$api.graphqlQuery(FourOhFour);
+			const { data } = await this.$api.graphqlQuery(EntryFourOhFour);
 			this.entry = data?.entry;
 		},
 	};
