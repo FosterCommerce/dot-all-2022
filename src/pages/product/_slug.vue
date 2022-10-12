@@ -1,5 +1,5 @@
 <script>
-	import ProductsCatalog from '@/queries/ProductsCatalog.gql';
+	import ProductsProducts from '@/queries/ProductsProducts.gql';
 	import FourOhFourViewComponent from '@/components/views/404ViewComponent';
 
 	export default {
@@ -10,7 +10,7 @@
 			let previewParams = null;
 
 			const { data } = await $api.graphqlQuery(
-				ProductsCatalog,
+				ProductsProducts,
 				{
 					limit: 1,
 					slug: route.params.slug,

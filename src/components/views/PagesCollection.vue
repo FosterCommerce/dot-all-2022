@@ -1,5 +1,5 @@
 <script>
-	import ProductsCatalog from '@/queries/ProductsCatalog.gql';
+	import ProductsProducts from '@/queries/ProductsProducts.gql';
 	import ProductsCount from '@/queries/ProductsCount.gql';
 
 	export default {
@@ -58,7 +58,7 @@
 				const categories = this.categories;
 
 				const products = await this.$api.graphqlQuery(
-					ProductsCatalog,
+					ProductsProducts,
 					{ categories, limit, offset, orderBy: "dateCreated DESC" }
 				);
 
