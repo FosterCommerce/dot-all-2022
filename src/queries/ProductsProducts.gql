@@ -1,7 +1,7 @@
 #import "./fragments/FieldContentBlocks.gql"
 #import "./fragments/AssetImages.gql"
 
-query ProductsCatalog (
+query ProductsProducts (
     $id: [QueryArgument]
     $slug: [String] = ["*"]
     $uri: [String] = ["*", null]
@@ -32,12 +32,12 @@ query ProductsCatalog (
             metaJsonLdContainer
             metaLinkContainer
         }
-        ...TypeProductsCatalog
+        ...TypeProductsProducts
     }
 }
 
-fragment TypeProductsCatalog on ProductInterface {
-    ... on catalog_Product {
+fragment TypeProductsProducts on ProductInterface {
+    ... on products_Product {
         contentBlocks {
             ...FieldContentBlocks
         }
@@ -75,7 +75,7 @@ fragment VariantCatalog on VariantInterface {
     weight
     width
     height
-    ... on catalog_Variant {
+    ... on products_Variant {
         title
         image {
             ...Images
